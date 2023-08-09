@@ -32,7 +32,6 @@ export default class MapData {
         this._landGenerator = new LandGenerator(this, this.noise);
         this._waterGenerator = new WaterGenerator(this, this.noise);
 
-        console.log(this._waterGenerator.waterAmount);
 
 
     }
