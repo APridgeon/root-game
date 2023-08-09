@@ -56,9 +56,6 @@ export default class Main extends Phaser.Scene
         new CameraManager(this, plantManager, this.mapManager);
     }
 
-    update(time: number, delta: number): void {
-        this.mapManager.mapDisplay.updateAnims(time);
-    }
 }
 
 

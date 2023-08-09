@@ -135,11 +135,11 @@ export default class RuleTileMapDisplay
         })
     }
 
-    public updateAnims(time: Number){
-        this._mapAnimFX.forEach(anim => {
-            anim.update(time);
-        })
-    }
+    // public updateAnims(time: Number){
+    //     this._mapAnimFX.forEach(anim => {
+    //         anim.update(time);
+    //     })
+    // }
 
     private placeWorms(scene: Phaser.Scene): void {
 
