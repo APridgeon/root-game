@@ -32,6 +32,9 @@ export default class Game_Config {
     static MAP_tilesToWorld(tile: integer): integer {
         return tile*this.MAP_RES*this.MAP_SCALE;
     }
+    static MAP_worldToTiles(world: integer): integer {
+        return Math.floor(world/(this.MAP_RES*this.MAP_SCALE));
+    }
 
     static UI_tilesToWorld(tile: integer): integer {
         return tile*this.UI_RES*this.UI_SCALE;
