@@ -45,7 +45,6 @@ export default class RuleTileMapDisplay
         this._mapData = mapData;
         this._texture = texture;
 
-        // this.convertToRuleTileData2();
         this.landDataTextureIndex = this.convertToRuleTileData(this._mapData.landData, RuleTileSets.landTileSet);
         this.waterDataTextureIndex = this.convertToRuleTileData(this._mapData.waterData, RuleTileSets.waterTileSet);
 
@@ -134,12 +133,6 @@ export default class RuleTileMapDisplay
             this.addAnimFX(pos, AnimatedTile.TileDestroy, this._scene);
         })
     }
-
-    // public updateAnims(time: Number){
-    //     this._mapAnimFX.forEach(anim => {
-    //         anim.update(time);
-    //     })
-    // }
 
     private placeWorms(scene: Phaser.Scene): void {
 
