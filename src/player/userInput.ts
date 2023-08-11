@@ -81,6 +81,6 @@ export default class InputHandler {
             }
         })
     }
-å
+
 
 }
