@@ -13,9 +13,11 @@ export type RootData = {
 
 export default class InputHandler {
 
-    _scene: Phaser.Scene;
-    _plantManager: PlantManager;
-    _mapManager: MapManager;
+    private currentTileSelection: Phaser.Tilemaps.Tile;
+
+    private _scene: Phaser.Scene;
+    private _plantManager: PlantManager;
+    private _mapManager: MapManager;
 
     constructor(scene: Phaser.Scene, plantManager: PlantManager, mapManager: MapManager){
 
@@ -49,11 +51,36 @@ export default class InputHandler {
     }
 
     private setupHover(): void {
-        this._scene.input.on('pointermove', (p: Phaser.Input.Pointer) => {
-            let tile = this._mapManager.mapDisplay.tilemap.findTile(() => true, null, Game_Config.MAP_worldToTiles(p.worldX), Game_Config.MAP_worldToTiles(p.worldY));
-            tile.tint = 0xaa6666;
+
+        this._scene.input.on('pointermove', (p: Phaser.Input.Pointer, go: Phaser.GameObjects.GameObject[]) => {
+
+            let pointerTileCo: Position = {x: Game_Config.MAP_worldToTiles(p.worldX), y: Game_Config.MAP_worldToTiles(p.worldY)};
+
+            if(this._mapManager.mapData.waterData[pointerTileCo.y][pointerTileCo.x]){
+
+                let newTile = this._mapManager.mapDisplay.tilemap.getTileAt(pointerTileCo.x, pointerTileCo.y, null, 'water');
+                if(newTile === this.currentTileSelection){
+                    return
+                } else {
+                    if(this.currentTileSelection){this.currentTileSelection.tint = 0xffffff}
+                    this.currentTileSelection = newTile;
+                    this.currentTileSelection.tint = 0xff9999;
+                }
+            } else if(this._mapManager.mapData.landData[pointerTileCo.y][pointerTileCo.x]){
+                let newTile = this._mapManager.mapDisplay.tilemap.getTileAt(pointerTileCo.x, pointerTileCo.y, null, 'land');
+                if(newTile === this.currentTileSelection){
+                    return
+                } else {
+                    if(this.currentTileSelection){this.currentTileSelection.tint = 0xffffff}
+                    this.currentTileSelection = newTile;
+                    this.currentTileSelection.tint = 0xff9999;
+                }
+            } else {
+                if(this.currentTileSelection){this.currentTileSelection.tint = 0xffffff}
+                this.currentTileSelection = null;
+            }
         })
     }
-
+å
 
 }
