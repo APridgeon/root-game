@@ -8,6 +8,7 @@ import CameraManager from './cameraManager';
 import TurnHandler from './player/turnHandler';
 import Game_Config from './game_config';
 import TimeOfDayManager from './general/timeOfDay';
+import SoundManager from './sound/SoundManager';
 
 export default class Main extends Phaser.Scene
 {
@@ -54,6 +55,8 @@ export default class Main extends Phaser.Scene
         new InputHandler(this, plantManager, this.mapManager);
         new TurnHandler(this, plantManager, this.mapManager);
         new CameraManager(this, plantManager, this.mapManager);
+
+        new SoundManager(this);
     }
 
 }
