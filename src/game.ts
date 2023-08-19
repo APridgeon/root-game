@@ -27,7 +27,10 @@ export default class Main extends Phaser.Scene
     preload ()
     {
         this.load.image('plantTiles', 'assets/PlantTiles.png');
+        this.load.spritesheet('inputPrompts', 'assets/kenney_1bit_input.png', {frameWidth: 16, frameHeight: 16, startFrame: 0, spacing: 1});
+
         this.load.spritesheet('plantTilesSpriteSheet', 'assets/PlantTiles.png', {frameWidth: 8, frameHeight: 8, startFrame: 0});
+
         this.load.image('soil', 'assets/soil2.png');
         this.load.image('sky', 'assets/skies/night.png');
         this.load.image('sky-dawn', 'assets/skies/dawn.png');

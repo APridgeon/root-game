@@ -69,6 +69,12 @@ export default class UI extends Phaser.Scene {
             .setDepth(10);
 
 
+        this.add.image(Game_Config.UI_tilesToWorld(20), Game_Config.GAMEHEIGHT - Game_Config.UI_tilesToWorld(3.5), 'inputPrompts', (3 * 34) + 9)
+            .setOrigin(0, 0)
+            .setScale(2)
+            .setTint(0x000000)
+
+
         this.scene.get('main').events.on(Events.WaterText, (waterStats: waterStats) =>{
             waterText.setText('Water: ' + waterStats.totalWater.toString());
             waterRemovedText.setText('Water removed: ' + waterStats.waterRemoved);
