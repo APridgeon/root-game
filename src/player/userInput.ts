@@ -61,7 +61,6 @@ export default class InputHandler {
             delay: 250,
             loop: true,
             callback: () => {
-                console.log(pointerIm.frame);
                 let newSprite = (pointerIm.frame.name === ((24 * 34) + 1)) ? (24 * 34) + 0 : (24 * 34) + 1;
                 pointerIm.setFrame(newSprite);
             }

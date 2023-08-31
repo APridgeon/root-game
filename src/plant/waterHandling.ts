@@ -63,7 +63,7 @@ export default class WaterHandler {
     }
 
     private calculateWaterToRemoveFromPlant(plantData: PlantData): number {
-        let biomass = plantData.rootData.flat(1).filter(value => value === true).length;
+        let biomass = plantData.__rootData.length;
         let waterToRemove = (biomass * Game_Config.WATER_SUBTRACT_AMOUNT);
         plantData.water -= waterToRemove;
 
@@ -75,33 +75,30 @@ export default class WaterHandler {
         this.waterSources = [];
         this.rootsCloseToWater = [];
 
-        for(let x = 1; x < plantData.rootData[0].length -1; x++){
-            for(let y = 1; y < plantData.rootData.length-1; y++){
+        plantData.__rootData.forEach( pos => {
+            let N = mapManager.mapData.waterData[pos.y - 1][pos.x];
+            let E = mapManager.mapData.waterData[pos.y][pos.x + 1];
+            let S = mapManager.mapData.waterData[pos.y + 1][pos.x];
+            let W = mapManager.mapData.waterData[pos.y][pos.x - 1];
 
-                if(plantData.rootData[y][x]){
-                    let N = mapManager.mapData.waterData[y - 1][x];
-                    let E = mapManager.mapData.waterData[y][x + 1];
-                    let S = mapManager.mapData.waterData[y + 1][x];
-                    let W = mapManager.mapData.waterData[y][x - 1];
-                    if(N){
-                        this.waterSources.push({x: x, y: y-1});
-                    } 
-                    if(E){
-                        this.waterSources.push({x: x+1, y: y});
-                    }
-                    if(S){
-                        this.waterSources.push({x: x, y: y+1});
-                    }
-                    if(W){
-                        this.waterSources.push({x: x-1, y: y});
-                    }
-
-                    if(N || E || S || W){
-                        this.rootsCloseToWater.push({x: x, y: y});
-                    }
-                }
+            if(N){
+                this.waterSources.push({x: pos.x, y: pos.y-1});
+            } 
+            if(E){
+                this.waterSources.push({x: pos.x+1, y: pos.y});
             }
-        }
+            if(S){
+                this.waterSources.push({x: pos.x, y: pos.y+1});
+            }
+            if(W){
+                this.waterSources.push({x: pos.x-1, y: pos.y});
+            }
+
+            if(N || E || S || W){
+                this.rootsCloseToWater.push(pos);
+            }
+        })
+
     }
 
 }

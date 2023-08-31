@@ -42,70 +42,96 @@ export default class PlantTileSets {
     ]);
 
 
-    static ConvertToTileIndex(x: number, y:number, plantData: boolean[][], plantTileSet: Map<PlantTile, integer>){
+    static ConvertToTileIndex(x: number, y:number, plantDataSet: PlantData, plantTileSet: Map<PlantTile, integer>){
+
+        let Npos = {x: x, y: y - 1};
+        let Epos = {x: x + 1, y: y};
+        let Spos = {x: x, y: y + 1};
+        let Wpos = {x: x - 1, y: y};
+
+        let N = plantDataSet.__rootData.some(val => {
+            return ((val.x === Npos.x) && ((val.y) === (Npos.y))) ? true : false;
+        });    
+        let E = plantDataSet.__rootData.some(val => {
+            return ((val.x === Epos.x) && ((val.y) === (Epos.y))) ? true : false;
+        }); 
+        let S = plantDataSet.__rootData.some(val => {
+            return ((val.x === Spos.x) && ((val.y) === (Spos.y))) ? true : false;
+        }); 
+        let W = plantDataSet.__rootData.some(val => {
+            return ((val.x === Wpos.x) && ((val.y) === (Wpos.y))) ? true : false;
+        });
 
         let tileIndexValue;
 
-         //tip bottom
-        if(plantData[y-1][x] && !plantData[y][x-1] && !plantData[y][x+1] && !plantData[y+1][x]){
+        // starting tile
+        if(plantDataSet.startPos.x === x && plantDataSet.startPos.y === y ){
+            N = true;
+        }
+
+         //tip bottom 
+        if(N && !W && !E && !S){
             tileIndexValue = plantTileSet.get(PlantTile.TipBottom);
         }
         //tip top
-        else if(!plantData[y-1][x] && !plantData[y][x-1] && !plantData[y][x+1] && plantData[y+1][x]){
+        else if(!N && !W && !E && S){
             tileIndexValue = plantTileSet.get(PlantTile.TipTop);
         }
         //tip left
-        else if(!plantData[y-1][x] && plantData[y][x-1] && !plantData[y][x+1] && !plantData[y+1][x]){
+        else if(!N && W && !E && !S){
             tileIndexValue = plantTileSet.get(PlantTile.TipLeft);
         }
         //tip right
-        else if(!plantData[y-1][x] && !plantData[y][x-1] && plantData[y][x+1] && !plantData[y+1][x]){
+        else if(!N && !W && E && !S){
             tileIndexValue = plantTileSet.get(PlantTile.TipRight);
         }
         //top and bottom
-        else if(plantData[y-1][x] && !plantData[y][x-1] && !plantData[y][x+1] && plantData[y+1][x]){
+        else if(N && !W && !E && S){
             tileIndexValue = plantTileSet.get(PlantTile.TopAndBottom);
         }
         //left and right
-        else if(!plantData[y-1][x] && plantData[y][x-1] && plantData[y][x+1] && !plantData[y+1][x]){
+        else if(!N && W && E && !S){
             tileIndexValue = plantTileSet.get(PlantTile.LeftAndRight);
         }
         //top and right
-        else if(plantData[y-1][x] && !plantData[y][x-1] && plantData[y][x+1] && !plantData[y+1][x]){
+        else if(N && !W && E && !S){
             tileIndexValue = plantTileSet.get(PlantTile.TopAndRight);
         }
         //top and left
-        else if(plantData[y-1][x] && plantData[y][x-1] && !plantData[y][x+1] && !plantData[y+1][x]){
+        else if(N && W && !E && !S){
             tileIndexValue = plantTileSet.get(PlantTile.TopAndLeft);
         }
         //bottom and left
-        else if(!plantData[y-1][x] && plantData[y][x-1] && !plantData[y][x+1] && plantData[y+1][x]){
+        else if(!N && W && !E && S){
             tileIndexValue = plantTileSet.get(PlantTile.BottomAndLeft);
         }
         //bottom and right
-        else if(!plantData[y-1][x] && !plantData[y][x-1] && plantData[y][x+1] && plantData[y+1][x]){
+        else if(!N && !W && E && S){
             tileIndexValue = plantTileSet.get(PlantTile.BottomAndRight);
         }
         //all but top
-        else if(!plantData[y-1][x] && plantData[y][x-1] && plantData[y][x+1] && plantData[y+1][x]){
+        else if(!N && W && E && S){
             tileIndexValue = plantTileSet.get(PlantTile.AllButTop);
         }
         //all but right
-        else if(plantData[y-1][x] && plantData[y][x-1] && !plantData[y][x+1] && plantData[y+1][x]){
+        else if(N && W && !E && S){
             tileIndexValue = plantTileSet.get(PlantTile.AllButRight);
         }
         //all but bottom
-        else if(plantData[y-1][x] && plantData[y][x-1] && plantData[y][x+1] && !plantData[y+1][x]){
+        else if(N && W && E && !S){
             tileIndexValue = plantTileSet.get(PlantTile.AllButBottom);
         }
         //all but left
-        else if(plantData[y-1][x] && !plantData[y][x-1] && plantData[y][x+1] && plantData[y+1][x]){
+        else if(N && !W && E && S){
             tileIndexValue = plantTileSet.get(PlantTile.AllButLeft);
         }
         //surrounded
-        else if(plantData[y-1][x] && plantData[y][x-1] && plantData[y][x+1] && plantData[y+1][x]){
+        else if(N && W && E && S){
             tileIndexValue = plantTileSet.get(PlantTile.Surrounded);
         }
+
+        // console.log(N, E, S, W);
+        // console.log(`Tile index: ${tileIndexValue}`);
 
         return tileIndexValue;
     }

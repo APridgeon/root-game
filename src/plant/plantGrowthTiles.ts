@@ -396,7 +396,7 @@ export default class PlantGrowthTileSets {
         return choice;
     }
 
-    static AddToTileSet(plantData: PlantData, tileIndexData: number[][]): number[][]{
+    static AddToTileSet(plantData: PlantData, tileIndexData: number[][]){
 
 
         if(!plantData.alive){
@@ -409,13 +409,11 @@ export default class PlantGrowthTileSets {
     
             for(let x = -xOffset; x <= xOffset; x++){
                 for(let y = 0; y < aerialTileInfo.height; y++){
-                    tileIndexData[plantData.startPos.y + y - (aerialTileInfo.height-1)][plantData.startPos.x + x] = aerialTileInfo.tiles[(x + xOffset) + (y * (aerialTileInfo.width))]
+                    tileIndexData[plantData.startPos.y + y - (aerialTileInfo.height)][plantData.startPos.x + x] = aerialTileInfo.tiles[(x + xOffset) + (y * (aerialTileInfo.width))]
                 }
             }
         }
 
-
-        return tileIndexData;
     }
 
 

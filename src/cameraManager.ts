@@ -50,17 +50,12 @@ export default class CameraManager {
         this.maskTexture.draw(this.skyMask);
 
         //draw circlemask for each root segment
-        for(let x = 1; x < Game_Config.MAP_SIZE.x - 1; x++){
-            for(let y = 1; y < Game_Config.MAP_SIZE.y - 1; y++){
-                if(plantManager.userPlant.rootData[y][x]){
-                    let tile = plantManager.plantDisplay.plantTileLayer.getTileAt(x, y, true);
-                    let circ = scene.add.image(tile.getCenterX(), tile.getCenterY(), 'circleMask').setVisible(false).setScale(Game_Config.MAP_SCALE);
-                    this.maskTexture.draw(circ);
-                    circleArray.push(circ);
-                }
-
-            }
-        }
+        plantManager.userPlant.__rootData.forEach(pos => {
+            let tile = plantManager.plantDisplay.plantTileLayer.getTileAt(pos.x, pos.y, true);
+            let circ = scene.add.image(tile.getCenterX(), tile.getCenterY(), 'circleMask').setVisible(false).setScale(Game_Config.MAP_SCALE);
+            this.maskTexture.draw(circ);
+            circleArray.push(circ);
+        })
 
         //draw masks for anim decorations
         mapManager.mapDisplay.mapAnimFX.forEach(anim => {

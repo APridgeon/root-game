@@ -17,35 +17,38 @@ export default class aiController {
 
     public aiRootChoice(){
         let chosenPos: Position;
-        for(let y = 0; y < this.plant.rootData.length; y++){
-            for(let x = 0; x < this.plant.rootData[0].length; x++){
-                if(this.plant.rootData[y][x]){
-                    let N = {x: x, y: y - 1};
-                    let E = {x: x + 1, y: y};
-                    let S = {x: x, y: y + 1};
-                    let W = {x: x - 1, y: y};
+        let finalPos: Position;
 
-                    let rand = Math.random();
-                    if(rand < 0.1){
-                        chosenPos = N;
-                    }
-                    else if(rand < 0.2){
-                        chosenPos = E;
-                    }
-                    else if(rand < 0.9){
-                        chosenPos = S;
-                    }
-                    else if(rand <= 1){
-                        chosenPos = W;
-                    }
+        this.plant.__rootData.forEach(pos => {
 
-                    rand = Math.random()
-                    let threshold = (1/(this.plant.rootData.flat(1).filter(Boolean).length)) * (0.5 * this.plant.rootData.flat(1).filter(Boolean).length);
-                    if(rand > threshold){
-                        break
-                    }
-                }
+            let N = {x: pos.x, y: pos.y - 1};
+            let E = {x: pos.x + 1, y: pos.y};
+            let S = {x: pos.x, y: pos.y + 1};
+            let W = {x: pos.x - 1, y: pos.y};
+
+            let rand = Math.random();
+            if(rand < 0.1){
+                chosenPos = N;
             }
+            else if(rand < 0.2){
+                chosenPos = E;
+            }
+            else if(rand < 0.9){
+                chosenPos = S;
+            }
+            else if(rand <= 1){
+                chosenPos = W;
+            }
+
+            rand = Math.random()
+            let threshold = (1/(this.plant.__rootData.length)) * (0.5 * this.plant.__rootData.length);
+            if(rand > threshold){
+                finalPos = chosenPos;
+            }
+        })
+
+        if(!finalPos){
+            finalPos = chosenPos;
         }
 
         let rootData: RootData = {

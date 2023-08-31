@@ -37,44 +37,20 @@ export default class PlantDisplay {
 
     }
 
-    private convertToRuleTileData(plantData: PlantData, plantTileSet: Map<PlantTile, integer>): number[][] {
-
-        let tileIndexData = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
-
-        tileIndexData = PlantGrowthTiles.AddToTileSet(plantData, tileIndexData);
-
-        for(let x = 1; x < plantData.rootData[0].length - 1; x++){
-            for(let y = Game_Config.MAP_GROUND_LEVEL; y < plantData.rootData.length - 1; y++){
-                if(plantData.rootData[y][x]){
-                    tileIndexData[y][x] = PlantTileSets.ConvertToTileIndex(x, y, plantData.rootData, plantTileSet);
-                } 
-            }
-        }
-
-        return tileIndexData;
+    private addToTileIndexData(plantData: PlantData, plantTileSet: Map<PlantTile, integer>): void {
+        PlantGrowthTiles.AddToTileSet(plantData, this.plantTileData);
+        plantData.__rootData.forEach(pos => {
+            this.plantTileData[pos.y][pos.x] = PlantTileSets.ConvertToTileIndex(pos.x, pos.y, plantData, plantTileSet);
+        })
     }
 
-    private combineRuleTileData(preExistingPlantData: number[][], newPlantData: number[][]): number[][]{
+    public updatePlantDisplay(): void {
 
-        for(let x = 1; x < newPlantData[0].length - 1; x++){
-            for(let y = 1; y < newPlantData.length - 1; y++){
-                if(preExistingPlantData[y][x] === -1){
-                    preExistingPlantData[y][x] = newPlantData[y][x];
-                }
-            }
-        }
+        this.plantTileData = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
 
-        return preExistingPlantData;
-    }
-
-    public updatePlantDisplay(){
-
-        let userTiles = this.convertToRuleTileData(this._plantManager.userPlant, PlantTileSets.testSet);
-
-
+        this.addToTileIndexData(this._plantManager.userPlant, PlantTileSets.testSet);
         this._plantManager.aiPlants.forEach(aiplant => {
-            let aiTiles = this.convertToRuleTileData(aiplant, PlantTileSets.testSet);
-            this.plantTileData = this.combineRuleTileData(userTiles, aiTiles);
+            this.addToTileIndexData(aiplant, PlantTileSets.testSet);
         })
 
         this._plantTileLayer

@@ -1,3 +1,4 @@
+import { Position } from "./plant/plantData";
 
 export default class Game_Config {
 
@@ -5,7 +6,7 @@ export default class Game_Config {
     static GAMEHEIGHT: integer = 600;
     static PIXEL_RES: integer = 8;
 
-    static MAP_SIZE: Phaser.Math.Vector2 = {x: 100, y: 150};
+    static MAP_SIZE: Position = {x: 100, y: 150};
     static MAP_RES: integer = 8;
     static MAP_SCALE: integer = 2;
 

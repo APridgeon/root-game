@@ -41,10 +41,7 @@ export default class PlantData {
         return this._ai;
     }
 
-    private _rootData = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(false));
-    get rootData(){
-        return this._rootData;
-    }
+    public __rootData: Position[] = [];
 
     public alive: boolean = true;
     public plantGrowthStage: PlantGrowthStage = PlantGrowthStage.Stage1;
@@ -60,8 +57,7 @@ export default class PlantData {
         this._startPos = startPos;
         this._ai = ai;
 
-        this._rootData[this._startPos.y][this._startPos.x] = true;
-
+        this.__rootData.push({x: this.startPos.x, y: this.startPos.y});
 
         if(ai){
             this.aiController = new aiController(scene, this);

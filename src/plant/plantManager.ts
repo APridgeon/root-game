@@ -36,7 +36,8 @@ export default class PlantManager {
         this._scene = scene;
         this._mapManager = mapManager;
 
-        this._userPlant = new PlantData(scene, {x: Game_Config.PLANT_STARTING_POSX, y: Game_Config.MAP_GROUND_LEVEL - 1}, false);
+        this._userPlant = new PlantData(scene, {x: Game_Config.PLANT_STARTING_POSX, y: Game_Config.MAP_GROUND_LEVEL }, false);
+        this._mapManager.DestroyTile({x: Game_Config.PLANT_STARTING_POSX, y: Game_Config.MAP_GROUND_LEVEL});
 
         this.PlacePlants(scene);
         this._plantDisplay = new PlantDisplay(scene, this);
@@ -48,23 +49,21 @@ export default class PlantManager {
 
     public checkIfPlantIsClose(plantData: PlantData, tile: Position){
 
+        let N = plantData.__rootData.some(val => {
+            return ((val.x == tile.x) && ((val.y - 1) === (tile.y))) ? true : false;
+        });
 
-        let N = plantData.rootData[tile.y-1][tile.x];
-        
-        if(tile.y-1 === plantData.startPos.y && tile.x === plantData.startPos.x){
-            N = true;
-        }
-        if(tile.y-1 === plantData.startPos.y && tile.x-1 === plantData.startPos.x){
-            N = false;
-        }
-        if(tile.y-1 === plantData.startPos.y && tile.x+1 === plantData.startPos.x){
-            N = false;
-        }
-        let S = plantData.rootData[tile.y+1][tile.x];
-        let E = plantData.rootData[tile.y][tile.x+1];
-        let W = plantData.rootData[tile.y][tile.x-1];
+        let E = plantData.__rootData.some(val => {
+            return ((val.x + 1 === tile.x) && ((val.y) === (tile.y))) ? true : false;
+        });
 
-        // console.log('N: ' + N + ' E: ' + E + ' S: ' + S + ' W: ' + W);
+        let S = plantData.__rootData.some(val => {
+            return ((val.x === tile.x) && ((val.y + 1) === (tile.y))) ? true : false;
+        });
+
+        let W = plantData.__rootData.some(val => {
+            return ((val.x - 1 === tile.x) && ((val.y) === (tile.y))) ? true : false;
+        });
 
         if(N || E || S || W){
             return true;
@@ -75,7 +74,7 @@ export default class PlantManager {
     }
 
     public createNewRoot(plantData: PlantData, tileCoords: Position){
-        plantData.rootData[tileCoords.y][tileCoords.x] = true;
+        plantData.__rootData.push(tileCoords);
     }
 
     public checkPlantWaterLevels(scene: Phaser.Scene){
@@ -94,32 +93,20 @@ export default class PlantManager {
         
         plantData.alive = false;
 
-        let deadRootPos: Position[] = [];
-
-        plantData.rootData.forEach((row, y) => {
-            row.forEach((pos, x) => {
-                if(pos){
-                    plantData.rootData[y][x] = false;
-                    deadRootPos.push({x: x, y: y});
-                }
-            })
-        });
-
-        scene.events.emit(Events.DeadRootToLand, deadRootPos);
+        scene.events.emit(Events.DeadRootToLand, plantData.__rootData);
+        plantData.__rootData = [];
 
         if(plantData === this._userPlant){
             scene.events.emit(Events.GameOver);
 
-        } else {
-            // let index = this._aiPlants.findIndex(value => value === plantData);
-            // this._aiPlants.splice(index, 1);
         }
     }
 
     private PlacePlants(scene: Phaser.Scene): void {
         for(let x = 1; x < Game_Config.MAP_SIZE.x - 1; x+=6){
             if(!(x > this._userPlant.startPos.x - 3 && x < this._userPlant.startPos.x + 3) && Math.random() > 0.5){
-                let aiPlant = new PlantData(scene, {x: x, y: Game_Config.MAP_GROUND_LEVEL - 1}, true);
+                let aiPlant = new PlantData(scene, {x: x, y: Game_Config.MAP_GROUND_LEVEL}, true);
+                this._mapManager.DestroyTile({x: x, y: Game_Config.MAP_GROUND_LEVEL});
                 this._aiPlants.push(aiPlant);
             }
         }
@@ -129,16 +116,14 @@ export default class PlantManager {
 
         this._scene.events.on(Events.RootGrowthRequest, (rootData: RootData) => {
 
-            let closeToPlant = this.checkIfPlantIsClose(rootData.plant, rootData.coords);
             let worldTileIsAccessable = this._mapManager.IsWorldTileAccessable(rootData.coords);
-
-
-            if(closeToPlant && worldTileIsAccessable){
-
-                rootData.plant.newRootLocation = rootData.coords;
-                this._scene.events.emit(Events.RootGrowthSuccess, rootData.coords);
+            if(worldTileIsAccessable){
+                let closeToPlant = this.checkIfPlantIsClose(rootData.plant, rootData.coords);
+                if(closeToPlant){
+                    rootData.plant.newRootLocation = rootData.coords;
+                    this._scene.events.emit(Events.RootGrowthSuccess, rootData.coords);
+                }
             }
-
         })
 
         this._scene.events.on(Events.AerialGrowth, (plantData: PlantData) => {

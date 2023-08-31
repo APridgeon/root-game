@@ -70,14 +70,16 @@ export default class TurnHandler {
     }
 
     private playerAerialGrowth(): void {
-        if(this._plantManager.userPlant.rootData.flat(2).filter(value => value === true).length > 10){
+
+        if(this._plantManager.userPlant.__rootData.length > 10){
             this._scene.events.emit(Events.AerialGrowth, this._plantManager.userPlant);
         }
+
     }
 
     private aiAerialGrowth(): void {
         this._plantManager.aiPlants.forEach(plantData => {
-            if(plantData.rootData.flat(2).filter(value => value === true).length > 10){
+            if(plantData.__rootData.length > 10){
                 this._scene.events.emit(Events.AerialGrowth, plantData);
             }
         })

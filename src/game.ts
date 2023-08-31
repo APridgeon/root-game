@@ -60,6 +60,8 @@ export default class Main extends Phaser.Scene
         new CameraManager(this, plantManager, this.mapManager);
 
         new SoundManager(this);
+
+        this.mapManager.mapDisplay.updateRuleTileMap();
     }
 
 }
