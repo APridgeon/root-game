@@ -27,12 +27,12 @@ export default class CameraManager {
             .setAlpha(0.95)
             .setOrigin(0);
         
-        this.updateMask(scene, plantManager, mapManager);
+        // this.updateMask(scene, plantManager, mapManager);
         
         scene.scene.get('UI').events.on(Events.TurnConfirm, () => {
             this.cam.clearMask(true);
             if(!plantManager.gameOver){
-                this.updateMask(scene, plantManager, mapManager);
+                // this.updateMask(scene, plantManager, mapManager);
             }
         })
 

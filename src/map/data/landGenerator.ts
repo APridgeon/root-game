@@ -2,6 +2,7 @@ import { Game } from "phaser";
 import Game_Config from "../../game_config";
 import MapData from "./mapData";
 import Perlin from "phaser3-rex-plugins/plugins/perlin";
+import * as Phaser from "phaser";
 
 class LandGenerator {
 
@@ -36,10 +37,25 @@ class LandGenerator {
         this._landData = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(false));
 
         for(let x = 0; x < this.size.x; x++){
-            for(let y = this.groundLevel; y < this.size.y; y++){
+            let noiseValue = this._noise.simplex2(x * 0.02, 0.5 * 0.02)
+            let groundLevelAlt = Phaser.Math.RoundTo(noiseValue*10, 0);
+
+            for(let y = this.groundLevel + groundLevelAlt; y < this.size.y; y++){
                 this._landData[y][x] = true;
             }
+
         }
+
+
+        // for(let x = 0; x < this.size.x; x++){
+        //     for(let y = this.groundLevel; y < this.size.y; y++){
+        //         this._landData[y][x] = true;
+        //     }
+        // }
+
+
+
+        
     }
 
     private addSimplexNoise(){
