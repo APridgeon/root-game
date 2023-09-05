@@ -4,6 +4,7 @@ import MapManager from "../map/mapManager";
 import PlantData, { Position } from "../plant/plantData";
 import PlantManager from "../plant/plantManager";
 import Game_Config from "../game_config";
+import PointerCrosshair from "./pointerCrosshair";
 
 
 export type RootData = {
@@ -24,7 +25,8 @@ export default class InputHandler {
         this._mapManager = mapManager;
 
         this.setupClickEvent();
-        this.setupHover();
+
+        new PointerCrosshair(this._scene);
 
         
     }
@@ -45,34 +47,6 @@ export default class InputHandler {
                 this._scene.events.emit(Events.RootGrowthRequest, rootData);
                 this._scene.scene.get('UI').events.emit(Events.TurnConfirm);
             }
-        })
-    }
-
-    private setupHover(): void {
-
-        let pointerIm = this._scene.add.image(220, 220, 'inputPrompts', (24 * 34) + 1)
-            .setOrigin(0.5, 0.5)
-            .setScale(2)
-            .setTint(0xffffff)
-            .setAlpha(0.8)
-            .setDepth(10);
-
-        this._scene.time.addEvent({
-            delay: 250,
-            loop: true,
-            callback: () => {
-                let newSprite = (pointerIm.frame.name === ((24 * 34) + 1)) ? (24 * 34) + 0 : (24 * 34) + 1;
-                pointerIm.setFrame(newSprite);
-            }
-        })
-
-        this._scene.input.on('pointermove', (p: Phaser.Input.Pointer, go: Phaser.GameObjects.GameObject[]) => {
-
-            let pointerTileCo: Position = {x: Game_Config.MAP_worldToTiles(p.worldX), y: Game_Config.MAP_worldToTiles(p.worldY)};
-            let imCo: Position = {x: Game_Config.MAP_tilesToWorld(pointerTileCo.x) + 8, y: Game_Config.MAP_tilesToWorld(pointerTileCo.y) + 8};
-
-            pointerIm.setPosition(imCo.x, imCo.y);
-
         })
     }
 
