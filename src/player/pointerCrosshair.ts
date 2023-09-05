@@ -22,7 +22,7 @@ class PointerCrosshair {
             delay: 250,
             loop: true,
             callback: () => {
-                let newSprite = (this.image.frame.name === ((24 * 34) + 1)) ? (24 * 34) + 0 : (24 * 34) + 1;
+                let newSprite = (this.image.frame.name as unknown as number === ((24 * 34) + 1)) ? (24 * 34) + 0 : (24 * 34) + 1;
                 this.image.setFrame(newSprite);
             }
         })
