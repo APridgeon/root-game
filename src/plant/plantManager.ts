@@ -36,8 +36,16 @@ export default class PlantManager {
         this._scene = scene;
         this._mapManager = mapManager;
 
-        this._userPlant = new PlantData(scene, {x: Game_Config.PLANT_STARTING_POSX, y: Game_Config.MAP_GROUND_LEVEL }, false);
-        this._mapManager.DestroyTile({x: Game_Config.PLANT_STARTING_POSX, y: Game_Config.MAP_GROUND_LEVEL});
+        let plantHeight: number;
+
+        for(let y = 0; y < Game_Config.MAP_SIZE.y; y++){
+            if(this._mapManager.mapData.landData[y][Game_Config.PLANT_STARTING_POSX]){
+                plantHeight = y;
+                break;
+            }
+        }
+        this._userPlant = new PlantData(scene, {x: Game_Config.PLANT_STARTING_POSX, y: plantHeight }, false);
+        this._mapManager.DestroyTile({x: Game_Config.PLANT_STARTING_POSX, y: plantHeight});
 
         this.PlacePlants(scene);
         this._plantDisplay = new PlantDisplay(scene, this);
@@ -105,8 +113,22 @@ export default class PlantManager {
     private PlacePlants(scene: Phaser.Scene): void {
         for(let x = 1; x < Game_Config.MAP_SIZE.x - 1; x+=6){
             if(!(x > this._userPlant.startPos.x - 3 && x < this._userPlant.startPos.x + 3) && Math.random() > 0.5){
-                let aiPlant = new PlantData(scene, {x: x, y: Game_Config.MAP_GROUND_LEVEL}, true);
-                this._mapManager.DestroyTile({x: x, y: Game_Config.MAP_GROUND_LEVEL});
+                
+
+                let plantHeight: number;
+
+                for(let y = 0; y < Game_Config.MAP_SIZE.y; y++){
+                    if(this._mapManager.mapData.landData[y][x]){
+                        plantHeight = y;
+                        break;
+                    }
+                }
+
+                console.log(plantHeight);
+
+                
+                let aiPlant = new PlantData(scene, {x: x, y: plantHeight}, true);
+                this._mapManager.DestroyTile({x: x, y: plantHeight});
                 this._aiPlants.push(aiPlant);
             }
         }
