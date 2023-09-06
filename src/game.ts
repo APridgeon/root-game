@@ -71,7 +71,7 @@ export default class Main extends Phaser.Scene
 
 const config = {
     type: Phaser.AUTO,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#000000',
     width: Game_Config.GAMEWIDTH,
     height: Game_Config.GAMEHEIGHT,
     scene: [Main, UI],

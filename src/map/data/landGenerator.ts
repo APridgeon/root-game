@@ -18,6 +18,9 @@ class LandGenerator {
     private noiseStretch = 0.05;
     private noiseThreshold = 0.7;
 
+    private landWobbleAmplitude = 6;
+    private landWobbleFrequency = 0.03;
+
 
     get landData(){
         return this._landData;
@@ -37,23 +40,14 @@ class LandGenerator {
         this._landData = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(false));
 
         for(let x = 0; x < this.size.x; x++){
-            let noiseValue = this._noise.simplex2(x * 0.02, 0.5 * 0.02)
-            let groundLevelAlt = Phaser.Math.RoundTo(noiseValue*10, 0);
+            let noiseValue = this._noise.simplex2(x * this.landWobbleFrequency, 0.5 * this.landWobbleFrequency)
+            let groundLevelAlt = Phaser.Math.RoundTo(noiseValue*this.landWobbleAmplitude, 0);
 
             for(let y = this.groundLevel + groundLevelAlt; y < this.size.y; y++){
                 this._landData[y][x] = true;
             }
 
         }
-
-
-        // for(let x = 0; x < this.size.x; x++){
-        //     for(let y = this.groundLevel; y < this.size.y; y++){
-        //         this._landData[y][x] = true;
-        //     }
-        // }
-
-
 
         
     }
