@@ -114,6 +114,7 @@ export default class RuleTileMapDisplay
             .setScale((Game_Config.MAP_SCALE/Game_Config.MAP_RES)*SOIL_RES)
             .setAlpha(0.4)
             .forEachTile(tile => tile.index = 0);
+        test.setVisible(false);
 
 
         testRenderTexture = this._scene.add.renderTexture(0, 0, 1000, 1000)
@@ -121,8 +122,8 @@ export default class RuleTileMapDisplay
 
         testRenderTexture.clear();
         testRenderTexture.draw(test);
-        testRenderTexture.setDepth(1000);
-        testRenderTexture.setTint(0x00ff00);
+        testRenderTexture
+            .setAlpha(1);
     };
 
     private setUpTileLayers(): void {
@@ -132,7 +133,14 @@ export default class RuleTileMapDisplay
             .setScale(Game_Config.MAP_SCALE)
             .putTilesAt(this.landDataTextureIndex, 0, 0);
 
-        layerMask = new Phaser.Display.Masks.BitmapMask(this._scene, this.landTileLayer);
+        let cloneOfTileLayer = this._tilemap.createBlankLayer('land2', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
+            .setOrigin(0, 0)
+            .setScale(Game_Config.MAP_SCALE)
+            .putTilesAt(this.landDataTextureIndex, 0, 0);
+
+        
+        layerMask = new Phaser.Display.Masks.BitmapMask(this._scene, cloneOfTileLayer);
+        cloneOfTileLayer.setVisible(false);
 
         testRenderTexture.setMask(layerMask);
 
