@@ -13,6 +13,9 @@ export default class CameraManager {
     maskTexture: Phaser.GameObjects.RenderTexture;
     skyMask: Phaser.GameObjects.Rectangle;
 
+    private screenCover: Phaser.GameObjects.Rectangle;
+    private skyCover: Phaser.GameObjects.Rectangle;
+
     private _plantManager: PlantManager;
     private _mapManager: MapManager;
 
@@ -21,9 +24,16 @@ export default class CameraManager {
         this._plantManager = plantManager;
         this._mapManager = mapManager;
 
-        darkTest = scene.add.rectangle(0, 0, 2000, 2000)
+        this.skyCover = scene.add.rectangle(0, 0, Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y))
+            .setFillStyle(0x000000, 0.1)
+            .setOrigin(0,0)
+            .setVisible(false);
+
+        this.screenCover = scene.add.rectangle(0, 0, Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y))
             .setFillStyle(0x000000, 1)
+            .setOrigin(0,0)
             .setDepth(100);
+
         
         this.cam = scene.cameras.main;
         this.cam.setBounds(Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y));
@@ -33,6 +43,7 @@ export default class CameraManager {
             .setOrigin(0,0)
             .setVisible(false);
         
+
         this.skyMask = scene.add.rectangle(0, 0, Game_Config.MAP_SIZE.x*Game_Config.MAP_RES*Game_Config.MAP_SCALE, (Game_Config.MAP_GROUND_LEVEL)*Game_Config.MAP_RES*Game_Config.MAP_SCALE, 0x000000)
             .setVisible(false)
             .setAlpha(0.95)
@@ -47,8 +58,11 @@ export default class CameraManager {
             }
         })
 
-    }
+        scene.events.on(Events.GameOver, () => {
+            this.screenCover.setVisible(false);
+        })
 
+    }
 
 
     private updateMask(scene: Phaser.Scene, plantManager: PlantManager, mapManager: MapManager){
@@ -58,35 +72,32 @@ export default class CameraManager {
         this.maskTexture.clear();
 
         //draw blank cover
-        // this.maskTexture.draw(this.skyMask);
+        this.maskTexture.draw(this.skyCover);
+        let land = this._mapManager.mapDisplay.tilemap.getLayer('landBeforeHoles');
+        this.maskTexture.draw(land.tilemapLayer);
 
         //draw circlemask for each root segment
         plantManager.userPlant.__rootData.forEach(pos => {
             let tile = plantManager.plantDisplay.plantTileLayer.getTileAt(pos.x, pos.y, true);
-            let circ = scene.add.image(tile.getCenterX(), tile.getCenterY(), 'circleMask').setVisible(false).setScale(Game_Config.MAP_SCALE);
-            this.maskTexture.draw(circ);
+            let circ = scene.add.image(tile.getCenterX(), tile.getCenterY(), 'circleMask')
+                .setVisible(false)
+                .setScale(Game_Config.MAP_SCALE)
+                .setAlpha(1);
+            this.maskTexture.erase(circ);
             circleArray.push(circ);
         })
 
         //draw masks for anim decorations
         mapManager.mapDisplay.mapAnimFX.forEach(anim => {
             let circ = scene.add.image(anim.image.getCenter().x, anim.image.getCenter().y, 'smallMask').setVisible(false).setScale(Game_Config.MAP_SCALE);
-            this.maskTexture.draw(circ);
+            this.maskTexture.erase(circ);
             circleArray.push(circ);
-
         })
 
-        //set as the camera mask
-        // this.cam.setMask(new Phaser.Display.Masks.BitmapMask(scene, this.maskTexture), false);
-        // let land = this._mapManager.mapDisplay.tilemap.getLayer('land');
-        // land.tilemapLayer.setMask(new Phaser.Display.Masks.BitmapMask(scene, this.maskTexture));
+        //invert mask and take away from screen cover
         let invert = new Phaser.Display.Masks.BitmapMask(scene, this.maskTexture);
-        invert.invertAlpha = true;
-        darkTest.setMask(invert );
-        // this.maskTexture.setMask(this._mapManager.mapDisplay.soilBackgroundBitmapMask);
-        // this._mapManager.mapDisplay.soilBackgroundRenderTexture.setMask(new Phaser.Display.Masks.BitmapMask(scene, this.maskTexture));
-
-        
+        invert.invertAlpha = false;
+        this.screenCover.setMask(invert );
 
 
         //destroy circle array objects

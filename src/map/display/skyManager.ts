@@ -51,7 +51,7 @@ class SkyManager {
     }
 
     private setupSkyTileLayer(): void {
-        this._currentTileLayer = this._tilemap.createBlankLayer('skyBackground', this._currentTileSet, 0,  Game_Config.MAP_RES - ((this.skyResolution * Game_Config.MAP_SCALE ) - (Game_Config.MAP_tilesToWorld(Game_Config.MAP_GROUND_LEVEL))), Math.round((Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x))/this.skyResolution) + 1, 1)
+        this._currentTileLayer = this._tilemap.createBlankLayer('skyBackground', this._currentTileSet, 0,  0, Math.round((Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x))/this.skyResolution) + 1, 1)
             .setAlpha(1)
             .setDepth(-5)
             .setOrigin(0, 0)
@@ -59,7 +59,7 @@ class SkyManager {
             .forEachTile(tile => tile.index = 0);
 
 
-        this._newTileLayer = this._tilemap.createBlankLayer('newSkyBackground', this._newTileSet, 0,  Game_Config.MAP_RES - ((this.skyResolution * Game_Config.MAP_SCALE ) - (Game_Config.MAP_tilesToWorld(Game_Config.MAP_GROUND_LEVEL))), Math.round((Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x))/this.skyResolution) + 1, 1)
+        this._newTileLayer = this._tilemap.createBlankLayer('newSkyBackground', this._newTileSet, 0, 0, Math.round((Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x))/this.skyResolution) + 1, 1)
             .setAlpha(0)
             .setOrigin(0, 0)
             .setScale(((Game_Config.MAP_SCALE/Game_Config.MAP_RES)*(this.skyResolution)))

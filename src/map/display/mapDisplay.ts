@@ -19,6 +19,7 @@ export default class RuleTileMapDisplay
 
     private landDataTextureIndex: number[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
     private waterDataTextureIndex: number[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
+    private landBeforeHolesTextureIndex: number[][] =  [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
     
     private _tilemap: Phaser.Tilemaps.Tilemap;
     get tilemap(){
@@ -30,6 +31,7 @@ export default class RuleTileMapDisplay
 
     private landTileLayer: Phaser.Tilemaps.TilemapLayer;
     private waterTileLayer: Phaser.Tilemaps.TilemapLayer;
+
 
     private _mapAnimFX: MapAnimFX[] = [];
     get mapAnimFX(){
@@ -49,6 +51,8 @@ export default class RuleTileMapDisplay
 
         this.landDataTextureIndex = this.convertToRuleTileData(this._mapData.landData, RuleTileSets.landTileSet);
         this.waterDataTextureIndex = this.convertToRuleTileData(this._mapData.waterData, RuleTileSets.waterTileSet);
+        this.landBeforeHolesTextureIndex = this.convertToRuleTileData(this._mapData.landDataBeforeHoles, RuleTileSets.landTileSet);
+
 
         this._tilemap = scene.make.tilemap({tileWidth: Game_Config.MAP_RES, tileHeight: Game_Config.MAP_RES, width: Game_Config.MAP_SIZE.x, height: Game_Config.MAP_SIZE.y});
         this.tiles = this._tilemap.addTilesetImage(texture, null, Game_Config.MAP_RES, Game_Config.MAP_RES, 0, 0);
@@ -110,22 +114,24 @@ export default class RuleTileMapDisplay
         let SOIL_RES = 100;
         this.soilTiles = this._tilemap.addTilesetImage('soil', null, SOIL_RES, SOIL_RES, 0, 0);
         
-        this.soilBackgroundTileLayer = this._tilemap.createBlankLayer('soilBackground', this.soilTiles, 0, Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x)/SOIL_RES, Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y)/SOIL_RES)
+        this.soilBackgroundTileLayer = this._tilemap.createBlankLayer('soilBackground', this.soilTiles, 0, Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y)
             .setOrigin(0,0)
             .setScale((Game_Config.MAP_SCALE/Game_Config.MAP_RES)*SOIL_RES)
-            .setAlpha(0.7)
+            .setAlpha(0.4)
             .forEachTile(tile => tile.index = 0)
             .setVisible(false);
                 
-        let cloneOfTileLayer = this._tilemap.createBlankLayer('land2', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
+        let cloneOfTileLayer = this._tilemap.createBlankLayer('landBeforeHoles', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
             .setOrigin(0, 0)
             .setScale(Game_Config.MAP_SCALE)
-            .putTilesAt(this.landDataTextureIndex, 0, 0)
+            .putTilesAt(this.landBeforeHolesTextureIndex, 0, 0)
             .setVisible(false);
 
-        this.soilBackgroundRenderTexture = this._scene.add.renderTexture(0, 0, 5000, 5000)
-        this.soilBackgroundRenderTexture.draw(this.soilBackgroundTileLayer)
-            .setDepth(0)   
+        this.soilBackgroundRenderTexture = this._scene.add.renderTexture(0, 0, Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y))
+        this.soilBackgroundRenderTexture
+            .draw(this.soilBackgroundTileLayer)
+            .setDepth(0)
+            .setOrigin(0,0)
 
         
         this.soilBackgroundBitmapMask = new Phaser.Display.Masks.BitmapMask(this._scene, cloneOfTileLayer);

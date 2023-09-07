@@ -21,10 +21,8 @@ export default class MapManager {
 
         scene.events.on(Events.DeadRootToLand, (deadRootPos: Position[]) => {
             deadRootPos.forEach(pos => {
-                if(pos.y > Game_Config.MAP_GROUND_LEVEL){
                     this.mapData.deadRootPos[pos.y][pos.x] = true;
                     this.mapData.landData[pos.y][pos.x] = true;
-                }
             })
         })
 

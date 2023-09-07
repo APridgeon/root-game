@@ -10,6 +10,7 @@ class LandGenerator {
     private _noise: Perlin;
 
     private _landData: boolean[][];
+    private _landDataBeforeHoles: boolean[][];
 
     readonly size = Game_Config.MAP_SIZE;
     readonly groundLevel = Game_Config.MAP_GROUND_LEVEL;
@@ -26,6 +27,10 @@ class LandGenerator {
         return this._landData;
     }
 
+    get landDataBeforeHoles(){
+        return this._landDataBeforeHoles;
+    }
+
     constructor(mapData: MapData, noise: Perlin){
 
         this._mapData = mapData;
@@ -38,6 +43,7 @@ class LandGenerator {
 
     private createLandData(){
         this._landData = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(false));
+        this._landDataBeforeHoles = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(false));
 
         for(let x = 0; x < this.size.x; x++){
             let noiseValue = this._noise.simplex2(x * this.landWobbleFrequency, 0.5 * this.landWobbleFrequency)
@@ -45,9 +51,12 @@ class LandGenerator {
 
             for(let y = this.groundLevel + groundLevelAlt; y < this.size.y; y++){
                 this._landData[y][x] = true;
+                this._landDataBeforeHoles[y][x] = true;
             }
 
         }
+
+
 
         
     }

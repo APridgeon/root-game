@@ -12,6 +12,10 @@ export default class MapData {
         return this._landGenerator.landData;
     }
 
+    get landDataBeforeHoles(){
+        return this._landGenerator.landDataBeforeHoles;
+    }
+
     private _waterGenerator: WaterGenerator;
 
     get waterData(){
