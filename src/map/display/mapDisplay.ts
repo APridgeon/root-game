@@ -125,7 +125,7 @@ export default class RuleTileMapDisplay
             .setOrigin(0, 0)
             .setScale(Game_Config.MAP_SCALE)
             .putTilesAt(this.landBeforeHolesTextureIndex, 0, 0)
-            .setVisible(false);
+            .setVisible(true);
 
         this.soilBackgroundRenderTexture = this._scene.add.renderTexture(0, 0, Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y))
         this.soilBackgroundRenderTexture
