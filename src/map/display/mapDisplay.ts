@@ -37,8 +37,8 @@ export default class RuleTileMapDisplay
     }
 
     private soilBackgroundTileLayer: Phaser.Tilemaps.TilemapLayer;
-    private soilBackgroundRenderTexture: Phaser.GameObjects.RenderTexture;
-    private soilBackgroundBitmapMask: Phaser.Display.Masks.BitmapMask;
+    public soilBackgroundRenderTexture: Phaser.GameObjects.RenderTexture;
+    public soilBackgroundBitmapMask: Phaser.Display.Masks.BitmapMask;
 
 
     constructor(scene: Phaser.Scene, mapData: MapData, texture: string){

@@ -4,6 +4,8 @@ import MapManager from "./map/mapManager";
 import PlantManager from "./plant/plantManager";
 import * as Phaser from "phaser";
 
+let darkTest: Phaser.GameObjects.Rectangle;
+
 export default class CameraManager {
 
 
@@ -11,8 +13,17 @@ export default class CameraManager {
     maskTexture: Phaser.GameObjects.RenderTexture;
     skyMask: Phaser.GameObjects.Rectangle;
 
+    private _plantManager: PlantManager;
+    private _mapManager: MapManager;
+
     constructor(scene: Phaser.Scene, plantManager: PlantManager, mapManager: MapManager){
 
+        this._plantManager = plantManager;
+        this._mapManager = mapManager;
+
+        darkTest = scene.add.rectangle(0, 0, 2000, 2000)
+            .setFillStyle(0x000000, 1)
+            .setDepth(100);
         
         this.cam = scene.cameras.main;
         this.cam.setBounds(Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y));
@@ -66,7 +77,17 @@ export default class CameraManager {
         })
 
         //set as the camera mask
-        this.cam.setMask(new Phaser.Display.Masks.BitmapMask(scene, this.maskTexture), false);
+        // this.cam.setMask(new Phaser.Display.Masks.BitmapMask(scene, this.maskTexture), false);
+        // let land = this._mapManager.mapDisplay.tilemap.getLayer('land');
+        // land.tilemapLayer.setMask(new Phaser.Display.Masks.BitmapMask(scene, this.maskTexture));
+        let invert = new Phaser.Display.Masks.BitmapMask(scene, this.maskTexture);
+        invert.invertAlpha = true;
+        darkTest.setMask(invert );
+        // this.maskTexture.setMask(this._mapManager.mapDisplay.soilBackgroundBitmapMask);
+        // this._mapManager.mapDisplay.soilBackgroundRenderTexture.setMask(new Phaser.Display.Masks.BitmapMask(scene, this.maskTexture));
+
+        
+
 
         //destroy circle array objects
         circleArray.forEach(circ => {
