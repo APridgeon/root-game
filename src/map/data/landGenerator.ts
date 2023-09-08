@@ -4,11 +4,18 @@ import MapData from "./mapData";
 import Perlin from "phaser3-rex-plugins/plugins/perlin";
 import * as Phaser from "phaser";
 
+enum LandTypes {
+    None,
+    Normal,
+    Sandy
+}
+
 class LandGenerator {
 
     private _mapData: MapData;
     private _noise: Perlin;
 
+    private _landData2: LandTypes[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(LandTypes.None));
     private _landData: boolean[][];
     private _landDataBeforeHoles: boolean[][];
 
@@ -52,11 +59,12 @@ class LandGenerator {
             for(let y = this.groundLevel + groundLevelAlt; y < this.size.y; y++){
                 this._landData[y][x] = true;
                 this._landDataBeforeHoles[y][x] = true;
+                this._landData2[y][x] = LandTypes.Normal;
             }
 
         }
 
-
+        console.log(this._landData2);
 
         
     }
