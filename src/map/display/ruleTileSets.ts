@@ -1,5 +1,7 @@
 import { Game } from "phaser";
 import Game_Config from "../../game_config";
+import { Position } from "../../plant/plantData";
+import { LandTypes } from "../data/landGenerator";
 
 export enum RuleTile {
     surrounded = 0,
@@ -187,6 +189,113 @@ export default class RuleTileSets {
         
 
         return tileIndexValue;
+    }
+
+    static ConvertToTileIndex2(pos: Position, mapData: LandTypes[][], landType: LandTypes, ruleTileSet: Map<RuleTile, integer>) {
+
+
+        let tileIndexValue;
+
+        let N;
+        let E;
+        let S;
+        let W;
+
+        if(pos.x === 0){
+            W = false;
+        } else {
+            W = (mapData[pos.y][pos.x-1] === landType);
+        }
+        if(pos.x === Game_Config.MAP_SIZE.x - 1){
+            E = false;
+        } else {
+            E = (mapData[pos.y][pos.x+1] === landType);
+        }
+        if(pos.y === 0){
+            N = false;
+        } else {
+            N = (mapData[pos.y-1][pos.x] === landType);
+        }
+        if(pos.y === Game_Config.MAP_SIZE.y - 1){
+            S = false;
+        } else {
+            S = (mapData[pos.y+1][pos.x] === landType);
+        }
+
+        if(N && W && E && S){
+            tileIndexValue = ruleTileSet.get(RuleTile.surrounded);
+                }
+            //stranded
+            if(!N && !W && !E && !S){
+                tileIndexValue = ruleTileSet.get(RuleTile.stranded);
+            }
+            //top
+            else if(!N && W && E && S){
+                tileIndexValue = ruleTileSet.get(RuleTile.top);
+            }
+
+            //bottom
+            else if(N && W && E && !S){
+                tileIndexValue = ruleTileSet.get(RuleTile.bottom);
+            }
+
+            //left
+            else if(N && !W && E && S){
+                tileIndexValue = ruleTileSet.get(RuleTile.left);
+            }
+
+            //right
+            else if(N && W && !E && S){
+                tileIndexValue = ruleTileSet.get(RuleTile.right);
+            }
+
+            //top right
+            else if(!N && W && !E && S){
+                tileIndexValue = ruleTileSet.get(RuleTile.topRight);
+            }    
+            
+            //top left
+            else if(!N && !W  && E && S){
+                tileIndexValue = ruleTileSet.get(RuleTile.topLeft);
+            } 
+
+            //bottom left
+            else if(N && !W  && E && !S ){
+                tileIndexValue = ruleTileSet.get(RuleTile.bottomLeft);
+            } 
+
+            //bottom right
+            else if(N && W && !E && !S){
+                tileIndexValue = ruleTileSet.get(RuleTile.bottomRight);
+            } 
+            //left and right
+            else if(N && !W && !E && S){
+                tileIndexValue = ruleTileSet.get(RuleTile.leftAndRight);
+            } 
+            //top and bottom
+            else if(!N && W && E && !S){
+                tileIndexValue = ruleTileSet.get(RuleTile.topAndBottom);
+            } 
+            //all but top
+            else if(N && !W && !E  && !S){
+                tileIndexValue = ruleTileSet.get(RuleTile.allButTop);
+            } 
+            //all but right
+            else if(!N  && !W && E && !S){
+                tileIndexValue = ruleTileSet.get(RuleTile.allButRight);
+            } 
+            //all but bottom
+            else if(!N && !W && !E && S){
+                tileIndexValue = ruleTileSet.get(RuleTile.allButBottom);
+            } 
+            //all but left
+            else if(!N  && W && !E && !S){
+                tileIndexValue = ruleTileSet.get(RuleTile.allButLeft);
+            } 
+        
+
+        return tileIndexValue;
+
     }
 
 }

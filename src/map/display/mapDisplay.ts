@@ -7,9 +7,8 @@ import MapAnimFX from './mapAnimFX';
 import { Position } from '../../plant/plantData';
 import { Events } from '../../events/events';
 import SkyManager from './skyManager';
+import { LandTypes } from '../data/landGenerator';
 
-let testRenderTexture: Phaser.GameObjects.RenderTexture;
-let layerMask: Phaser.Display.Masks.BitmapMask;
 
 export default class RuleTileMapDisplay
 {
@@ -50,6 +49,7 @@ export default class RuleTileMapDisplay
         this._texture = texture;
 
         this.landDataTextureIndex = this.convertToRuleTileData(this._mapData.landData, RuleTileSets.landTileSet);
+        this.convertToRuleTileData2(this._mapData.landData2);
         this.waterDataTextureIndex = this.convertToRuleTileData(this._mapData.waterData, RuleTileSets.waterTileSet);
         this.landBeforeHolesTextureIndex = this.convertToRuleTileData(this._mapData.landDataBeforeHoles, RuleTileSets.landTileSet);
 
@@ -79,6 +79,24 @@ export default class RuleTileMapDisplay
         return tileIndexData;
     }
 
+    private convertToRuleTileData2(mapData: LandTypes[][]) {
+
+        let tileIndexData = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
+
+        for(let x = 0; x < mapData[0].length - 0; x++){
+            for(let y = 0; y < mapData.length - 0; y++){
+                if(mapData[y][x] === LandTypes.Normal){
+                    tileIndexData[y][x] = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, LandTypes.Normal, RuleTileSets.landTileSet);
+                }
+                else if(mapData[y][x] === LandTypes.DeadRoot){
+                    tileIndexData[y][x] = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, LandTypes.DeadRoot, RuleTileSets.deadRootTileSet);
+                }
+            }
+        }
+
+        console.log(tileIndexData);
+    }
+
 
     private addRuleTileData(mapData: boolean[][], ruleTileSet: Map<RuleTile, integer>, textureIndex: number[][]){
 
@@ -93,8 +111,6 @@ export default class RuleTileMapDisplay
     }
 
     public updateRuleTileMap(){
-
-        
 
         this.landDataTextureIndex = this.convertToRuleTileData(this._mapData.landData, RuleTileSets.landTileSet);
         this.addRuleTileData(this._mapData.deadRootPos, RuleTileSets.deadRootTileSet, this.landDataTextureIndex);
@@ -166,7 +182,7 @@ export default class RuleTileMapDisplay
         for(let x = 0; x < Game_Config.MAP_SIZE.x; x++){
             for(let y = Game_Config.MAP_UGROUND_HOLE_LEVEL; y < Game_Config.MAP_SIZE.y; y++){
 
-                if(!this._mapData.landData[y][x]){
+                if(this._mapData.landData2[y][x] === LandTypes.Hole){
                     let threshold = Math.random();
                     if(threshold < 0.05){
 

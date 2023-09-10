@@ -1,15 +1,22 @@
 import Perlin from "phaser3-rex-plugins/plugins/perlin";
 import Game_Config from "../../game_config";
-import LandGenerator from "./landGenerator";
+import LandGenerator, { LandTypes } from "./landGenerator";
 import WaterGenerator from "./waterGenerator";
+import { Position } from "../../plant/plantData";
+import MapManager from "../mapManager";
 
 
 export default class MapData {
 
     private _landGenerator: LandGenerator;
+    _mapManager: MapManager;
 
     get landData(){
         return this._landGenerator.landData;
+    }
+
+    get landData2(){
+        return this._landGenerator.landData2;
     }
 
     get landDataBeforeHoles(){
@@ -29,8 +36,9 @@ export default class MapData {
     deadRootPos: boolean[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(false));
     noise: Perlin;
 
-    constructor(noise: Perlin){
+    constructor(noise: Perlin, mapManager: MapManager){
 
+        this._mapManager = mapManager;
         this.noise = noise;
 
         this._landGenerator = new LandGenerator(this, this.noise);
@@ -39,5 +47,7 @@ export default class MapData {
 
 
     }
+
+
 
 }

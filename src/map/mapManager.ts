@@ -4,6 +4,7 @@ import MapData from './data/mapData';
 import { Position } from '../plant/plantData';
 import { Events } from '../events/events';
 import Game_Config from '../game_config';
+import { LandTypes } from './data/landGenerator';
 
 export default class MapManager {
 
@@ -15,13 +16,14 @@ export default class MapManager {
 
         this.noise = noise;
 
-        this.mapData = new MapData(this.noise);
+        this.mapData = new MapData(this.noise, this);
 
         this.mapDisplay = new RuleTileMapDisplay(scene, this.mapData, 'plantTiles');
 
         scene.events.on(Events.DeadRootToLand, (deadRootPos: Position[]) => {
             deadRootPos.forEach(pos => {
                     this.mapData.deadRootPos[pos.y][pos.x] = true;
+                    this.mapData.landData2[pos.y][pos.x] = LandTypes.DeadRoot;
                     this.mapData.landData[pos.y][pos.x] = true;
             })
         })
@@ -40,6 +42,24 @@ export default class MapManager {
         return result
     }
 
+    public isLandTileAccessible(pos: Position): boolean {
+
+        let result = false;
+
+        if(this.mapData.landData2[pos.y][pos.x] === LandTypes.DeadRoot || 
+            this.mapData.landData2[pos.y][pos.x] === LandTypes.Normal ||
+            this.mapData.landData2[pos.y][pos.x] === LandTypes.Sandy){
+                result = true;
+            }
+        
+        if(this.mapData.waterData[pos.y][pos.x]){
+            result = false;
+        }
+
+        return result;
+
+    }
+
     public FindAccessableRoute(startPos: Position, endPos: Position): Position[] {
         //TODO
         //path finding algorithm
@@ -49,6 +69,7 @@ export default class MapManager {
 
     public DestroyTile(pos: Position): void {
         this.mapData.landData[pos.y][pos.x] = false;
+        this.mapData.landData2[pos.y][pos.x] = LandTypes.Hole;
         this.mapData.deadRootPos[pos.y][pos.x] = false;
     }
 

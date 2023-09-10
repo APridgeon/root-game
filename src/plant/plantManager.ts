@@ -118,7 +118,7 @@ export default class PlantManager {
                 let plantHeight: number;
 
                 for(let y = 0; y < Game_Config.MAP_SIZE.y; y++){
-                    if(this._mapManager.mapData.landData[y][x]){
+                    if(this._mapManager.isLandTileAccessible({x: x, y: y})){
                         plantHeight = y;
                         break;
                     }
