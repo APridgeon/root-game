@@ -11,10 +11,6 @@ export default class MapData {
     private _landGenerator: LandGenerator;
     _mapManager: MapManager;
 
-    get landData(){
-        return this._landGenerator.landData;
-    }
-
     get landData2(){
         return this._landGenerator.landData2;
     }

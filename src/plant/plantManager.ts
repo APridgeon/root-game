@@ -5,6 +5,7 @@ import PlantDisplay from "./plantDisplay";
 import WaterHandler from "./waterHandling";
 import { Events } from "../events/events";
 import { RootData } from "../player/userInput";
+import { LandTypes } from "../map/data/landGenerator";
 
 export default class PlantManager {
 
@@ -39,7 +40,7 @@ export default class PlantManager {
         let plantHeight: number;
 
         for(let y = 0; y < Game_Config.MAP_SIZE.y; y++){
-            if(this._mapManager.mapData.landData[y][Game_Config.PLANT_STARTING_POSX]){
+            if(this._mapManager.mapData.landData2[y][Game_Config.PLANT_STARTING_POSX] !== LandTypes.None){
                 plantHeight = y;
                 break;
             }
@@ -138,7 +139,7 @@ export default class PlantManager {
 
         this._scene.events.on(Events.RootGrowthRequest, (rootData: RootData) => {
 
-            let worldTileIsAccessable = this._mapManager.IsWorldTileAccessable(rootData.coords);
+            let worldTileIsAccessable = this._mapManager.isLandTileAccessible(rootData.coords);
             if(worldTileIsAccessable){
                 let closeToPlant = this.checkIfPlantIsClose(rootData.plant, rootData.coords);
                 if(closeToPlant){

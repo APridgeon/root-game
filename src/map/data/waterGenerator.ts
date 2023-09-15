@@ -1,6 +1,7 @@
 import Perlin from "phaser3-rex-plugins/plugins/perlin";
 import MapData from "./mapData";
 import Game_Config from "../../game_config";
+import { LandTypes } from "./landGenerator";
 
 class WaterGenerator {
 
@@ -44,7 +45,7 @@ class WaterGenerator {
     private addSimplexNoise(): void {
         for(let x = 0; x < this.size.x; x++){
             for(let y = this.waterLevel; y < this.size.y; y++){
-                if(this._mapData.landData[y][x]){
+                if(this._mapData.landData2[y][x] !== LandTypes.Hole){
                     this._waterData[y][x] = (this._noise.simplex2(x * this.noiseStretch, y * this.noiseStretch)) < this.noiseThreshold; 
                 }
             }

@@ -48,7 +48,6 @@ export default class RuleTileMapDisplay
         this._mapData = mapData;
         this._texture = texture;
 
-        this.landDataTextureIndex = this.convertToRuleTileData(this._mapData.landData, RuleTileSets.landTileSet);
         this.convertToRuleTileData2(this._mapData.landData2);
         this.waterDataTextureIndex = this.convertToRuleTileData(this._mapData.waterData, RuleTileSets.waterTileSet);
         this.landBeforeHolesTextureIndex = this.convertToRuleTileData(this._mapData.landDataBeforeHoles, RuleTileSets.landTileSet);
@@ -94,26 +93,11 @@ export default class RuleTileMapDisplay
             }
         }
 
-        console.log(tileIndexData);
-    }
-
-
-    private addRuleTileData(mapData: boolean[][], ruleTileSet: Map<RuleTile, integer>, textureIndex: number[][]){
-
-        for(let x = 0; x < mapData[0].length - 0; x++){
-            for(let y = 0; y < mapData.length - 0; y++){
-                if(mapData[y][x]){
-                    textureIndex[y][x] = RuleTileSets.ConvertToTileIndex(x, y, mapData, ruleTileSet);
-                } 
-            }
-        }
-
+        this.landDataTextureIndex = tileIndexData;
     }
 
     public updateRuleTileMap(){
-
-        this.landDataTextureIndex = this.convertToRuleTileData(this._mapData.landData, RuleTileSets.landTileSet);
-        this.addRuleTileData(this._mapData.deadRootPos, RuleTileSets.deadRootTileSet, this.landDataTextureIndex);
+        this.convertToRuleTileData2(this._mapData.landData2);
         this.waterDataTextureIndex = this.convertToRuleTileData(this._mapData.waterData, RuleTileSets.waterTileSet);
 
         this.landTileLayer.putTilesAt(this.landDataTextureIndex, 0, 0);

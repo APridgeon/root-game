@@ -21,8 +21,6 @@ class LandGenerator {
     private _landData2: LandTypes[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(LandTypes.None));
     private _landDataBeforeHoles: boolean[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(false));
 
-    private _landData: boolean[][];
-
     readonly size = Game_Config.MAP_SIZE;
     readonly groundLevel = Game_Config.MAP_GROUND_LEVEL;
     readonly underGroundHoleLevel = Game_Config.MAP_UGROUND_HOLE_LEVEL;
@@ -32,11 +30,6 @@ class LandGenerator {
 
     private landWobbleAmplitude = 6;
     private landWobbleFrequency = 0.03;
-
-
-    get landData(){
-        return this._landData;
-    }
 
     get landData2(){
         return this._landData2;
@@ -57,14 +50,12 @@ class LandGenerator {
     }
 
     private createLandSurface(){
-        this._landData = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(false));
 
         for(let x = 0; x < this.size.x; x++){
             let noiseValue = this._noise.simplex2(x * this.landWobbleFrequency, 0.5 * this.landWobbleFrequency)
             let groundLevelAlt = Phaser.Math.RoundTo(noiseValue*this.landWobbleAmplitude, 0);
 
             for(let y = this.groundLevel + groundLevelAlt; y < this.size.y; y++){
-                this._landData[y][x] = true;
                 this._landDataBeforeHoles[y][x] = true;
                 this._landData2[y][x] = LandTypes.Normal;
             }
@@ -76,7 +67,6 @@ class LandGenerator {
 
         for(let x = 0; x < this.size.x; x++){
             for(let y = startFromY; y < this.size.y; y++){
-                this._landData[y][x] = ((this._noise.simplex2(x * noiseStretch.x, y * noiseStretch.y)) < noiseThreshold); 
                 if((this._noise.simplex2(x * noiseStretch.x, y * noiseStretch.y)) > noiseThreshold){
                     this._landData2[y][x] = landType;
                 }

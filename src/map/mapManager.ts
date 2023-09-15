@@ -22,25 +22,13 @@ export default class MapManager {
 
         scene.events.on(Events.DeadRootToLand, (deadRootPos: Position[]) => {
             deadRootPos.forEach(pos => {
-                    this.mapData.deadRootPos[pos.y][pos.x] = true;
                     this.mapData.landData2[pos.y][pos.x] = LandTypes.DeadRoot;
-                    this.mapData.landData[pos.y][pos.x] = true;
             })
         })
 
 
     }
 
-
-    public IsWorldTileAccessable(tilePos: Position): boolean {;
-
-        let land = this.mapData.landData[tilePos.y][tilePos.x];
-        let water = this.mapData.waterData[tilePos.y][tilePos.x];
-
-        let result = (land && !water);
-
-        return result
-    }
 
     public isLandTileAccessible(pos: Position): boolean {
 
@@ -68,9 +56,7 @@ export default class MapManager {
     }
 
     public DestroyTile(pos: Position): void {
-        this.mapData.landData[pos.y][pos.x] = false;
         this.mapData.landData2[pos.y][pos.x] = LandTypes.Hole;
-        this.mapData.deadRootPos[pos.y][pos.x] = false;
     }
 
 
