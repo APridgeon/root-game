@@ -85,6 +85,46 @@ export default class RuleTileSets {
         [RuleTile.empty, (5*10) + 7]
     ])
 
+    static sandTileSet = new Map<RuleTile, integer>([
+        [RuleTile.surrounded, (7*10) + 5],
+        [RuleTile.top, (6*10) + 5],
+        [RuleTile.bottom, (8*10) + 5],
+        [RuleTile.left, (7*10) + 4],
+        [RuleTile.right, (7*10) + 6],
+        [RuleTile.topLeft, (6*10) + 4],
+        [RuleTile.topRight, (6*10) + 6],
+        [RuleTile.bottomLeft, (8*10) + 4],
+        [RuleTile.bottomRight, (8*10) + 6],
+        [RuleTile.stranded, (11*10) + 4],
+        [RuleTile.leftAndRight, (9*10) + 5],
+        [RuleTile.topAndBottom, (9*10) + 4],
+        [RuleTile.allButTop, (10*10) + 5],
+        [RuleTile.allButRight, (10*10) + 6],
+        [RuleTile.allButBottom, (9*10) + 6],
+        [RuleTile.allButLeft, (10*10) + 4],
+        [RuleTile.empty, (5*10) + 5]
+    ])
+
+    static normalNoGapsTileSet = new Map<RuleTile, integer>([
+        [RuleTile.surrounded, (7*10) + 8],
+        [RuleTile.top, (6*10) + 8],
+        [RuleTile.bottom, (8*10) + 8],
+        [RuleTile.left, (7*10) + 7],
+        [RuleTile.right, (7*10) + 9],
+        [RuleTile.topLeft, (6*10) + 7],
+        [RuleTile.topRight, (6*10) + 9],
+        [RuleTile.bottomLeft, (8*10) + 7],
+        [RuleTile.bottomRight, (8*10) + 9],
+        [RuleTile.stranded, (11*10) + 7],
+        [RuleTile.leftAndRight, (9*10) + 8],
+        [RuleTile.topAndBottom, (9*10) + 7],
+        [RuleTile.allButTop, (10*10) + 8],
+        [RuleTile.allButRight, (10*10) + 9],
+        [RuleTile.allButBottom, (9*10) + 9],
+        [RuleTile.allButLeft, (10*10) + 7],
+        [RuleTile.empty, (5*10) + 8]
+    ])
+
     static ConvertToTileIndex(x: number, y:number, mapData: boolean[][], ruleTileSet: Map<RuleTile, integer>){
 
         let tileIndexValue;

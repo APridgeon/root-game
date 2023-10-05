@@ -24,6 +24,7 @@ class LandGenerator {
     readonly size = Game_Config.MAP_SIZE;
     readonly groundLevel = Game_Config.MAP_GROUND_LEVEL;
     readonly underGroundHoleLevel = Game_Config.MAP_UGROUND_HOLE_LEVEL;
+    readonly sandLevel = Game_Config.MAP_UGROUND_HOLE_LEVEL + 10;
 
     private noiseStretch = 0.05;
     private noiseThreshold = 0.7;
@@ -46,6 +47,7 @@ class LandGenerator {
 
         this.createLandSurface();
         this.addSimplexNoise(this.underGroundHoleLevel, {x: this.noiseStretch, y: this.noiseStretch}, this.noiseThreshold, LandTypes.Hole);
+        this.addSimplexNoise(this.sandLevel, {x: this.noiseStretch * 0.5, y: this.noiseStretch * 0.5}, this.noiseThreshold - 0.3, LandTypes.Sandy);
 
     }
 
