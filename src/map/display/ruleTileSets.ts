@@ -105,7 +105,7 @@ export default class RuleTileSets {
         [RuleTile.empty, (5*10) + 5]
     ])
 
-    static normalNoGapsTileSet = new Map<RuleTile, integer>([
+    static deadRootTileSet2 = new Map<RuleTile, integer>([
         [RuleTile.surrounded, (7*10) + 8],
         [RuleTile.top, (6*10) + 8],
         [RuleTile.bottom, (8*10) + 8],
