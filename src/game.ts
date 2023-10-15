@@ -75,7 +75,8 @@ const config = {
     width: Game_Config.GAMEWIDTH,
     height: Game_Config.GAMEHEIGHT,
     scene: [Main, UI],
-    pixelArt: true
+    pixelArt: true,
+    parent: 'game'
 };
 
 const game = new Phaser.Game(config);
