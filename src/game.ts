@@ -26,21 +26,21 @@ export default class Main extends Phaser.Scene
 
     preload ()
     {
-        this.load.image('plantTiles', 'assets/PlantTiles.png');
-        this.load.spritesheet('inputPrompts', 'assets/kenney_1bit_input.png', {frameWidth: 16, frameHeight: 16, startFrame: 0, spacing: 1});
+        this.load.image('plantTiles', 'assets/plants/PlantTiles.png');
+        this.load.spritesheet('inputPrompts', 'assets/ui/kenney_1bit_input.png', {frameWidth: 16, frameHeight: 16, startFrame: 0, spacing: 1});
 
-        this.load.spritesheet('plantTilesSpriteSheet', 'assets/PlantTiles.png', {frameWidth: 8, frameHeight: 8, startFrame: 0});
+        this.load.spritesheet('plantTilesSpriteSheet', 'assets/plants/PlantTiles.png', {frameWidth: 8, frameHeight: 8, startFrame: 0});
 
-        this.load.image('soil', 'assets/soil2.png');
+        this.load.image('soil', 'assets/backgrounds/soil2.png');
         this.load.image('sky', 'assets/skies/night.png');
         this.load.image('sky-dawn', 'assets/skies/dawn.png');
         this.load.image('sky-dusk', 'assets/skies/midday.png');
         this.load.image('sky-noon', 'assets/skies/noon.png');
         this.load.image('sky-sunset', 'assets/skies/sunset.png');
         this.load.image('sky-night', 'assets/skies/night.png');
-        this.load.image('circleMask', 'assets/circleMask.png');
-        this.load.image('smallMask', 'assets/smallMask.png');
-        this.load.image('clouds', 'assets/clouds.png');
+        this.load.image('circleMask', 'assets/masks/circleMask.png');
+        this.load.image('smallMask', 'assets/masks/smallMask.png');
+        this.load.image('clouds', 'assets/skies/clouds.png');
 
 
     }
