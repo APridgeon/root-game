@@ -1,3 +1,6 @@
+const ROWLENGTH = 25;
+
+
 import PlantData, { PlantSize } from "./plantData";
 
 export enum PlantTile {
@@ -21,23 +24,23 @@ export enum PlantTile {
 
 export default class PlantTileSets {
 
-    static testSet = new Map<PlantTile, integer>([
-        [PlantTile.AboveGround, (7*10) + 0],
-        [PlantTile.TipBottom, (8*10) + 0],
-        [PlantTile.TipTop, (8*10) + 1],
-        [PlantTile.TipLeft, (8*10) + 3],
-        [PlantTile.TipRight, (8*10) + 2],
-        [PlantTile.TopAndBottom, (9*10) + 0],
-        [PlantTile.LeftAndRight, (9*10) + 1],
-        [PlantTile.TopAndRight, (10*10) + 2],
-        [PlantTile.TopAndLeft, (10*10) + 3],
-        [PlantTile.BottomAndRight, (9*10) + 2],
-        [PlantTile.BottomAndLeft, (9*10) + 3],
-        [PlantTile.AllButTop, (11*10) + 1],
-        [PlantTile.AllButRight, (10*10) + 1],
-        [PlantTile.AllButBottom, (11*10) + 0],
-        [PlantTile.AllButLeft, (10*10) + 0],
-        [PlantTile.Surrounded, (11*10) + 2]
+    static rootSet1 = new Map<PlantTile, integer>([
+        [PlantTile.AboveGround, (5*ROWLENGTH) + 2],
+        [PlantTile.TipBottom, (18*ROWLENGTH) + 0],
+        [PlantTile.TipTop, (18*ROWLENGTH) + 1],
+        [PlantTile.TipLeft, (18*ROWLENGTH) + 3],
+        [PlantTile.TipRight, (18*ROWLENGTH) + 2],
+        [PlantTile.TopAndBottom, (19*ROWLENGTH) + 0],
+        [PlantTile.LeftAndRight, (19*ROWLENGTH) + 1],
+        [PlantTile.TopAndRight, (20*ROWLENGTH) + 2],
+        [PlantTile.TopAndLeft, (20*ROWLENGTH) + 3],
+        [PlantTile.BottomAndRight, (19*ROWLENGTH) + 2],
+        [PlantTile.BottomAndLeft, (19*ROWLENGTH) + 3],
+        [PlantTile.AllButTop, (21*ROWLENGTH) + 1],
+        [PlantTile.AllButRight, (20*ROWLENGTH) + 1],
+        [PlantTile.AllButBottom, (21*ROWLENGTH) + 0],
+        [PlantTile.AllButLeft, (20*ROWLENGTH) + 0],
+        [PlantTile.Surrounded, (21*ROWLENGTH) + 2]
 
     ]);
 

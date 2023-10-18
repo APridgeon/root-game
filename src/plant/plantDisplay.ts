@@ -48,9 +48,9 @@ export default class PlantDisplay {
 
         this.plantTileData = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
 
-        this.addToTileIndexData(this._plantManager.userPlant, PlantTileSets.testSet);
+        this.addToTileIndexData(this._plantManager.userPlant, PlantTileSets.rootSet1);
         this._plantManager.aiPlants.forEach(aiplant => {
-            this.addToTileIndexData(aiplant, PlantTileSets.testSet);
+            this.addToTileIndexData(aiplant, PlantTileSets.rootSet1);
         })
 
         this._plantTileLayer
