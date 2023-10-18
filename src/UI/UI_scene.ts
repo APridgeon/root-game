@@ -22,7 +22,7 @@ export default class UI extends Phaser.Scene {
     }
     
     preload(){
-        this.load.spritesheet('UI_tiles', 'assets/GUI_1x_sliced.png', {frameWidth: 8, frameHeight: 8, spacing: 0 });
+        this.load.spritesheet('UI_tiles', 'assets/ui/GUI_1x_sliced.png', {frameWidth: 8, frameHeight: 8, spacing: 0 });
         this.load.bitmapFont({
             key: 'ant_party', 
             textureURL: 'assets/fonts/AntParty/AntParty.png', 
