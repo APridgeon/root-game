@@ -70,13 +70,19 @@ export default class Main extends Phaser.Scene
 
 
 const config = {
-    type: Phaser.AUTO,
+    // type: Phaser.AUTO,
     backgroundColor: '#ffffff',
-    width: Game_Config.GAMEWIDTH,
-    height: Game_Config.GAMEHEIGHT,
+    // width: Game_Config.GAMEWIDTH,
+    // height: Game_Config.GAMEHEIGHT,
     scene: [Main, UI],
     pixelArt: true,
-    parent: 'game'
+    scale: {
+        parent: 'game',
+        mode: Phaser.Scale.FIT,
+        width: 800,
+        height: 600,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+    }
 };
 
 const game = new Phaser.Game(config);

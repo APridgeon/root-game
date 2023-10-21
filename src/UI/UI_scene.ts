@@ -56,7 +56,7 @@ export default class UI extends Phaser.Scene {
             .setScale(Game_Config.FONT_SCALE)
             .setDepth(10);
 
-        let uiText = this.add.bitmapText(Game_Config.UI_tilesToWorld(2), Game_Config.GAMEHEIGHT - Game_Config.UI_tilesToWorld(3), 'ant_party', 'WELCOME TO ROOT MADNESS')
+        let uiText = this.add.bitmapText(Game_Config.UI_tilesToWorld(2), Game_Config.GAMEHEIGHT - Game_Config.UI_tilesToWorld(3), 'ant_party', 'WELCOME TO TAPROOT')
             .setOrigin(0,0)
             .setTint(0x000000)
             .setScale(Game_Config.FONT_SCALE)
@@ -98,6 +98,22 @@ export default class UI extends Phaser.Scene {
 
 
 
+        uiText.setInteractive();
+        uiText.on('pointerup', function ()
+        {
+
+            if (this.scale.isFullscreen)
+            {
+
+                this.scale.stopFullscreen();
+            }
+            else
+            {
+
+                this.scale.startFullscreen();
+            }
+
+        }, this);
     }
     
     
