@@ -70,7 +70,7 @@ export default class Main extends Phaser.Scene
 
 
 const config = {
-    // type: Phaser.AUTO,
+    type: Phaser.AUTO,
     backgroundColor: '#ffffff',
     // width: Game_Config.GAMEWIDTH,
     // height: Game_Config.GAMEHEIGHT,
@@ -79,9 +79,9 @@ const config = {
     scale: {
         parent: 'game',
         mode: Phaser.Scale.FIT,
-        width: 800,
-        height: 600,
-        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: Game_Config.GAMEWIDTH,
+        height: Game_Config.GAMEHEIGHT,
+        autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
     }
 };
 

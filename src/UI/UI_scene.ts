@@ -101,15 +101,19 @@ export default class UI extends Phaser.Scene {
         uiText.setInteractive();
         uiText.on('pointerup', function ()
         {
+            let test = this as Phaser.Scene;
 
             if (this.scale.isFullscreen)
             {
 
+                
                 this.scale.stopFullscreen();
+                this.scale.resize(Game_Config.GAMEWIDTH, Game_Config.GAMEHEIGHT);
+                // this.scale.setGameSize(800, 600);
             }
             else
             {
-
+                // test.scale.setGameSize(1000, 1000);
                 this.scale.startFullscreen();
             }
 
