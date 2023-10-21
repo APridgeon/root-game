@@ -29,7 +29,7 @@ export default class Main extends Phaser.Scene
         this.load.image('plantTiles', 'assets/plants/rootGameAssets.png');
         this.load.spritesheet('inputPrompts', 'assets/ui/kenney_1bit_input.png', {frameWidth: 16, frameHeight: 16, startFrame: 0, spacing: 1});
 
-        this.load.spritesheet('plantTilesSpriteSheet', 'assets/plants/PlantTiles.png', {frameWidth: 8, frameHeight: 8, startFrame: 0});
+        this.load.spritesheet('plantTilesSpriteSheet', 'assets/plants/rootGameAssets.png', {frameWidth: 8, frameHeight: 8, startFrame: 0});
 
         this.load.image('soil', 'assets/backgrounds/soil2.png');
         this.load.image('sky', 'assets/skies/night.png');

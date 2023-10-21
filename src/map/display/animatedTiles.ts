@@ -4,6 +4,8 @@ export enum AnimatedTile {
 }
 
 
+const ROWLENGTH = 25;
+
 
 export default class AnimatedTiles {
 
@@ -11,20 +13,20 @@ export default class AnimatedTiles {
         [
             AnimatedTile.Worm, 
             [
-                (13*10) + 0,
-                (13*10) + 1,
-                (13*10) + 2,
-                (13*10) + 3 
+                (22*ROWLENGTH) + 0,
+                (22*ROWLENGTH) + 1,
+                (22*ROWLENGTH) + 2,
+                (22*ROWLENGTH) + 3 
             ]
         ],
         [
             AnimatedTile.TileDestroy,
             [
-                (14*10) + 0,
-                (14*10) + 1,
-                (14*10) + 2,
-                (14*10) + 3,
-                (14*10) + 4
+                (23*ROWLENGTH) + 0,
+                (23*ROWLENGTH) + 1,
+                (23*ROWLENGTH) + 2,
+                (23*ROWLENGTH) + 3,
+                (23*ROWLENGTH) + 4
 
             ]
         ]

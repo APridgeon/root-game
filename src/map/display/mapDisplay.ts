@@ -88,10 +88,10 @@ export default class RuleTileMapDisplay
                     tileIndexData[y][x] = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, LandTypes.Normal, RuleTileSets.landTileSet);
                 }
                 else if(mapData[y][x] === LandTypes.DeadRoot){
-                    tileIndexData[y][x] = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, LandTypes.DeadRoot, RuleTileSets.deadRootTileSet2);
+                    tileIndexData[y][x] = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, LandTypes.DeadRoot, RuleTileSets.deadRootTileSetNoGaps);
                 }
                 else if(mapData[y][x] === LandTypes.Sandy){
-                    tileIndexData[y][x] = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, LandTypes.Sandy, RuleTileSets.sandTileSet);
+                    tileIndexData[y][x] = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, LandTypes.Sandy, RuleTileSets.sandTileSetNoGaps);
                 }
             }
         }
