@@ -1,13 +1,19 @@
+import { Position } from "../../plant/plantData";
 import { LandTypes } from "./landGenerator";
 
 class LandData {
 
     landType: LandTypes;
     landStrength: number = 0;
+    pos?: Position;
 
-    constructor(landType: LandTypes){
+    constructor(landType: LandTypes, pos?: Position){
         this.landType = landType;
         this.initStrength();
+
+        if(pos){
+            this.pos = pos;
+        }
     }
 
     private initStrength() {
