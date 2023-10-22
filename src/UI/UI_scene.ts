@@ -35,41 +35,41 @@ export default class UI extends Phaser.Scene {
         this.uiTileMap = this.make.tilemap({tileHeight: Game_Config.UI_RES, tileWidth: Game_Config.UI_RES, height: Game_Config.GAMEHEIGHT/Game_Config.UI_tilesToWorld(1), width: Game_Config.GAMEWIDTH/Game_Config.UI_tilesToWorld(1)});
         this.uiTiles = this.uiTileMap.addTilesetImage('UI_tiles', 'UI_tiles', Game_Config.UI_RES, Game_Config.UI_RES, 0, 0);
 
-        new Box(this.uiTileMap, UI_TileSets.boxStyle3, 0, Game_Config.GAMEHEIGHT-Game_Config.UI_tilesToWorld(5), Game_Config.GAMEWIDTH/Game_Config.UI_tilesToWorld(1), 5);
+        new Box(this.uiTileMap, UI_TileSets.boxStyle3, 0, this.game.scale.height-Game_Config.UI_tilesToWorld(5), Game_Config.GAMEWIDTH/Game_Config.UI_tilesToWorld(1), 5);
         
-        let barometer = new Barometer(this, this.uiTileMap, Game_Config.UI_tilesToWorld(1), Game_Config.GAMEHEIGHT-Game_Config.UI_tilesToWorld(7), 10);
-        let waterText = this.add.bitmapText(Game_Config.UI_tilesToWorld(2), Game_Config.GAMEHEIGHT - Game_Config.UI_tilesToWorld(8), 'ant_party', 'Water: ' + Game_Config.PLANT_DATA_WATER_START_LEVEL)
+        let barometer = new Barometer(this, this.uiTileMap, Game_Config.UI_tilesToWorld(1), this.game.scale.height-Game_Config.UI_tilesToWorld(7), 10);
+        let waterText = this.add.bitmapText(Game_Config.UI_tilesToWorld(2), this.game.scale.height - Game_Config.UI_tilesToWorld(8), 'ant_party', 'Water: ' + Game_Config.PLANT_DATA_WATER_START_LEVEL)
             .setOrigin(0,0)
             .setTint(0x0095e9)
             .setScale(Game_Config.FONT_SCALE)
             .setDepth(10);
 
-        let waterRemovedText = this.add.bitmapText(Game_Config.UI_tilesToWorld(2), Game_Config.GAMEHEIGHT - Game_Config.UI_tilesToWorld(9), 'ant_party', 'Water removed: ' + 0)
+        let waterRemovedText = this.add.bitmapText(Game_Config.UI_tilesToWorld(2), this.game.scale.height - Game_Config.UI_tilesToWorld(9), 'ant_party', 'Water removed: ' + 0)
             .setOrigin(0,0)
             .setTint(0xff0000)
             .setScale(Game_Config.FONT_SCALE)
             .setDepth(10);
 
-        let waterAddedText = this.add.bitmapText(Game_Config.UI_tilesToWorld(2), Game_Config.GAMEHEIGHT - Game_Config.UI_tilesToWorld(10), 'ant_party', 'Water added: ' + 0)
+        let waterAddedText = this.add.bitmapText(Game_Config.UI_tilesToWorld(2), this.game.scale.height - Game_Config.UI_tilesToWorld(10), 'ant_party', 'Water added: ' + 0)
             .setOrigin(0,0)
             .setTint(0x00ff00)
             .setScale(Game_Config.FONT_SCALE)
             .setDepth(10);
 
-        let uiText = this.add.bitmapText(Game_Config.UI_tilesToWorld(2), Game_Config.GAMEHEIGHT - Game_Config.UI_tilesToWorld(3), 'ant_party', 'WELCOME TO TAPROOT')
+        let uiText = this.add.bitmapText(Game_Config.UI_tilesToWorld(2), this.game.scale.height - Game_Config.UI_tilesToWorld(3), 'ant_party', 'WELCOME TO TAPROOT')
             .setOrigin(0,0)
             .setTint(0x000000)
             .setScale(Game_Config.FONT_SCALE)
             .setDepth(10);
 
-        let turnNoText = this.add.bitmapText(Game_Config.GAMEWIDTH - Game_Config.UI_tilesToWorld(10), Game_Config.GAMEHEIGHT - Game_Config.UI_tilesToWorld(3), 'ant_party', 'Turn no: 0')
+        let turnNoText = this.add.bitmapText(Game_Config.GAMEWIDTH - Game_Config.UI_tilesToWorld(10), this.game.scale.height - Game_Config.UI_tilesToWorld(3), 'ant_party', 'Turn no: 0')
             .setOrigin(0,0)
             .setTint(0x000000)
             .setScale(Game_Config.FONT_SCALE)
             .setDepth(10);
 
 
-        this.add.image(Game_Config.UI_tilesToWorld(20), Game_Config.GAMEHEIGHT - Game_Config.UI_tilesToWorld(3.5), 'inputPrompts', (3 * 34) + 9)
+        this.add.image(Game_Config.UI_tilesToWorld(20), this.game.scale.height - Game_Config.UI_tilesToWorld(3.5), 'inputPrompts', (3 * 34) + 9)
             .setOrigin(0, 0)
             .setScale(2)
             .setTint(0x000000)
@@ -105,19 +105,25 @@ export default class UI extends Phaser.Scene {
 
             if (this.scale.isFullscreen)
             {
-
-                
                 this.scale.stopFullscreen();
-                this.scale.resize(Game_Config.GAMEWIDTH, Game_Config.GAMEHEIGHT);
-                // this.scale.setGameSize(800, 600);
             }
             else
             {
-                // test.scale.setGameSize(1000, 1000);
                 this.scale.startFullscreen();
             }
 
         }, this);
+
+
+        let div = document.getElementById("gameCanvas");
+        this.scale.on('enterfullscreen', () => {
+            div.style.height = "100%";
+            // this.game.scale.scaleMode = Phaser.Scale.FIT;
+        })
+        this.scale.on('leavefullscreen', () => {
+            div.style.height = "";
+            // this.game.scale.scaleMode = Phaser.Scale.NONE;
+        })
     }
     
     

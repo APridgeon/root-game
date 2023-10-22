@@ -48,6 +48,21 @@ export default class Main extends Phaser.Scene
     create ()
     {
 
+
+        this.game.canvas.id = "gameCanvas";
+
+        let div = document.getElementById("gameCanvas");
+        this.game.scale.on('enterfullscreen', () => {
+            div.style.height = "100%";
+            div.style.cursor = "none";
+            // this.game.scale.scaleMode = Phaser.Scale.FIT;
+        })
+        this.game.scale.on('leavefullscreen', () => {
+            div.style.height = "";
+            div.style.cursor = "default";
+            // this.game.scale.scaleMode = Phaser.Scale.NONE;
+        })
+
         this.timeOfDayManager = new TimeOfDayManager(this);
         this.noise = new Perlin(Math.random());
 
@@ -72,19 +87,42 @@ export default class Main extends Phaser.Scene
 const config = {
     type: Phaser.AUTO,
     backgroundColor: '#ffffff',
-    // width: Game_Config.GAMEWIDTH,
-    // height: Game_Config.GAMEHEIGHT,
+    width: Game_Config.GAMEWIDTH,
+    height: Game_Config.GAMEHEIGHT,
     scene: [Main, UI],
     pixelArt: true,
     scale: {
         parent: 'game',
-        mode: Phaser.Scale.FIT,
-        width: Game_Config.GAMEWIDTH,
-        height: Game_Config.GAMEHEIGHT,
-        autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
+        mode: Phaser.Scale.NONE,
+        // width: Game_Config.GAMEWIDTH,
+        // height: Game_Config.GAMEHEIGHT,
+        // autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
     }
 };
 
-const game = new Phaser.Game(config);
+const config_mobile = {
+    type: Phaser.AUTO,
+    backgroundColor: '#ffffff',
+    width: Game_Config.GAMEWIDTH_MOBILE,
+    height: Game_Config.GAMEHEIGHT_MOBILE,
+    scene: [Main, UI],
+    pixelArt: true,
+    scale: {
+        parent: 'game',
+        mode: Phaser.Scale.NONE,
+        // width: Game_Config.GAMEWIDTH_MOBILE,
+        // height: Game_Config.GAMEHEIGHT_MOBILE,
+        // autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
+    }
+};
+
+let game;
+
+if(screen.height < 600 || screen.width < 600){
+    game = new Phaser.Game(config_mobile);
+} else {
+    game = new Phaser.Game(config);
+}
+
 
 //'#ead4aa'

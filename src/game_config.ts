@@ -4,6 +4,10 @@ export default class Game_Config {
 
     static GAMEWIDTH: integer = 800;
     static GAMEHEIGHT: integer = 600;
+
+    static GAMEWIDTH_MOBILE: integer = 800;
+    static GAMEHEIGHT_MOBILE: integer = 400;
+
     static PIXEL_RES: integer = 8;
 
     static MAP_SIZE: Position = {x: 100, y: 150};
