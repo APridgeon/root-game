@@ -14,6 +14,8 @@ export default class UI extends Phaser.Scene {
     uiTileMap: Phaser.Tilemaps.Tilemap;
     uiTiles: Phaser.Tilemaps.Tileset;
 
+    fullscreenButton: Phaser.GameObjects.Image;
+
     turnNo = 0;
     
     constructor(){
@@ -32,7 +34,7 @@ export default class UI extends Phaser.Scene {
 
     create(){
 
-        this.uiTileMap = this.make.tilemap({tileHeight: Game_Config.UI_RES, tileWidth: Game_Config.UI_RES, height: Game_Config.GAMEHEIGHT/Game_Config.UI_tilesToWorld(1), width: Game_Config.GAMEWIDTH/Game_Config.UI_tilesToWorld(1)});
+        this.uiTileMap = this.make.tilemap({tileHeight: Game_Config.UI_RES, tileWidth: Game_Config.UI_RES, height: this.game.scale.height /Game_Config.UI_tilesToWorld(1), width: this.game.scale.width /Game_Config.UI_tilesToWorld(1)});
         this.uiTiles = this.uiTileMap.addTilesetImage('UI_tiles', 'UI_tiles', Game_Config.UI_RES, Game_Config.UI_RES, 0, 0);
 
         new Box(this.uiTileMap, UI_TileSets.boxStyle3, 0, this.game.scale.height-Game_Config.UI_tilesToWorld(5), Game_Config.GAMEWIDTH/Game_Config.UI_tilesToWorld(1), 5);
@@ -62,7 +64,7 @@ export default class UI extends Phaser.Scene {
             .setScale(Game_Config.FONT_SCALE)
             .setDepth(10);
 
-        let turnNoText = this.add.bitmapText(Game_Config.GAMEWIDTH - Game_Config.UI_tilesToWorld(10), this.game.scale.height - Game_Config.UI_tilesToWorld(3), 'ant_party', 'Turn no: 0')
+        let turnNoText = this.add.bitmapText(this.game.scale.width - Game_Config.UI_tilesToWorld(10), this.game.scale.height - Game_Config.UI_tilesToWorld(3), 'ant_party', 'Turn no: 0')
             .setOrigin(0,0)
             .setTint(0x000000)
             .setScale(Game_Config.FONT_SCALE)
@@ -73,6 +75,9 @@ export default class UI extends Phaser.Scene {
             .setOrigin(0, 0)
             .setScale(2)
             .setTint(0x000000)
+
+
+
 
 
         this.scene.get('main').events.on(Events.WaterText, (waterStats: waterStats) =>{
@@ -97,9 +102,20 @@ export default class UI extends Phaser.Scene {
         })
 
 
+        this.fullscreenButton = this.add.image(this.game.scale.width - Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(2), 'inputPrompts', (10 * 34) + 15)
+            .setOrigin(0, 0)
+            .setScale(2)
+            .setTint(0xffffff)
+            .setInteractive();
 
-        uiText.setInteractive();
-        uiText.on('pointerup', function ()
+        this.fullscreenButton.on(Phaser.Input.Events.POINTER_OVER, () => {
+            this.fullscreenButton.setTint(0xff4444);
+        }, this);
+        this.fullscreenButton.on(Phaser.Input.Events.POINTER_OUT, () => {
+            this.fullscreenButton.setTint(0xffffff);
+        }, this);
+
+        this.fullscreenButton.on(Phaser.Input.Events.POINTER_UP, function ()
         {
             let test = this as Phaser.Scene;
 
@@ -115,15 +131,7 @@ export default class UI extends Phaser.Scene {
         }, this);
 
 
-        let div = document.getElementById("gameCanvas");
-        this.scale.on('enterfullscreen', () => {
-            div.style.height = "100%";
-            // this.game.scale.scaleMode = Phaser.Scale.FIT;
-        })
-        this.scale.on('leavefullscreen', () => {
-            div.style.height = "";
-            // this.game.scale.scaleMode = Phaser.Scale.NONE;
-        })
+
     }
     
     
