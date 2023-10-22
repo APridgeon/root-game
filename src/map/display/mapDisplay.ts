@@ -48,7 +48,7 @@ export default class RuleTileMapDisplay
         this._mapData = mapData;
         this._texture = texture;
 
-        this.convertToRuleTileData2(this._mapData.landData2);
+        this.convertToRuleTileData2(this._mapData.landData);
         this.waterDataTextureIndex = this.convertToRuleTileData(this._mapData.waterData, RuleTileSets.waterTileSet);
         this.landBeforeHolesTextureIndex = this.convertToRuleTileData(this._mapData.landDataBeforeHoles, RuleTileSets.landTileSet);
 
@@ -100,7 +100,7 @@ export default class RuleTileMapDisplay
     }
 
     public updateRuleTileMap(){
-        this.convertToRuleTileData2(this._mapData.landData2);
+        this.convertToRuleTileData2(this._mapData.landData);
         this.waterDataTextureIndex = this.convertToRuleTileData(this._mapData.waterData, RuleTileSets.waterTileSet);
 
         this.landTileLayer.putTilesAt(this.landDataTextureIndex, 0, 0);
@@ -169,7 +169,7 @@ export default class RuleTileMapDisplay
         for(let x = 0; x < Game_Config.MAP_SIZE.x; x++){
             for(let y = Game_Config.MAP_UGROUND_HOLE_LEVEL; y < Game_Config.MAP_SIZE.y; y++){
 
-                if(this._mapData.landData2[y][x] === LandTypes.Hole){
+                if(this._mapData.landData[y][x] === LandTypes.Hole){
                     let threshold = Math.random();
                     if(threshold < 0.05){
 

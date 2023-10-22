@@ -4,6 +4,7 @@ import MapData from "./mapData";
 import Perlin from "phaser3-rex-plugins/plugins/perlin";
 import * as Phaser from "phaser";
 import { Position } from "../../plant/plantData";
+import LandData from "./landData";
 
 export enum LandTypes {
     None = 'none',
@@ -13,13 +14,16 @@ export enum LandTypes {
     Sandy = 'sandy'
 }
 
+
 class LandGenerator {
 
     private _mapData: MapData;
     private _noise: Perlin;
 
-    private _landData2: LandTypes[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(LandTypes.None));
+    private _landData: LandTypes[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(LandTypes.None));
     private _landDataBeforeHoles: boolean[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(false));
+
+    public landData2: number[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(new LandData(LandTypes.Normal)));
 
     readonly size = Game_Config.MAP_SIZE;
     readonly groundLevel = Game_Config.MAP_GROUND_LEVEL;
@@ -32,8 +36,8 @@ class LandGenerator {
     private landWobbleAmplitude = 6;
     private landWobbleFrequency = 0.03;
 
-    get landData2(){
-        return this._landData2;
+    get landData(){
+        return this._landData;
     }
 
     get landDataBeforeHoles(){
@@ -49,6 +53,8 @@ class LandGenerator {
         this.addSimplexNoise(this.underGroundHoleLevel, {x: this.noiseStretch, y: this.noiseStretch}, this.noiseThreshold, LandTypes.Hole);
         this.addSimplexNoise(this.sandLevel, {x: this.noiseStretch * 0.5, y: this.noiseStretch * 0.5}, this.noiseThreshold - 0.3, LandTypes.Sandy);
 
+        console.log(this.landData2);
+
     }
 
     private createLandSurface(){
@@ -59,7 +65,7 @@ class LandGenerator {
 
             for(let y = this.groundLevel + groundLevelAlt; y < this.size.y; y++){
                 this._landDataBeforeHoles[y][x] = true;
-                this._landData2[y][x] = LandTypes.Normal;
+                this._landData[y][x] = LandTypes.Normal;
             }
 
         }  
@@ -70,7 +76,7 @@ class LandGenerator {
         for(let x = 0; x < this.size.x; x++){
             for(let y = startFromY; y < this.size.y; y++){
                 if((this._noise.simplex2(x * noiseStretch.x, y * noiseStretch.y)) > noiseThreshold){
-                    this._landData2[y][x] = landType;
+                    this._landData[y][x] = landType;
                 }
                 
             }

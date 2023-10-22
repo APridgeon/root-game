@@ -40,7 +40,7 @@ export default class PlantManager {
         let plantHeight: number;
 
         for(let y = 0; y < Game_Config.MAP_SIZE.y; y++){
-            if(this._mapManager.mapData.landData2[y][Game_Config.PLANT_STARTING_POSX] !== LandTypes.None){
+            if(this._mapManager.mapData.landData[y][Game_Config.PLANT_STARTING_POSX] !== LandTypes.None){
                 plantHeight = y;
                 break;
             }
