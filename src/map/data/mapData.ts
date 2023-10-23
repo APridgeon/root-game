@@ -8,7 +8,7 @@ import MapManager from "../mapManager";
 
 export default class MapData {
 
-    private _landGenerator: LandGenerator;
+    public _landGenerator: LandGenerator;
     _mapManager: MapManager;
 
     get landData(){

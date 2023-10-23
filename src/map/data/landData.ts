@@ -28,6 +28,19 @@ class LandData {
         }
     }
 
+    public attack(){
+        this.landStrength -= 1;
+        if(this.landStrength <= 0){
+            this.destroy();
+            console.log(`land destroyed at x: ${this.pos.x}`);
+        }
+    }
+
+    private destroy(){
+        this.landType = LandTypes.Hole;
+        this.landStrength = 0;
+    }
+
 }
 
 export default LandData;

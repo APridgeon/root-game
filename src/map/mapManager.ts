@@ -59,6 +59,7 @@ export default class MapManager {
 
     public DestroyTile(pos: Position): void {
         this.mapData.landData[pos.y][pos.x] = LandTypes.Hole;
+        this.mapData._landGenerator.landData2[pos.y][pos.x].attack();
     }
 
 
