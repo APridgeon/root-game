@@ -170,7 +170,7 @@ export default class RuleTileMapDisplay
         for(let x = 0; x < Game_Config.MAP_SIZE.x; x++){
             for(let y = Game_Config.MAP_UGROUND_HOLE_LEVEL; y < Game_Config.MAP_SIZE.y; y++){
 
-                if(this._mapData.landData[y][x] === LandTypes.Hole){
+                if(this._mapData._landGenerator.landData2[y][x].landType === LandTypes.Hole){
                     let threshold = Math.random();
                     if(threshold < 0.05){
 

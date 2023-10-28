@@ -22,7 +22,7 @@ export default class MapManager {
 
         scene.events.on(Events.DeadRootToLand, (deadRootPos: Position[]) => {
             deadRootPos.forEach(pos => {
-                    this.mapData.landData[pos.y][pos.x] = LandTypes.DeadRoot;
+                    // this.mapData.landData[pos.y][pos.x] = LandTypes.DeadRoot;
                     this.mapData._landGenerator.landData2[pos.y][pos.x].landType = LandTypes.DeadRoot;
             })
         })
@@ -37,9 +37,9 @@ export default class MapManager {
 
         let result = false;
 
-        if(this.mapData.landData[pos.y][pos.x] === LandTypes.DeadRoot || 
-            this.mapData.landData[pos.y][pos.x] === LandTypes.Normal ||
-            this.mapData.landData[pos.y][pos.x] === LandTypes.Sandy){
+        if(this.mapData._landGenerator.landData2[pos.y][pos.x].landType === LandTypes.DeadRoot || 
+            this.mapData._landGenerator.landData2[pos.y][pos.x].landType === LandTypes.Normal ||
+            this.mapData._landGenerator.landData2[pos.y][pos.x].landType === LandTypes.Sandy){
                 result = true;
             }
         
@@ -59,7 +59,8 @@ export default class MapManager {
     }
 
     public DestroyTile(pos: Position): void {
-        this.mapData.landData[pos.y][pos.x] = LandTypes.Hole;
+        // this.mapData.landData[pos.y][pos.x] = LandTypes.Hole;
+        console.log(`Tile to be destroyed at ${JSON.stringify(pos)}`)
         this.mapData._landGenerator.landData2[pos.y][pos.x].attack();
     }
 

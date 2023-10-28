@@ -32,7 +32,7 @@ class LandData {
         this.landStrength -= 1;
         if(this.landStrength <= 0){
             this.destroy();
-            console.log(`land destroyed at x: ${this.pos.x}`);
+            // console.log(`land destroyed at x: ${this.pos.x}`);
         }
     }
 
