@@ -2,6 +2,7 @@ import { Game } from "phaser";
 import Game_Config from "../../game_config";
 import { Position } from "../../plant/plantData";
 import { LandTypes } from "../data/landGenerator";
+import LandData from "../data/landData";
 
 const ROWLENGTH = 25;
 
@@ -273,7 +274,7 @@ export default class RuleTileSets {
         return tileIndexValue;
     }
 
-    static ConvertToTileIndex2(pos: Position, mapData: LandTypes[][], landType: LandTypes, ruleTileSet: Map<RuleTile, integer>) {
+    static ConvertToTileIndex2(pos: Position, mapData: LandData[][], landType: LandTypes, ruleTileSet: Map<RuleTile, integer>) {
 
 
         let tileIndexValue;
@@ -286,22 +287,22 @@ export default class RuleTileSets {
         if(pos.x === 0){
             W = false;
         } else {
-            W = (mapData[pos.y][pos.x-1] === landType);
+            W = (mapData[pos.y][pos.x-1].landType === landType);
         }
         if(pos.x === Game_Config.MAP_SIZE.x - 1){
             E = false;
         } else {
-            E = (mapData[pos.y][pos.x+1] === landType);
+            E = (mapData[pos.y][pos.x+1].landType === landType);
         }
         if(pos.y === 0){
             N = false;
         } else {
-            N = (mapData[pos.y-1][pos.x] === landType);
+            N = (mapData[pos.y-1][pos.x].landType === landType);
         }
         if(pos.y === Game_Config.MAP_SIZE.y - 1){
             S = false;
         } else {
-            S = (mapData[pos.y+1][pos.x] === landType);
+            S = (mapData[pos.y+1][pos.x].landType === landType);
         }
 
         if(N && W && E && S){

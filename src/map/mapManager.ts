@@ -23,6 +23,7 @@ export default class MapManager {
         scene.events.on(Events.DeadRootToLand, (deadRootPos: Position[]) => {
             deadRootPos.forEach(pos => {
                     this.mapData.landData[pos.y][pos.x] = LandTypes.DeadRoot;
+                    this.mapData._landGenerator.landData2[pos.y][pos.x].landType = LandTypes.DeadRoot;
             })
         })
 

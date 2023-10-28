@@ -8,6 +8,7 @@ import { Position } from '../../plant/plantData';
 import { Events } from '../../events/events';
 import SkyManager from './skyManager';
 import { LandTypes } from '../data/landGenerator';
+import LandData from '../data/landData';
 
 
 export default class RuleTileMapDisplay
@@ -48,7 +49,7 @@ export default class RuleTileMapDisplay
         this._mapData = mapData;
         this._texture = texture;
 
-        this.convertToRuleTileData2(this._mapData.landData);
+        this.convertToRuleTileData2(this._mapData._landGenerator.landData2);
         this.waterDataTextureIndex = this.convertToRuleTileData(this._mapData.waterData, RuleTileSets.waterTileSet);
         this.landBeforeHolesTextureIndex = this.convertToRuleTileData(this._mapData.landDataBeforeHoles, RuleTileSets.landTileSet);
 
@@ -78,19 +79,19 @@ export default class RuleTileMapDisplay
         return tileIndexData;
     }
 
-    private convertToRuleTileData2(mapData: LandTypes[][]) {
+    private convertToRuleTileData2(mapData: LandData[][]) {
 
         let tileIndexData = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
 
         for(let x = 0; x < mapData[0].length - 0; x++){
             for(let y = 0; y < mapData.length - 0; y++){
-                if(mapData[y][x] === LandTypes.Normal){
+                if(mapData[y][x].landType === LandTypes.Normal){
                     tileIndexData[y][x] = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, LandTypes.Normal, RuleTileSets.landTileSet);
                 }
-                else if(mapData[y][x] === LandTypes.DeadRoot){
+                else if(mapData[y][x].landType === LandTypes.DeadRoot){
                     tileIndexData[y][x] = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, LandTypes.DeadRoot, RuleTileSets.deadRootTileSetNoGaps);
                 }
-                else if(mapData[y][x] === LandTypes.Sandy){
+                else if(mapData[y][x].landType === LandTypes.Sandy){
                     tileIndexData[y][x] = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, LandTypes.Sandy, RuleTileSets.sandTileSetNoGaps);
                 }
             }
@@ -100,7 +101,7 @@ export default class RuleTileMapDisplay
     }
 
     public updateRuleTileMap(){
-        this.convertToRuleTileData2(this._mapData.landData);
+        this.convertToRuleTileData2(this._mapData._landGenerator.landData2);
         this.waterDataTextureIndex = this.convertToRuleTileData(this._mapData.waterData, RuleTileSets.waterTileSet);
 
         this.landTileLayer.putTilesAt(this.landDataTextureIndex, 0, 0);
