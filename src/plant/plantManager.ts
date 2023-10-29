@@ -7,6 +7,15 @@ import { Events } from "../events/events";
 import { RootData } from "../player/userInput";
 import { LandTypes } from "../map/data/landGenerator";
 
+
+export enum Direction {
+    North  = 'N',
+    East = 'E',
+    South = 'S',
+    West = 'W',
+    None = 'NA'
+}
+
 export default class PlantManager {
 
     private _scene: Phaser.Scene;
@@ -56,7 +65,9 @@ export default class PlantManager {
         this.setupEventResponses();
     }
 
-    public checkIfPlantIsClose(plantData: PlantData, tile: Position){
+    public checkIfPlantIsClose(plantData: PlantData, tile: Position): Direction{
+
+        let direction: Direction;
 
         let N = plantData.__rootData.some(val => {
             return ((val.x == tile.x) && ((val.y - 1) === (tile.y))) ? true : false;
@@ -74,12 +85,20 @@ export default class PlantManager {
             return ((val.x - 1 === tile.x) && ((val.y) === (tile.y))) ? true : false;
         });
 
-        if(N || E || S || W){
-            return true;
+        if(N){
+            direction = Direction.North;
+        } else if (E){
+            direction = Direction.East;
+        } else if (S){
+            direction = Direction.South;
+        } else if (W){
+            direction = Direction.West;
         } else {
-            return false;
+            direction = Direction.None;
         }
 
+        console.log(JSON.stringify(direction))
+        return direction;
     }
 
     public createNewRoot(plantData: PlantData, tileCoords: Position){
@@ -142,9 +161,12 @@ export default class PlantManager {
             let worldTileIsAccessable = this._mapManager.isLandTileAccessible(rootData.coords);
             if(worldTileIsAccessable){
                 let closeToPlant = this.checkIfPlantIsClose(rootData.plant, rootData.coords);
-                if(closeToPlant){
+                if(closeToPlant !== Direction.None){
                     rootData.plant.newRootLocation = rootData.coords;
+                    rootData.plant.newRootDirection = closeToPlant;
                     this._scene.events.emit(Events.RootGrowthSuccess, rootData.coords);
+                } else {
+                    rootData.plant.newRootDirection = Direction.None;
                 }
             }
         })
