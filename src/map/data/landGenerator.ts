@@ -22,7 +22,7 @@ class LandGenerator {
 
     private _landDataBeforeHoles: boolean[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(false));
 
-    public landData2: LandData[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x));
+    public landData: LandData[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x));
 
     readonly size = Game_Config.MAP_SIZE;
     readonly groundLevel = Game_Config.MAP_GROUND_LEVEL;
@@ -49,7 +49,6 @@ class LandGenerator {
         this.addSimplexNoise(this.underGroundHoleLevel, {x: this.noiseStretch, y: this.noiseStretch}, this.noiseThreshold, LandTypes.Hole);
         this.addSimplexNoise(this.sandLevel, {x: this.noiseStretch * 0.5, y: this.noiseStretch * 0.5}, this.noiseThreshold - 0.3, LandTypes.Sandy);
 
-        console.log((this.landData2));
 
     }
 
@@ -57,7 +56,7 @@ class LandGenerator {
 
         for(let x = 0; x < this.size.x; x++){
             for(let y = 0; y < this.size.y; y++){
-                this.landData2[y][x] = new LandData(LandTypes.None, {x: x, y: y});
+                this.landData[y][x] = new LandData(LandTypes.None, {x: x, y: y});
             }
         }
 
@@ -67,7 +66,7 @@ class LandGenerator {
 
             for(let y = this.groundLevel + groundLevelAlt; y < this.size.y; y++){
                 this._landDataBeforeHoles[y][x] = true;
-                this.landData2[y][x] = new LandData(LandTypes.Normal, {x: x, y: y});
+                this.landData[y][x] = new LandData(LandTypes.Normal, {x: x, y: y});
             }
 
         }  
@@ -78,7 +77,7 @@ class LandGenerator {
         for(let x = 0; x < this.size.x; x++){
             for(let y = startFromY; y < this.size.y; y++){
                 if((this._noise.simplex2(x * noiseStretch.x, y * noiseStretch.y)) > noiseThreshold){
-                    this.landData2[y][x] = new LandData(landType, {x: x, y: y});
+                    this.landData[y][x] = new LandData(landType, {x: x, y: y});
                 }
                 
             }

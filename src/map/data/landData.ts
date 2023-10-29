@@ -36,6 +36,14 @@ class LandData {
         }
     }
 
+    public isLand(){
+        if(this.landType !== LandTypes.Hole && this.landType !== LandTypes.None){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private destroy(){
         this.landType = LandTypes.Hole;
         this.landStrength = 0;

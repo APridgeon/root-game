@@ -274,8 +274,16 @@ export default class RuleTileSets {
         return tileIndexValue;
     }
 
-    static ConvertToTileIndex2(pos: Position, mapData: LandData[][], landType: LandTypes, ruleTileSet: Map<RuleTile, integer>) {
+    static ConvertToTileIndex2(pos: Position, mapData: LandData[][], landType: LandTypes) {
+        let ruleTileSet;
 
+        if(landType === LandTypes.DeadRoot){
+            ruleTileSet = RuleTileSets.deadRootTileSetNoGaps;
+        } else if(landType === LandTypes.Normal){
+            ruleTileSet = RuleTileSets.landTileSet;
+        } else if(landType === LandTypes.Sandy){
+            ruleTileSet = RuleTileSets.sandTileSetNoGaps;
+        }
 
         let tileIndexValue;
 

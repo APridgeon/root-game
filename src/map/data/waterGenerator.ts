@@ -45,7 +45,7 @@ class WaterGenerator {
     private addSimplexNoise(): void {
         for(let x = 0; x < this.size.x; x++){
             for(let y = this.waterLevel; y < this.size.y; y++){
-                if(this._mapData._landGenerator.landData2[y][x].landType !== LandTypes.Hole){
+                if(this._mapData._landGenerator.landData[y][x].landType !== LandTypes.Hole){
                     this._waterData[y][x] = (this._noise.simplex2(x * this.noiseStretch, y * this.noiseStretch)) < this.noiseThreshold; 
                 }
             }

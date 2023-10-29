@@ -49,7 +49,7 @@ export default class RuleTileMapDisplay
         this._mapData = mapData;
         this._texture = texture;
 
-        this.convertToRuleTileData2(this._mapData._landGenerator.landData2);
+        this.convertToRuleTileData2(this._mapData._landGenerator.landData);
         this.waterDataTextureIndex = this.convertToRuleTileData(this._mapData.waterData, RuleTileSets.waterTileSet);
         this.landBeforeHolesTextureIndex = this.convertToRuleTileData(this._mapData.landDataBeforeHoles, RuleTileSets.landTileSet);
 
@@ -81,27 +81,20 @@ export default class RuleTileMapDisplay
 
     private convertToRuleTileData2(mapData: LandData[][]) {
 
-        let tileIndexData = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
+        this.landDataTextureIndex = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
+        this.waterDataTextureIndex = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
 
         for(let x = 0; x < mapData[0].length - 0; x++){
             for(let y = 0; y < mapData.length - 0; y++){
-                if(mapData[y][x].landType === LandTypes.Normal){
-                    tileIndexData[y][x] = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, LandTypes.Normal, RuleTileSets.landTileSet);
-                }
-                else if(mapData[y][x].landType === LandTypes.DeadRoot){
-                    tileIndexData[y][x] = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, LandTypes.DeadRoot, RuleTileSets.deadRootTileSetNoGaps);
-                }
-                else if(mapData[y][x].landType === LandTypes.Sandy){
-                    tileIndexData[y][x] = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, LandTypes.Sandy, RuleTileSets.sandTileSetNoGaps);
+                if(mapData[y][x].isLand()){
+                    this.landDataTextureIndex[y][x] = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, mapData[y][x].landType);
                 }
             }
         }
-
-        this.landDataTextureIndex = tileIndexData;
     }
 
     public updateRuleTileMap(){
-        this.convertToRuleTileData2(this._mapData._landGenerator.landData2);
+        this.convertToRuleTileData2(this._mapData._landGenerator.landData);
         this.waterDataTextureIndex = this.convertToRuleTileData(this._mapData.waterData, RuleTileSets.waterTileSet);
 
         this.landTileLayer.putTilesAt(this.landDataTextureIndex, 0, 0);
@@ -170,7 +163,7 @@ export default class RuleTileMapDisplay
         for(let x = 0; x < Game_Config.MAP_SIZE.x; x++){
             for(let y = Game_Config.MAP_UGROUND_HOLE_LEVEL; y < Game_Config.MAP_SIZE.y; y++){
 
-                if(this._mapData._landGenerator.landData2[y][x].landType === LandTypes.Hole){
+                if(this._mapData._landGenerator.landData[y][x].landType === LandTypes.Hole){
                     let threshold = Math.random();
                     if(threshold < 0.05){
 
