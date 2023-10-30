@@ -97,12 +97,11 @@ export default class PlantManager {
             direction = Direction.None;
         }
 
-        console.log(JSON.stringify(direction))
         return direction;
     }
 
-    public createNewRoot(plantData: PlantData, tileCoords: Position){
-        plantData.__rootData.push(tileCoords);
+    public createNewRoot(plantData: PlantData){
+        plantData.__rootData.push(plantData.newRootLocation);
     }
 
     public checkPlantWaterLevels(scene: Phaser.Scene){

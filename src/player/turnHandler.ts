@@ -2,7 +2,7 @@ import * as Phaser from "phaser";
 import { Events } from "../events/events";
 import MapManager from "../map/mapManager";
 import PlantData, { Position } from "../plant/plantData";
-import PlantManager from "../plant/plantManager";
+import PlantManager, { Direction } from "../plant/plantManager";
 
 
 export default class TurnHandler {
@@ -47,24 +47,26 @@ export default class TurnHandler {
     }
 
     private playerRootCreation(): void{
-        if(this._plantManager.userPlant.newRootLocation){
-            this._plantManager.createNewRoot(this._plantManager.userPlant, this._plantManager.userPlant.newRootLocation);
+        if(this._plantManager.userPlant.newRootDirection !== Direction.None){
             this._mapManager.DestroyTile(this._plantManager.userPlant.newRootLocation);
+            this._plantManager.createNewRoot(this._plantManager.userPlant);
         }
         this._scene.events.emit(Events.AbsorbWater, this._plantManager.userPlant);
         this._plantManager.userPlant.newRootLocation = null;
+        this._plantManager.userPlant.newRootDirection = Direction.None;
     }
 
     private aiRootCreation(): void {
         this._plantManager.aiPlants.forEach(aiplant => {
             if(aiplant.alive){
                 aiplant.aiController.aiRootChoice();
-                if(aiplant.newRootLocation){
-                    this._plantManager.createNewRoot(aiplant, aiplant.newRootLocation);
+                if(aiplant.newRootDirection !== Direction.None){
                     this._mapManager.DestroyTile(aiplant.newRootLocation);
+                    this._plantManager.createNewRoot(aiplant);
                 }
                 this._scene.events.emit(Events.AbsorbWater, aiplant);
                 aiplant.newRootLocation = null;
+                aiplant.newRootDirection = Direction.None;
             }
         })
     }
