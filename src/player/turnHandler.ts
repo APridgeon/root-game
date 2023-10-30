@@ -47,11 +47,31 @@ export default class TurnHandler {
     }
 
     private playerRootCreation(): void{
+
+
+
         if(this._plantManager.userPlant.newRootDirection !== Direction.None){
-            let destroyed = this._mapManager.DestroyTile(this._plantManager.userPlant.newRootLocation);
+
+            if(this._plantManager.userPlant.newRootDirection === Direction.South){
+                let destroyed = this._mapManager.DestroyTile(this._plantManager.userPlant.newRootLocation);
+                if(destroyed){
+                    this._plantManager.createNewRoot(this._plantManager.userPlant);
+                    this._scene.events.emit(Events.RootGrowthSuccess, this._plantManager.userPlant.newRootLocation);
+                    this._plantManager.userPlant.newRootLocation = {x: this._plantManager.userPlant.newRootLocation.x, y: this._plantManager.userPlant.newRootLocation.y + 1};
+                    let destroyed = this._mapManager.DestroyTile(this._plantManager.userPlant.newRootLocation);
+                    if(destroyed){
+                        this._plantManager.createNewRoot(this._plantManager.userPlant);
+                        this._scene.events.emit(Events.RootGrowthSuccess, this._plantManager.userPlant.newRootLocation);
+                    }
+                }
+            } else {
+
+                let destroyed = this._mapManager.DestroyTile(this._plantManager.userPlant.newRootLocation);
                 if(destroyed){
                     this._plantManager.createNewRoot(this._plantManager.userPlant);
                 }
+            }
+
         }
         this._scene.events.emit(Events.AbsorbWater, this._plantManager.userPlant);
         this._plantManager.userPlant.newRootLocation = null;

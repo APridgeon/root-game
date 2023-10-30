@@ -163,8 +163,8 @@ export default class PlantManager {
                 if(closeToPlant !== Direction.None){
                     rootData.plant.newRootLocation = rootData.coords;
                     rootData.plant.newRootDirection = closeToPlant;
-                    this._scene.events.emit(Events.RootGrowthSuccess, rootData.coords);
                 } else {
+                    rootData.plant.newRootLocation = null;
                     rootData.plant.newRootDirection = Direction.None;
                 }
             }
