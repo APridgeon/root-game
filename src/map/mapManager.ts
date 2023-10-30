@@ -23,6 +23,7 @@ export default class MapManager {
         scene.events.on(Events.DeadRootToLand, (deadRootPos: Position[]) => {
             deadRootPos.forEach(pos => {
                     this.mapData._landGenerator.landData[pos.y][pos.x].landType = LandTypes.DeadRoot;
+                    this.mapData._landGenerator.landData[pos.y][pos.x].landStrength = 2;
             })
         })
 
@@ -55,9 +56,18 @@ export default class MapManager {
         return []
     }
 
-    public DestroyTile(pos: Position): void {
+ 
+    /**
+     * 
+     * @param pos Position of tile to be destroyed
+     * @returns If tile is destroyed position is returned
+     */
+    public DestroyTile(pos: Position): Position|void {
         // console.log(`Tile to be destroyed at ${JSON.stringify(pos)}`)
-        this.mapData._landGenerator.landData[pos.y][pos.x].attack();
+        let destroyed = this.mapData._landGenerator.landData[pos.y][pos.x].attack();
+        if(destroyed){
+            return pos;
+        }
     }
 
 

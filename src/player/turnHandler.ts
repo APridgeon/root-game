@@ -48,8 +48,10 @@ export default class TurnHandler {
 
     private playerRootCreation(): void{
         if(this._plantManager.userPlant.newRootDirection !== Direction.None){
-            this._mapManager.DestroyTile(this._plantManager.userPlant.newRootLocation);
-            this._plantManager.createNewRoot(this._plantManager.userPlant);
+            let destroyed = this._mapManager.DestroyTile(this._plantManager.userPlant.newRootLocation);
+                if(destroyed){
+                    this._plantManager.createNewRoot(this._plantManager.userPlant);
+                }
         }
         this._scene.events.emit(Events.AbsorbWater, this._plantManager.userPlant);
         this._plantManager.userPlant.newRootLocation = null;
@@ -61,8 +63,10 @@ export default class TurnHandler {
             if(aiplant.alive){
                 aiplant.aiController.aiRootChoice();
                 if(aiplant.newRootDirection !== Direction.None){
-                    this._mapManager.DestroyTile(aiplant.newRootLocation);
-                    this._plantManager.createNewRoot(aiplant);
+                    let destroyed = this._mapManager.DestroyTile(aiplant.newRootLocation);
+                    if(destroyed){
+                        this._plantManager.createNewRoot(aiplant);
+                    }
                 }
                 this._scene.events.emit(Events.AbsorbWater, aiplant);
                 aiplant.newRootLocation = null;

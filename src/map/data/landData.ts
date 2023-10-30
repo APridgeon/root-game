@@ -28,11 +28,13 @@ class LandData {
         }
     }
 
-    public attack(){
+    public attack(): boolean {
         this.landStrength -= 1;
         if(this.landStrength <= 0){
             this.destroy();
-            // console.log(`land destroyed at x: ${this.pos.x}`);
+            return true;
+        } else {
+            return false;
         }
     }
 

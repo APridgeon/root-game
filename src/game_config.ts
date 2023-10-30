@@ -10,7 +10,7 @@ export default class Game_Config {
 
     static PIXEL_RES: integer = 8;
 
-    static MAP_SIZE: Position = {x: 100, y: 150};
+    static MAP_SIZE: Position = {x: 150, y: 150};
     static MAP_RES: integer = 8;
     static MAP_SCALE: integer = 2;
 
