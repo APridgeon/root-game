@@ -37,6 +37,10 @@ export default class MapManager {
 
         let result = false;
 
+        if(!pos){
+            return false;
+        }
+
         if(this.mapData._landGenerator.landData[pos.y][pos.x].isLand()){
                 result = true;
             }

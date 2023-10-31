@@ -30,8 +30,8 @@ class LandData {
 
     public attack(plant: PlantData): boolean {
         this.landStrength -= plant.strength;
+        plant.strength -= 1;
         if(this.landStrength <= 0){
-            plant.strength += -1;
             this.destroy();
             return true;
         } else {

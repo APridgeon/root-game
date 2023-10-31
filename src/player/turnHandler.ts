@@ -51,7 +51,6 @@ export default class TurnHandler {
 
         let plant = this._plantManager.userPlant;
         let worldTileIsAccessable = this._mapManager.isLandTileAccessible(plant.newRootLocation);
-        let directionVector = DirectionVectors.vectors.get(plant.newRootDirection);
 
         if(worldTileIsAccessable){
             while(plant.strength > 0){
@@ -59,6 +58,7 @@ export default class TurnHandler {
                 if(destroyed){
                     this._plantManager.createNewRoot(plant);
                     this._scene.events.emit(Events.RootGrowthSuccess, plant.newRootLocation);
+                    let directionVector = DirectionVectors.vectors.get(plant.newRootDirection);
                     plant.newRootLocation = {x: plant.newRootLocation.x + directionVector.x, y: plant.newRootLocation.y + directionVector.y};
                     let worldTileIsAccessable = this._mapManager.isLandTileAccessible(plant.newRootLocation);
                     if(!worldTileIsAccessable){
@@ -80,10 +80,8 @@ export default class TurnHandler {
             if(aiplant.alive){
                 aiplant.aiController.aiRootChoice();
 
-
                 let plant = aiplant;
                 let worldTileIsAccessable = this._mapManager.isLandTileAccessible(plant.newRootLocation);
-                let directionVector = DirectionVectors.vectors.get(plant.newRootDirection);
         
                 if(worldTileIsAccessable){
                     while(plant.strength > 0){
@@ -91,6 +89,7 @@ export default class TurnHandler {
                         if(destroyed){
                             this._plantManager.createNewRoot(plant);
                             this._scene.events.emit(Events.RootGrowthSuccess, plant.newRootLocation);
+                            let directionVector = DirectionVectors.vectors.get(plant.newRootDirection);
                             plant.newRootLocation = {x: plant.newRootLocation.x + directionVector.x, y: plant.newRootLocation.y + directionVector.y};
                             let worldTileIsAccessable = this._mapManager.isLandTileAccessible(plant.newRootLocation);
                             if(!worldTileIsAccessable){

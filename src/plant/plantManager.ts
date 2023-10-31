@@ -162,17 +162,6 @@ export default class PlantManager {
                 rootData.plant.newRootDirection = Direction.None;
             }
 
-        //     let worldTileIsAccessable = this._mapManager.isLandTileAccessible(rootData.coords);
-        //     if(worldTileIsAccessable){
-        //         let closeToPlant = this.checkIfPlantIsClose(rootData.plant, rootData.coords);
-        //         if(closeToPlant !== Direction.None){
-        //             rootData.plant.newRootLocation = rootData.coords;
-        //             rootData.plant.newRootDirection = closeToPlant;
-        //         } else {
-        //             rootData.plant.newRootLocation = null;
-        //             rootData.plant.newRootDirection = Direction.None;
-        //         }
-        //     }
         })
 
         this._scene.events.on(Events.AerialGrowth, (plantData: PlantData) => {
