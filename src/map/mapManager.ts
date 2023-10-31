@@ -1,7 +1,7 @@
 import Perlin from 'phaser3-rex-plugins/plugins/perlin.js';
 import RuleTileMapDisplay from "./display/mapDisplay";
 import MapData from './data/mapData';
-import { Position } from '../plant/plantData';
+import PlantData, { Position } from '../plant/plantData';
 import { Events } from '../events/events';
 import Game_Config from '../game_config';
 import { LandTypes } from './data/landGenerator';
@@ -63,14 +63,15 @@ export default class MapManager {
      * @returns If tile is destroyed position is returned
      */
     public DestroyTile(pos: Position): Position|void {
-        // console.log(`Tile to be destroyed at ${JSON.stringify(pos)}`)
-        let destroyed = this.mapData._landGenerator.landData[pos.y][pos.x].attack();
+        this.mapData._landGenerator.landData[pos.y][pos.x].destroy();
+    }
+
+    public AttackTile(pos: Position, plant: PlantData){
+        let destroyed = this.mapData._landGenerator.landData[pos.y][pos.x].attack(plant);
         if(destroyed){
             return pos;
         }
     }
-
-
 
 }
 

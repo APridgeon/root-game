@@ -2,7 +2,8 @@ import * as Phaser from "phaser";
 import { Events } from "../events/events";
 import MapManager from "../map/mapManager";
 import PlantData, { Position } from "../plant/plantData";
-import PlantManager, { Direction } from "../plant/plantManager";
+import PlantManager from "../plant/plantManager";
+import { Direction, DirectionVectors } from "../general/direction";
 
 
 export default class TurnHandler {
@@ -48,49 +49,61 @@ export default class TurnHandler {
 
     private playerRootCreation(): void{
 
+        let plant = this._plantManager.userPlant;
+        let worldTileIsAccessable = this._mapManager.isLandTileAccessible(plant.newRootLocation);
+        let directionVector = DirectionVectors.vectors.get(plant.newRootDirection);
 
-
-        if(this._plantManager.userPlant.newRootDirection !== Direction.None){
-
-            if(this._plantManager.userPlant.newRootDirection === Direction.South){
-                let destroyed = this._mapManager.DestroyTile(this._plantManager.userPlant.newRootLocation);
+        if(worldTileIsAccessable){
+            while(plant.strength > 0){
+                let destroyed = this._mapManager.AttackTile(plant.newRootLocation, plant);
                 if(destroyed){
-                    this._plantManager.createNewRoot(this._plantManager.userPlant);
-                    this._scene.events.emit(Events.RootGrowthSuccess, this._plantManager.userPlant.newRootLocation);
-                    this._plantManager.userPlant.newRootLocation = {x: this._plantManager.userPlant.newRootLocation.x, y: this._plantManager.userPlant.newRootLocation.y + 1};
-                    let destroyed = this._mapManager.DestroyTile(this._plantManager.userPlant.newRootLocation);
-                    if(destroyed){
-                        this._plantManager.createNewRoot(this._plantManager.userPlant);
-                        this._scene.events.emit(Events.RootGrowthSuccess, this._plantManager.userPlant.newRootLocation);
+                    this._plantManager.createNewRoot(plant);
+                    this._scene.events.emit(Events.RootGrowthSuccess, plant.newRootLocation);
+                    plant.newRootLocation = {x: plant.newRootLocation.x + directionVector.x, y: plant.newRootLocation.y + directionVector.y};
+                    let worldTileIsAccessable = this._mapManager.isLandTileAccessible(plant.newRootLocation);
+                    if(!worldTileIsAccessable){
+                        break;
                     }
                 }
-            } else {
-
-                let destroyed = this._mapManager.DestroyTile(this._plantManager.userPlant.newRootLocation);
-                if(destroyed){
-                    this._plantManager.createNewRoot(this._plantManager.userPlant);
-                }
             }
-
         }
+
         this._scene.events.emit(Events.AbsorbWater, this._plantManager.userPlant);
         this._plantManager.userPlant.newRootLocation = null;
         this._plantManager.userPlant.newRootDirection = Direction.None;
+        plant.strength = 1;
+        console.log("finished");
     }
 
     private aiRootCreation(): void {
         this._plantManager.aiPlants.forEach(aiplant => {
             if(aiplant.alive){
                 aiplant.aiController.aiRootChoice();
-                if(aiplant.newRootDirection !== Direction.None){
-                    let destroyed = this._mapManager.DestroyTile(aiplant.newRootLocation);
-                    if(destroyed){
-                        this._plantManager.createNewRoot(aiplant);
+
+
+                let plant = aiplant;
+                let worldTileIsAccessable = this._mapManager.isLandTileAccessible(plant.newRootLocation);
+                let directionVector = DirectionVectors.vectors.get(plant.newRootDirection);
+        
+                if(worldTileIsAccessable){
+                    while(plant.strength > 0){
+                        let destroyed = this._mapManager.AttackTile(plant.newRootLocation, plant);
+                        if(destroyed){
+                            this._plantManager.createNewRoot(plant);
+                            this._scene.events.emit(Events.RootGrowthSuccess, plant.newRootLocation);
+                            plant.newRootLocation = {x: plant.newRootLocation.x + directionVector.x, y: plant.newRootLocation.y + directionVector.y};
+                            let worldTileIsAccessable = this._mapManager.isLandTileAccessible(plant.newRootLocation);
+                            if(!worldTileIsAccessable){
+                                break;
+                            }
+                        }
                     }
                 }
-                this._scene.events.emit(Events.AbsorbWater, aiplant);
+
+                this._scene.events.emit(Events.AbsorbWater, plant);
                 aiplant.newRootLocation = null;
                 aiplant.newRootDirection = Direction.None;
+                plant.strength = 1;
             }
         })
     }

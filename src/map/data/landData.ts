@@ -1,4 +1,4 @@
-import { Position } from "../../plant/plantData";
+import PlantData, { Position } from "../../plant/plantData";
 import { LandTypes } from "./landGenerator";
 
 class LandData {
@@ -28,9 +28,10 @@ class LandData {
         }
     }
 
-    public attack(): boolean {
-        this.landStrength -= 1;
+    public attack(plant: PlantData): boolean {
+        this.landStrength -= plant.strength;
         if(this.landStrength <= 0){
+            plant.strength += -1;
             this.destroy();
             return true;
         } else {
@@ -46,7 +47,7 @@ class LandData {
         }
     }
 
-    private destroy(){
+    public destroy(){
         this.landType = LandTypes.Hole;
         this.landStrength = 0;
     }

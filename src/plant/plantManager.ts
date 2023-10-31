@@ -6,15 +6,8 @@ import WaterHandler from "./waterHandling";
 import { Events } from "../events/events";
 import { RootData } from "../player/userInput";
 import { LandTypes } from "../map/data/landGenerator";
+import { Direction } from "../general/direction";
 
-
-export enum Direction {
-    North  = 'N',
-    East = 'E',
-    South = 'S',
-    West = 'W',
-    None = 'NA'
-}
 
 export default class PlantManager {
 
@@ -155,19 +148,31 @@ export default class PlantManager {
 
     private setupEventResponses(): void{
 
+
+
         this._scene.events.on(Events.RootGrowthRequest, (rootData: RootData) => {
 
-            let worldTileIsAccessable = this._mapManager.isLandTileAccessible(rootData.coords);
-            if(worldTileIsAccessable){
-                let closeToPlant = this.checkIfPlantIsClose(rootData.plant, rootData.coords);
-                if(closeToPlant !== Direction.None){
-                    rootData.plant.newRootLocation = rootData.coords;
-                    rootData.plant.newRootDirection = closeToPlant;
-                } else {
-                    rootData.plant.newRootLocation = null;
-                    rootData.plant.newRootDirection = Direction.None;
-                }
+            let directionTowardsPlant = this.checkIfPlantIsClose(rootData.plant, rootData.coords);
+            
+            if(directionTowardsPlant !== Direction.None){
+                rootData.plant.newRootLocation = rootData.coords;
+                rootData.plant.newRootDirection = directionTowardsPlant;
+            } else {
+                rootData.plant.newRootLocation = null;
+                rootData.plant.newRootDirection = Direction.None;
             }
+
+        //     let worldTileIsAccessable = this._mapManager.isLandTileAccessible(rootData.coords);
+        //     if(worldTileIsAccessable){
+        //         let closeToPlant = this.checkIfPlantIsClose(rootData.plant, rootData.coords);
+        //         if(closeToPlant !== Direction.None){
+        //             rootData.plant.newRootLocation = rootData.coords;
+        //             rootData.plant.newRootDirection = closeToPlant;
+        //         } else {
+        //             rootData.plant.newRootLocation = null;
+        //             rootData.plant.newRootDirection = Direction.None;
+        //         }
+        //     }
         })
 
         this._scene.events.on(Events.AerialGrowth, (plantData: PlantData) => {

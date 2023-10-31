@@ -3,7 +3,8 @@ import Game_Config from "../game_config"
 import aiController from "../ai/aiPlantController";
 import PlantGrowthTiles from "./plantGrowthTiles";
 import plantGrowthTiles from "./plantGrowthTiles";
-import { Direction } from "./plantManager";
+import { Direction } from "../general/direction";
+
 
 export type Position = {
     x: integer,
@@ -51,6 +52,8 @@ export default class PlantData {
     public aiController: aiController | null;
     public newRootLocation: Position;
     public newRootDirection: Direction = Direction.None;
+
+    public strength: number = 1;
 
 
     constructor(scene: Phaser.Scene, startPos: Position, ai: boolean){
