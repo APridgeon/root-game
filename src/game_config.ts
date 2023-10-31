@@ -17,6 +17,8 @@ export default class Game_Config {
     static PLANT_STARTING_POSX: integer = 37;
 
     static PLANT_DATA_WATER_START_LEVEL: integer = 50;
+    static PLANT_STRENGTH: integer = 1;
+
     static WATER_ADD_AMOUNT: integer = 10;
     static WATER_SUBTRACT_AMOUNT: integer = 0.5;
 

@@ -4,6 +4,7 @@ import MapManager from "../map/mapManager";
 import PlantData, { Position } from "../plant/plantData";
 import PlantManager from "../plant/plantManager";
 import { Direction, DirectionVectors } from "../general/direction";
+import Game_Config from "../game_config";
 
 
 export default class TurnHandler {
@@ -71,8 +72,7 @@ export default class TurnHandler {
         this._scene.events.emit(Events.AbsorbWater, this._plantManager.userPlant);
         this._plantManager.userPlant.newRootLocation = null;
         this._plantManager.userPlant.newRootDirection = Direction.None;
-        plant.strength = 1;
-        console.log("finished");
+        plant.strength = Game_Config.PLANT_STRENGTH;
     }
 
     private aiRootCreation(): void {
@@ -102,7 +102,7 @@ export default class TurnHandler {
                 this._scene.events.emit(Events.AbsorbWater, plant);
                 aiplant.newRootLocation = null;
                 aiplant.newRootDirection = Direction.None;
-                plant.strength = 1;
+                plant.strength = Game_Config.PLANT_STRENGTH;
             }
         })
     }

@@ -29,8 +29,9 @@ class LandData {
     }
 
     public attack(plant: PlantData): boolean {
+        let effort = this.landStrength;
         this.landStrength -= plant.strength;
-        plant.strength -= 1;
+        plant.strength -= effort;
         if(this.landStrength <= 0){
             this.destroy();
             return true;

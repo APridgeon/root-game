@@ -47,7 +47,7 @@ class LandGenerator {
 
         this.createLandSurface();
         this.addSimplexNoise(this.underGroundHoleLevel, {x: this.noiseStretch, y: this.noiseStretch}, this.noiseThreshold, LandTypes.Hole);
-        this.addSimplexNoise(this.sandLevel, {x: this.noiseStretch * 0.5, y: this.noiseStretch * 0.5}, this.noiseThreshold - 0.3, LandTypes.Sandy);
+        this.addSimplexNoise(this.sandLevel, {x: this.noiseStretch * 0.5, y: this.noiseStretch * 0.5}, this.noiseThreshold - 0.3, LandTypes.Sandy, 0.5);
 
 
     }
@@ -72,12 +72,13 @@ class LandGenerator {
         }  
     }
 
-    private addSimplexNoise(startFromY: number, noiseStretch: Position, noiseThreshold: number, landType: LandTypes){
+    private addSimplexNoise(startFromY: number, noiseStretch: Position, noiseThreshold: number, landType: LandTypes, landStrength = 0){
 
         for(let x = 0; x < this.size.x; x++){
             for(let y = startFromY; y < this.size.y; y++){
                 if((this._noise.simplex2(x * noiseStretch.x, y * noiseStretch.y)) > noiseThreshold){
                     this.landData[y][x] = new LandData(landType, {x: x, y: y});
+                    this.landData[y][x].landStrength = landStrength;
                 }
                 
             }
