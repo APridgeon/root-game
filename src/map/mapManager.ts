@@ -41,6 +41,11 @@ export default class MapManager {
             return false;
         }
 
+        if(!this.mapData._landGenerator.landData[pos.y][pos.x]){
+            console.log(JSON.stringify(pos) + " is not accessible")
+            return false;
+        }
+
         if(this.mapData._landGenerator.landData[pos.y][pos.x].isLand()){
                 result = true;
             }

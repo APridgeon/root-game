@@ -91,6 +91,7 @@ export default class TurnHandler {
                             this._scene.events.emit(Events.RootGrowthSuccess, plant.newRootLocation);
                             let directionVector = DirectionVectors.vectors.get(plant.newRootDirection);
                             plant.newRootLocation = {x: plant.newRootLocation.x + directionVector.x, y: plant.newRootLocation.y + directionVector.y};
+                            
                             let worldTileIsAccessable = this._mapManager.isLandTileAccessible(plant.newRootLocation);
                             if(!worldTileIsAccessable){
                                 break;

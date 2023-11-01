@@ -136,7 +136,7 @@ export default class PlantManager {
                     }
                 }
 
-                console.log(plantHeight);
+                // console.log(plantHeight);
 
                 
                 let aiPlant = new PlantData(scene, {x: x, y: plantHeight}, true);
