@@ -9,6 +9,7 @@ import TurnHandler from './player/turnHandler';
 import Game_Config from './game_config';
 import TimeOfDayManager from './general/timeOfDay';
 import SoundManager from './sound/SoundManager';
+import { Position } from './plant/plantData';
 
 export default class Main extends Phaser.Scene
 {
@@ -84,21 +85,7 @@ export default class Main extends Phaser.Scene
 
 
 
-const config = {
-    type: Phaser.AUTO,
-    backgroundColor: '#ffffff',
-    width: Game_Config.GAMEWIDTH,
-    height: Game_Config.GAMEHEIGHT,
-    scene: [Main, UI],
-    pixelArt: true,
-    scale: {
-        parent: 'game',
-        mode: Phaser.Scale.NONE,
-        // width: Game_Config.GAMEWIDTH,
-        // height: Game_Config.GAMEHEIGHT,
-        // autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
-    }
-};
+
 
 const config_mobile = {
     type: Phaser.AUTO,
@@ -116,13 +103,37 @@ const config_mobile = {
     }
 };
 
-let game;
+let screenDim: Position;
+let mobile: boolean;
 
-if(screen.height < 600 || screen.width < 600){
-    game = new Phaser.Game(config_mobile);
+if(screen.height < 600){
+    screenDim = {x: screen.availWidth - 10, y: screen.availHeight - 10};
+    mobile = true;
+} else if(screen.width < 600){
+    screenDim = {x: screen.availWidth - 10, y: screen.availHeight - 10};
+    mobile = true;
 } else {
-    game = new Phaser.Game(config);
+    screenDim = {x: Game_Config.GAMEWIDTH, y: Game_Config.GAMEHEIGHT};
+    mobile = false;
 }
 
+const config = {
+    type: Phaser.AUTO,
+    backgroundColor: '#ffffff',
+    width: screenDim.x,
+    height: screenDim.y,
+    scene: [Main, UI],
+    pixelArt: true,
+    scale: {
+        parent: 'game',
+        mode: Phaser.Scale.NONE,
+        // width: Game_Config.GAMEWIDTH,
+        // height: Game_Config.GAMEHEIGHT,
+        // autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
+    },
+    isMobile: true
+};
+
+new Phaser.Game(config);
 
 //'#ead4aa'
