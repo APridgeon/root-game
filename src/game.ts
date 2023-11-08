@@ -10,6 +10,7 @@ import Game_Config from './game_config';
 import TimeOfDayManager from './general/timeOfDay';
 import SoundManager from './sound/SoundManager';
 import { Position } from './plant/plantData';
+import gameManager from './gameManager/gameManager';
 
 export default class Main extends Phaser.Scene
 {
@@ -48,7 +49,7 @@ export default class Main extends Phaser.Scene
 
     create ()
     {
-
+        console.log(gameManager);
 
         this.game.canvas.id = "gameCanvas";
 

@@ -3,12 +3,17 @@ import UI from "../UI/UI_scene";
 import Main from "../game";
 import Game_Config from "../game_config";
 import { Position } from "../plant/plantData";
+import GameSizeManager from '../gameSizing/gameSizeManager';
 
 
-export default class GameCreator {
+class GameManager {
 
     screenDim: Position;
     mobile: boolean;
+
+    game: Phaser.Game;
+    gameSizeManager: GameSizeManager;
+
 
     constructor(){
 
@@ -30,7 +35,7 @@ export default class GameCreator {
             }
         };
 
-        let game = new Phaser.Game(config);
+        this.game = new Phaser.Game(config);
 
 
     }
@@ -38,4 +43,6 @@ export default class GameCreator {
 
 }
 
-new GameCreator();
+let gameManager = new GameManager();
+
+export default gameManager;
