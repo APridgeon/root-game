@@ -1,6 +1,7 @@
 import { Events } from "./events/events";
 import Game_Config from "./game_config";
 import MapManager from "./map/mapManager";
+import { Position } from "./plant/plantData";
 import PlantManager from "./plant/plantManager";
 import * as Phaser from "phaser";
 
@@ -61,6 +62,10 @@ export default class CameraManager {
 
         scene.events.on(Events.GameOver, () => {
             this.screenCover.setVisible(false);
+        })
+
+        scene.game.events.on(Events.screenSizeChange, (screenDim: Position) => {
+            console.log(`the camera has listened! screenDim: ${JSON.stringify(screenDim)}`);
         })
 
     }

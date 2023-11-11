@@ -8,7 +8,6 @@ import GameSizeManager from '../gameSizing/gameSizeManager';
 
 class GameManager {
 
-    screenDim: Position;
     mobile: boolean;
 
     game: Phaser.Game;
@@ -18,15 +17,15 @@ class GameManager {
     constructor(){
 
         this.mobile = (screen.width < 600 || screen.height < 600) ? true : false;        
-        this.screenDim = this.mobile ? {x: screen.availWidth-20, y: screen.availHeight-20} : {x: 800, y: 600} ;
+        let screenDim = this.mobile ? {x: screen.availWidth-100, y: screen.availHeight-100} : {x: 800, y: 600} ;
         
 
 
         const config = {
             type: Phaser.AUTO,
             backgroundColor: '#ffffff',
-            width: this.screenDim.x,
-            height: this.screenDim.y,
+            width: screenDim.x,
+            height: screenDim.y,
             scene: [Main, UI],
             pixelArt: true,
             scale: {
@@ -37,6 +36,11 @@ class GameManager {
 
         this.game = new Phaser.Game(config);
 
+        this.game.events.on(Phaser.Core.Events.READY, () => {
+            console.log("Loaded!");
+
+            this.gameSizeManager = new GameSizeManager(this.game, screenDim);
+        })
 
     }
 

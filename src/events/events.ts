@@ -10,5 +10,7 @@ export enum Events {
     UpdateUIText = 'updateUIText',
     GameOver = 'gameOver',
     DeadRootToLand = 'deadRootToLand',
-    TimeOfDayChange = 'timeOfDayChange'
+    TimeOfDayChange = 'timeOfDayChange',
+
+    screenSizeChange = 'screenSizeChange'
 }
