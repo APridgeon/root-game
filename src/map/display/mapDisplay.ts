@@ -40,7 +40,6 @@ export default class RuleTileMapDisplay
 
     private soilBackgroundTileLayer: Phaser.Tilemaps.TilemapLayer;
     public soilBackgroundRenderTexture: Phaser.GameObjects.RenderTexture;
-    public soilBackgroundBitmapMask: Phaser.Display.Masks.BitmapMask;
 
 
     constructor(scene: Phaser.Scene, mapData: MapData, texture: string){
@@ -129,11 +128,9 @@ export default class RuleTileMapDisplay
             .draw(this.soilBackgroundTileLayer)
             .setDepth(0)
             .setOrigin(0,0)
-            .setVisible(false);
+            .setVisible(true);
 
-        
-        this.soilBackgroundBitmapMask = this._scene.add.bitmapMask(cloneOfTileLayer);
-        this.soilBackgroundRenderTexture.setMask(this.soilBackgroundBitmapMask);
+
     };
 
     private setUpTileLayers(): void {

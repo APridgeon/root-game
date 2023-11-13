@@ -12,9 +12,8 @@ export default class CameraManager {
 
     cam: Phaser.Cameras.Scene2D.Camera;
     maskTexture: Phaser.GameObjects.RenderTexture;
-
-    private screenCover: Phaser.GameObjects.Rectangle;
-    private skyCover: Phaser.GameObjects.Rectangle;
+    
+    private fog: Phaser.GameObjects.Rectangle;
 
     private _plantManager: PlantManager;
     private _mapManager: MapManager;
@@ -24,23 +23,16 @@ export default class CameraManager {
         this._plantManager = plantManager;
         this._mapManager = mapManager;
 
-        this.skyCover = scene.add.rectangle(0, 0, Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y))
+        this.fog = scene.add.rectangle(0, 0, Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y))
             .setFillStyle(0x000000, 0.1)
             .setOrigin(0,0)
             .setVisible(false);
-
-        this.screenCover = scene.add.rectangle(0, 0, scene.game.scale.width, scene.game.scale.height)
-            .setFillStyle(0x000000, 1)
-            .setOrigin(0,0)
-            .setDepth(100)
-            .setVisible(false);
-
         
         this.cam = scene.cameras.main;
         this.cam.setBounds(Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y));
         
 
-        this.maskTexture = scene.add.renderTexture(0, 0, scene.game.scale.width, scene.game.scale.height)
+        this.maskTexture = scene.add.renderTexture(0, 0, Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y))
             .setOrigin(0,0)
             .setVisible(true)
             .setDepth(100);
@@ -59,7 +51,7 @@ export default class CameraManager {
         })
 
         scene.events.on(Events.GameOver, () => {
-            this.screenCover.setVisible(false);
+            // this.screenCover.setVisible(false);
         })
 
         scene.game.events.on(Events.screenSizeChange, (screenDim: Position) => {
@@ -75,12 +67,15 @@ export default class CameraManager {
     private updateMask(scene: Phaser.Scene, plantManager: PlantManager, mapManager: MapManager){
         let circleArray: Phaser.GameObjects.Image[] = [];
             
+
         //clear maskTexture
         this.maskTexture.clear();
-        this.screenCover.clearMask();
 
-        //draw blank cover
-        this.maskTexture.draw(this.skyCover, -this.maskTexture.x, -this.maskTexture.y);
+
+        //fog
+        this.maskTexture.draw(this.fog, -this.maskTexture.x, -this.maskTexture.y);
+
+        //draw land cover
         let land = this._mapManager.mapDisplay.tilemap.getLayer('landBeforeHoles');
         this.maskTexture.draw(land.tilemapLayer,  -this.maskTexture.x, -this.maskTexture.y);
 
@@ -103,6 +98,7 @@ export default class CameraManager {
         })
 
 
+
         //destroy circle array objects
         circleArray.forEach(circ => {
             circ.destroy();
@@ -110,8 +106,6 @@ export default class CameraManager {
     }
 
     private setupDragMovement(scene: Phaser.Scene){
-        let cam = this.cam;
-        let rt = this.maskTexture;
 
         scene.input.on("pointermove", function (p) {
             if (!p.isDown) return;
@@ -119,13 +113,6 @@ export default class CameraManager {
             this.cam.scrollX -= (p.x - p.prevPosition.x) / this.cam.zoom;
             this.cam.scrollY -= (p.y - p.prevPosition.y) /  this.cam.zoom;
 
-            this.maskTexture.setPosition(cam.scrollX, cam.scrollY);
-            this.screenCover.setPosition(cam.scrollX, cam.scrollY);
-            this.updateMask(scene, this._plantManager, this._mapManager);
-
-
-            console.log(`camera x: ${cam.scrollX}, y: ${cam.scrollY}, width: ${cam.width}, height: ${cam.height}`);
-            console.log(`screencover x: ${this.screenCover.x}, y: ${this.screenCover.y}, width: ${this.screenCover.width}, height: ${this.screenCover.height}`)
         }, this);
     }
 
