@@ -12,7 +12,6 @@ export default class CameraManager {
 
     cam: Phaser.Cameras.Scene2D.Camera;
     maskTexture: Phaser.GameObjects.RenderTexture;
-    skyMask: Phaser.GameObjects.Rectangle;
 
     private screenCover: Phaser.GameObjects.Rectangle;
     private skyCover: Phaser.GameObjects.Rectangle;
@@ -33,21 +32,20 @@ export default class CameraManager {
         this.screenCover = scene.add.rectangle(0, 0, scene.game.scale.width, scene.game.scale.height)
             .setFillStyle(0x000000, 1)
             .setOrigin(0,0)
-            .setDepth(100);
+            .setDepth(100)
+            .setVisible(false);
 
         
         this.cam = scene.cameras.main;
-        // this.cam.setBounds(Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y));
+        this.cam.setBounds(Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y));
         
 
         this.maskTexture = scene.add.renderTexture(0, 0, scene.game.scale.width, scene.game.scale.height)
             .setOrigin(0,0)
-            .setVisible(false);
+            .setVisible(true)
+            .setDepth(100);
         
-
-        // this.maskTexture = scene.add.renderTexture(0, 0, Game_Config.MAP_SCALE*Game_Config.MAP_RES*Game_Config.MAP_SIZE.x, Game_Config.MAP_SCALE*Game_Config.MAP_RES*Game_Config.MAP_SIZE.y)
-        //     .setOrigin(0,0)
-        //     .setVisible(false);
+        
         
         this.updateMask(scene, plantManager, mapManager);
         
@@ -66,17 +64,9 @@ export default class CameraManager {
 
         scene.game.events.on(Events.screenSizeChange, (screenDim: Position) => {
             console.log(`the camera has listened! screenDim: ${JSON.stringify(screenDim)}`);
-            this.maskTexture.clear();
-            this.screenCover.clearMask();
-            // this.screenCover.setDisplaySize(screenDim.x * 0.5, screenDim.y * 0.5);
-            // this.screenCover.setScale(1,1);
-            // this.screenCover.setPosition(0, 0);
-            this.maskTexture.resize(screenDim.x, screenDim.y);
-            this.screenCover.setSize(screenDim.x, screenDim.y);
-            // this.maskTexture.setScale(0.8,1);
-            // this.maskTexture.setPosition(this.cam.scrollX, this.cam.scrollY)
-            // this.updateMask(scene, plantManager, mapManager);
-            console.log(this.maskTexture);
+
+            this.maskTexture.resize(screenDim.x, screenDim.y); 
+            this.updateMask(scene, plantManager, mapManager);
         })
 
     }
@@ -111,11 +101,6 @@ export default class CameraManager {
             this.maskTexture.erase(circ, circ.x -this.maskTexture.x, circ.y -this.maskTexture.y);
             circleArray.push(circ);
         })
-
-        //invert mask and take away from screen cover
-        let invert = new Phaser.Display.Masks.BitmapMask(scene, this.maskTexture, 0, 0);
-        invert.invertAlpha = false;
-        this.screenCover.setMask(invert );
 
 
         //destroy circle array objects
