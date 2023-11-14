@@ -39,7 +39,6 @@ export default class RuleTileMapDisplay
     }
 
     private soilBackgroundTileLayer: Phaser.Tilemaps.TilemapLayer;
-    public soilBackgroundRenderTexture: Phaser.GameObjects.RenderTexture;
 
 
     constructor(scene: Phaser.Scene, mapData: MapData, texture: string){
@@ -107,30 +106,23 @@ export default class RuleTileMapDisplay
     }
 
     private setUpBackgrounds(): void {
-        let SOIL_RES = 100;
-        this.soilTiles = this._tilemap.addTilesetImage('soil', null, SOIL_RES, SOIL_RES, 0, 0);
-        
-        this.soilBackgroundTileLayer = this._tilemap.createBlankLayer('soilBackground', this.soilTiles, 0, Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y)
-            .setOrigin(0,0)
-            .setScale((Game_Config.MAP_SCALE/Game_Config.MAP_RES)*SOIL_RES)
-            .setAlpha(0.4)
-            .forEachTile(tile => tile.index = 0)
-            .setVisible(false);
                 
         let cloneOfTileLayer = this._tilemap.createBlankLayer('landBeforeHoles', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
+        .setOrigin(0, 0)
+        .setAlpha(1)
+        .setScale(Game_Config.MAP_SCALE)
+        .putTilesAt(this.landBeforeHolesTextureIndex, 0, 0)
+
+        this.soilBackgroundTileLayer = this._tilemap.createBlankLayer('soilBackground', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
             .setOrigin(0, 0)
+            .setAlpha(0.4)
             .setScale(Game_Config.MAP_SCALE)
             .putTilesAt(this.landBeforeHolesTextureIndex, 0, 0)
-            .setVisible(false);
-
-        this.soilBackgroundRenderTexture = this._scene.add.renderTexture(0, 0, Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y))
-        this.soilBackgroundRenderTexture
-            .draw(this.soilBackgroundTileLayer)
-            .setDepth(0)
-            .setOrigin(0,0)
-            .setVisible(true);
-
-
+            .forEachTile(tile => {
+                if(tile.index != -1){
+                    tile.index = (25*7) + 4;
+                }
+            })
     };
 
     private setUpTileLayers(): void {

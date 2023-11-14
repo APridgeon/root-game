@@ -57,7 +57,6 @@ export default class CameraManager {
         scene.game.events.on(Events.screenSizeChange, (screenDim: Position) => {
             console.log(`the camera has listened! screenDim: ${JSON.stringify(screenDim)}`);
 
-            this.maskTexture.resize(screenDim.x, screenDim.y); 
             this.updateMask(scene, plantManager, mapManager);
         })
 
@@ -73,11 +72,11 @@ export default class CameraManager {
 
 
         //fog
-        this.maskTexture.draw(this.fog, -this.maskTexture.x, -this.maskTexture.y);
+        this.maskTexture.draw(this.fog, 0, 0);
 
         //draw land cover
         let land = this._mapManager.mapDisplay.tilemap.getLayer('landBeforeHoles');
-        this.maskTexture.draw(land.tilemapLayer,  -this.maskTexture.x, -this.maskTexture.y);
+        this.maskTexture.draw(land.tilemapLayer,  0, 0);
 
         //draw circlemask for each root segment
         plantManager.userPlant.__rootData.forEach(pos => {
@@ -86,14 +85,14 @@ export default class CameraManager {
                 .setVisible(false)
                 .setScale(Game_Config.MAP_SCALE)
                 .setAlpha(1);
-            this.maskTexture.erase(circ, circ.x -this.maskTexture.x, circ.y -this.maskTexture.y);
+            this.maskTexture.erase(circ, circ.x , circ.y );
             circleArray.push(circ);
         })
 
         //draw masks for anim decorations
         mapManager.mapDisplay.mapAnimFX.forEach(anim => {
             let circ = scene.add.image(anim.image.getCenter().x, anim.image.getCenter().y, 'smallMask').setVisible(false).setScale(Game_Config.MAP_SCALE);
-            this.maskTexture.erase(circ, circ.x -this.maskTexture.x, circ.y -this.maskTexture.y);
+            this.maskTexture.erase(circ, circ.x, circ.y);
             circleArray.push(circ);
         })
 
@@ -107,13 +106,14 @@ export default class CameraManager {
 
     private setupDragMovement(scene: Phaser.Scene){
 
-        scene.input.on("pointermove", function (p) {
+        scene.input.on("pointermove", p => {
             if (!p.isDown) return;
         
             this.cam.scrollX -= (p.x - p.prevPosition.x) / this.cam.zoom;
             this.cam.scrollY -= (p.y - p.prevPosition.y) /  this.cam.zoom;
 
-        }, this);
+        })
+
     }
 
 
