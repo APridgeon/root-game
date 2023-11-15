@@ -30,11 +30,14 @@ export default class GameSizeManager {
     }
 
     public updateScreenSize(){
-
-        if(!gameManager.mobile && !this.game.scale.isFullscreen){
+        
+        
+        if(this.game.scale.isFullscreen) {
+            this.screenDim = {x: screen.availWidth, y: screen.availHeight};
+        } else if(!gameManager.mobile){
             this.screenDim = {x: 800, y: 600};
-        } else {
-            this.screenDim = {x: screen.availWidth - 100, y: screen.availHeight -100};
+        } else if(gameManager.mobile){
+            this.screenDim = {x: screen.availWidth - 100, y: screen.availHeight - 100};
         }
 
         this.game.scale.resize(this.screenDim.x, this.screenDim.y);
@@ -43,13 +46,11 @@ export default class GameSizeManager {
 
     private setupFullScreen(){
 
-        this.updateScreenSize();
         this.game.scale.on('enterfullscreen', () => {
-            this.gameDiv.style.height = `${screen.availHeight}px`;
+            this.updateScreenSize();
         })
         this.game.scale.on('leavefullscreen', () => {
-            this.gameDiv.style.height = "";
-            this.gameDiv.style.width = "";
+            this.updateScreenSize();
         })
     }
 

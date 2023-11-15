@@ -153,6 +153,7 @@ export default class UI extends Phaser.Scene {
         this.fullscreenButton.setPosition(screenDim.x - Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(2));
         this.barometer.setPosition({x: Game_Config.UI_tilesToWorld(1), y: screenDim.y - Game_Config.UI_tilesToWorld(7)});
         this.box.setPosition({x: 0, y: screenDim.y - Game_Config.UI_tilesToWorld(5)});
+        // this.box.SetBoxSize(screenDim.x - (screenDim.x % Game_Config.UI_tilesToWorld(1)) , 5);
 
         this.mouse.setPosition(Game_Config.UI_tilesToWorld(20), screenDim.y - Game_Config.UI_tilesToWorld(3.5))
 

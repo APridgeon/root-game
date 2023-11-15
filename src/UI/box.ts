@@ -43,7 +43,9 @@ export default class Box {
     }
 
     public setPosition(pos: Position){
+        this.pos = pos;
         this.boxLayer.setPosition(pos.x, pos.y);
     }
+
 
 }
