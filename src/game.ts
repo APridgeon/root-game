@@ -49,21 +49,8 @@ export default class Main extends Phaser.Scene
 
     create ()
     {
-        console.log(gameManager);
 
-        this.game.canvas.id = "gameCanvas";
 
-        let div = document.getElementById("gameCanvas");
-        this.game.scale.on('enterfullscreen', () => {
-            div.style.height = "100%";
-            div.style.cursor = "none";
-            // this.game.scale.scaleMode = Phaser.Scale.FIT;
-        })
-        this.game.scale.on('leavefullscreen', () => {
-            div.style.height = "";
-            div.style.cursor = "default";
-            // this.game.scale.scaleMode = Phaser.Scale.NONE;
-        })
 
         this.timeOfDayManager = new TimeOfDayManager(this);
         this.noise = new Perlin(Math.random());
