@@ -54,5 +54,11 @@ export default class Barometer {
         })
     }
 
+    public setPosition(pos: Position){
+        this.barometerLayer.setPosition(pos.x, pos.y);
+        this.waterSprite[0].setPosition(pos.x, pos.y);
+        this.waterSprite[1].setPosition(pos.x, pos.y + Game_Config.UI_tilesToWorld(1));
+    }
+
 
 }

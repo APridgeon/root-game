@@ -42,4 +42,8 @@ export default class Box {
             .setScale(Game_Config.UI_SCALE);
     }
 
+    public setPosition(pos: Position){
+        this.boxLayer.setPosition(pos.x, pos.y);
+    }
+
 }
