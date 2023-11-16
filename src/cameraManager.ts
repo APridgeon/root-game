@@ -33,7 +33,7 @@ export default class CameraManager {
         this.cam.setBounds(Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y));
         
         if(gameManager.mobile){
-            this.cam.setZoom(1.5);
+            this.cam.setZoom(2);
         }
 
         this.maskTexture = scene.add.renderTexture(0, 0, Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y))

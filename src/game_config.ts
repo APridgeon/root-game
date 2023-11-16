@@ -47,4 +47,8 @@ export default class Game_Config {
         return tile*this.UI_RES*this.UI_SCALE;
     }
 
+    static UI_worldToTiles(world: integer){
+        return Math.floor(world/(this.UI_RES*this.UI_SCALE));
+    }
+
 }
