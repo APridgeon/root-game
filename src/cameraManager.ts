@@ -62,6 +62,8 @@ export default class CameraManager {
             console.log(`the camera has listened! screenDim: ${JSON.stringify(screenDim)}`);
 
             this.updateMask(scene, plantManager, mapManager);
+
+            this.cam.centerOn(Game_Config.MAP_tilesToWorld(plantManager.userPlant.startPos.x), Game_Config.MAP_tilesToWorld(plantManager.userPlant.startPos.y));
         })
 
     }
