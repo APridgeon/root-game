@@ -55,7 +55,7 @@ export default class CameraManager {
         })
 
         scene.events.on(Events.GameOver, () => {
-            // this.screenCover.setVisible(false);
+            this.maskTexture.clear();
         })
 
         scene.game.events.on(Events.screenSizeChange, (screenDim: Position) => {
