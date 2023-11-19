@@ -160,7 +160,12 @@ export default class RuleTileMapDisplay
                         let worms = new MapAnimFX({x: x, y: y}, AnimatedTile.Worm, scene, this.mapAnimFX, 1000, false);
                         this.mapAnimFX.push(worms);
 
-                    }
+                    } 
+                    // else if(threshold < 0.08){
+
+                    //     let mushrooms = new MapAnimFX({x: x, y: y}, AnimatedTile.Mushroom, scene, this.mapAnimFX, 100, false);
+                    //     this.mapAnimFX.push(mushrooms);
+                    // }
                 }
             }
         }

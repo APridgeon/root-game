@@ -29,7 +29,7 @@ export default class UI extends Phaser.Scene {
     turnNo = 0;
     
     constructor(){
-        super({key: 'UI', active: true})
+        super({key: 'UI'})
         
     }
     

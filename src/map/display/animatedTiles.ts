@@ -1,6 +1,7 @@
 export enum AnimatedTile {
     Worm = 0,
-    TileDestroy = 1
+    TileDestroy = 1,
+    Mushroom = 2
 }
 
 
@@ -28,6 +29,13 @@ export default class AnimatedTiles {
                 (23*ROWLENGTH) + 3,
                 (23*ROWLENGTH) + 4
 
+            ]
+        ],
+        [
+            AnimatedTile.Mushroom, 
+            [
+                (22*ROWLENGTH + 4),
+                // (22*ROWLENGTH + 5) 
             ]
         ]
     ])
