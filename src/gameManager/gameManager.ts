@@ -5,6 +5,7 @@ import Game_Config from "../game_config";
 import { Position } from "../plant/plantData";
 import GameSizeManager from '../gameSizing/gameSizeManager';
 import MainMenu from '../mainMenu/mainMenu';
+import DevScene from '../development/devScene';
 
 
 class GameManager {
@@ -27,7 +28,7 @@ class GameManager {
             backgroundColor: '#ffffff',
             width: screenDim.x,
             height: screenDim.y,
-            scene: [MainMenu, Main, UI],
+            scene: [DevScene, MainMenu, Main, UI],
             pixelArt: true,
             scale: {
                 parent: 'game',
