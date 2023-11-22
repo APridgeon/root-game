@@ -1,5 +1,5 @@
 
-type LeafComponent = {
+export type LeafComponent = {
     top: number,
     middle: number,
     bottom: number,
