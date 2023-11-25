@@ -1,3 +1,7 @@
+export enum FrameType {
+    Branch,
+    Leaf
+}
 
 
 export type LeafFrames = {
@@ -7,8 +11,8 @@ export type LeafFrames = {
 }
 
 export type BranchFrames = {
-    top: number,
-    bottom: number,
+    shadow: number,
+    main: number,
 }
 
 const ROWLENGTH = 6;
@@ -26,8 +30,10 @@ export default class TreeComponents {
     ];
 
     static BranchComponents: BranchFrames[] = [
-        {top: (ROWLENGTH * 0) + 1, bottom: (ROWLENGTH * 0) + 2},
-        {top: (ROWLENGTH * 1) + 1, bottom: (ROWLENGTH * 3) + 2}
+        {shadow: (ROWLENGTH * 0) + 1, main: (ROWLENGTH * 0) + 2},
+        {shadow: (ROWLENGTH * 1) + 1, main: (ROWLENGTH * 1) + 2},
+        {shadow: (ROWLENGTH * 0) + 4, main: (ROWLENGTH * 0) + 5},
+        {shadow: (ROWLENGTH * 1) + 4, main: (ROWLENGTH * 1) + 5},
     ]
 
 }
