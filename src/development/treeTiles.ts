@@ -36,4 +36,6 @@ export default class TreeComponents {
         {shadow: (ROWLENGTH * 1) + 4, main: (ROWLENGTH * 1) + 5},
     ]
 
+    static pixelRes = 16;
+
 }
