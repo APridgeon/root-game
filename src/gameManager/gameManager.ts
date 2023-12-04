@@ -6,6 +6,7 @@ import { Position } from "../plant/plantData";
 import GameSizeManager from '../gameSizing/gameSizeManager';
 import MainMenu from '../mainMenu/mainMenu';
 import DevScene from '../development/devScene';
+import PixelatedFX from '../development/pixelatedFX';
 
 
 class GameManager {
@@ -24,11 +25,12 @@ class GameManager {
 
 
         const config = {
-            type: Phaser.AUTO,
+            type: Phaser.WEBGL,
             backgroundColor: '#ffffff',
             width: screenDim.x,
             height: screenDim.y,
             scene: [DevScene, MainMenu, Main, UI],
+            pipeline: {'PixelatedFX': PixelatedFX},
             pixelArt: true,
             scale: {
                 parent: 'game',

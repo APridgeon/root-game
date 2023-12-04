@@ -33,19 +33,19 @@ export default class ProceduralTree {
 
         this._scene = scene;
 
-        this.pos = {x:  50 * this.scale, y:  100 * this.scale};
+        this.pos = {x:  50 , y:  100 };
         
         this.drawingBranches();
 
-        this.placeComponentRandomly(FrameType.Branch);
-        this.placeComponentRandomly(FrameType.Leaf);
-        this.renderComponents();
+        // this.placeComponentRandomly(FrameType.Branch);
+        // this.placeComponentRandomly(FrameType.Leaf);
+        // this.renderComponents();
 
-        this._scene.input.on(Phaser.Input.Events.POINTER_UP, () => {
-            this.grow(true, true);
-            this.placeComponentRandomly(FrameType.Leaf);
-            this.renderComponents();
-        })
+        // this._scene.input.on(Phaser.Input.Events.POINTER_UP, () => {
+        //     this.grow(true, true);
+        //     this.placeComponentRandomly(FrameType.Leaf);
+        //     this.renderComponents();
+        // })
 
     }
 
@@ -160,7 +160,7 @@ export default class ProceduralTree {
 
     renderLeafComponent(comp: TreeComponent<LeafFrames>, index: number){
 
-        let renderPos: Position = {x: (this.scale * comp.pos.x) + this.pos.x, y: (this.scale * comp.pos.y) + this.pos.y}
+        let renderPos: Position = {x: (comp.pos.x + this.pos.x) * this.scale, y: (this.pos.y + comp.pos.y) * this.scale}
 
         this.currentImages.push( this._scene.add.image(renderPos.x, renderPos.y, 'trees', comp.frames.bottom) 
             .setTint(comp.colours[0])
@@ -184,7 +184,7 @@ export default class ProceduralTree {
 
     renderBranchComponent(comp: TreeComponent<BranchFrames>, index: number){
 
-        let renderPos: Position = {x: (this.scale * comp.pos.x) + this.pos.x, y: (this.scale * comp.pos.y) + this.pos.y}
+        let renderPos: Position = {x: (comp.pos.x + this.pos.x) * this.scale, y: (this.pos.y + comp.pos.y) * this.scale}
 
         this.currentImages.push( this._scene.add.image(renderPos.x, renderPos.y, 'trees', comp.frames.shadow)
             .setTint(comp.colours[0])
@@ -201,50 +201,42 @@ export default class ProceduralTree {
 
     drawingBranches(){
 
-        //branch settings
-        let settings = {
-            loss: 0.03, // Width loss per cycle
-            minSleep: 10, // Min sleep time (For the animation)
-            branchLoss: 0.8, // % width maintained for branches
-            mainLoss: 0.8, // % width maintained after branching
-            speed: 0.3, // Movement speed
-            newBranch: 0.8, // Chance of not starting a new branch 
-            colorful: false, // Use colors for new trees
-            fastMode: true, // Fast growth mode
-            fadeOut: true, // Fade slowly to black
-            fadeAmount: 0.05, // How much per iteration
-            autoSpawn: true, // Automatically create trees
-            spawnInterval: 250, // Spawn interval in ms
-            fadeInterval: 250, // Fade interval in ms
-            initialWidth: 10, // Initial branch width
-            indicateNewBranch: false, // Display a visual indicator when a new branch is born
-            fitScreen: false, // Resize canvas to fit screen,
-            treeColor: '#ffffff',
-            bgColor: [0, 0, 0]
-        };
 
-
-
+        let branchNodes: Position[] = [];
         let gOb = this._scene.add.graphics({x: 0, y: 0});
-        gOb.setDepth(-100)
-        gOb.setDefaultStyles({lineStyle: {color: 0x816976, width: this.scale*3, alpha: 1}})
 
-        gOb.beginPath();
-        gOb.moveTo(this.pos.x  + (this.scale*10), this.pos.y + (16));
-        gOb.lineTo(this.pos.x + (this.scale*13), this.pos.y - (this.scale*3));
-        gOb.stroke();
+        gOb.setDepth(-100);
+        branchNodes.push({x: this.pos.x + 3, y: this.pos.y - 15});
+        branchNodes.push({x: this.pos.x + 6, y: this.pos.y - 29});
+        branchNodes.push({x: this.pos.x - 2, y: this.pos.y - 37});
 
+        let branchColor = new Phaser.Display.Color(0x81, 0x69, 0x76);
+        let width = 5;
 
+        branchNodes.forEach((node, i) => {
+            width *= 0.75
+
+            if(i == 0){
+                this.drawMainTrunk(this.pos, node, width, branchColor, gOb);
+            } else {
+                this.drawMainTrunk(branchNodes[i-1], node, width, branchColor, gOb);
+            }
+        })
 
         //pixelate is 2 less than scale **unknown why???***
         gOb.postFX.addPixelate(this.scale-2);
 
     }
 
-    branch(x, y, dx, dy, w, growthRate, lifetime, color){
-        canvas.ctx.lineWidth = w - lifetime * tg.settings.loss;
-		canvas.ctx.beginPath();
-		canvas.ctx.moveTo(x, y);
+    drawMainTrunk(oldPos: Position, newPos: Position, width: number, colour: Phaser.Display.Color, gOb: Phaser.GameObjects.Graphics){
+
+        gOb.setDefaultStyles({lineStyle: {color: colour.color, width: width*this.scale, alpha: 1}});
+        gOb.beginPath();
+        gOb.moveTo(oldPos.x * this.scale, oldPos.y * this.scale);
+        gOb.lineTo((newPos.x) * this.scale, (newPos.y) * this.scale);
+        gOb.stroke();
+
+
     }
 
 }
