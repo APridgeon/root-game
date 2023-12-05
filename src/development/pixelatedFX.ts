@@ -8,6 +8,10 @@ const fragShader = `
     uniform sampler2D uMainSampler;
     uniform vec2 resolution;
     uniform float amount;
+    uniform float SW ;
+    uniform float SE ;
+    uniform float NE ;
+    uniform float NW ;
     varying vec2 outTexCoord;
     void main ()
     {
@@ -18,6 +22,10 @@ const fragShader = `
         vec2 corner3 = center + pixelSize * vec2(+0.5, +0.5);
         vec2 corner4 = center + pixelSize * vec2(-0.5, +0.5);
         vec4 pixel = 1.0 * texture2D(uMainSampler, center / resolution);
+        pixel += SW * texture2D(uMainSampler, corner1 / resolution);
+        pixel += SE * texture2D(uMainSampler, corner2 / resolution);
+        pixel += NE * texture2D(uMainSampler, corner3 / resolution);
+        pixel += NW * texture2D(uMainSampler, corner4 / resolution);
 
         gl_FragColor = pixel;
     }
@@ -26,16 +34,20 @@ const fragShader = `
 
 export default class PixelatedFX extends Phaser.Renderer.WebGL.Pipelines.PostFXPipeline
 {
+
+    amount: number = 4;
+    shadows: {NE: number, SE: number, SW: number, NW: number} = {NE: 0.2, SE: 0, SW: 0, NW: 0};
+
     constructor (game)
     {
         super({
             game,
             renderTarget: true,
             fragShader,
+            /* @ts-ignore */
             uniforms: [
                 'uProjectionMatrix',
                 'uMainSampler',
-                'uTime',
                 'resolution',
                 'amount'
             ]
@@ -49,7 +61,20 @@ export default class PixelatedFX extends Phaser.Renderer.WebGL.Pipelines.PostFXP
 
     onPreRender ()
     {
-        this.set1f('uTime', this.game.loop.time / 1000);
-        this.set1f('amount', 0);
+        this.set1f('amount', this.amount);
+        this.set1f('NE', this.shadows.NE);
+        this.set1f('SE', this.shadows.SE);
+        this.set1f('SW', this.shadows.SW);
+        this.set1f('NW', this.shadows.NW);
+    }
+
+    public setup (amount: number, shadows: {NE: number, SE: number, SW: number, NW: number}){
+        this.amount = amount;
+        this.shadows = {
+            NE: shadows.NE,
+            SE: shadows.SE,
+            SW: shadows.SW,
+            NW: shadows.NW
+        }
     }
 }

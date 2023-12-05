@@ -1,3 +1,4 @@
+import PixelatedFX from "./pixelatedFX";
 
 export default class GraphicsTree {
 
@@ -22,21 +23,24 @@ export default class GraphicsTree {
     initialWidth= 10 // Initial branch width
     indicateNewBranch= false // Display a visual indicator when a new branch is born
     fitScreen= false // Resize canvas to fit screen
-    treeColor= '#ff0000'
+    treeColor= 0xff0000
     bgColor= [0, 0, 0]
 
     constructor(scene: Phaser.Scene){
         this._scene = scene;
 
 
-        let pixel = (this._scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.getPostPipeline('PixelatedFX');
-        console.log(pixel);
+        let pixel = (this._scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.getPostPipeline('PixelatedFX') as PixelatedFX;
+
+
+        this._scene.add.circle(200, 200, 80, 0x00ff00);
 
         this.gOb = scene.add.graphics();
+        this.branch(200, 400, 0, -3, 10, 30, 0, this.treeColor);
 
-        this.branch(200, 300, 0, -3, 10, 30, 0, this.treeColor);
-
-        this.gOb.setPostPipeline(pixel)
+        this.gOb.setPostPipeline(pixel);
+        let post = this.gOb.postPipelines[0] as PixelatedFX;
+        post.setup(2, {NE: 0, SE: 0, SW: 0.2, NW: 0});
 
 
     }

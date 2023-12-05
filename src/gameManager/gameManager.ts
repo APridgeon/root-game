@@ -38,6 +38,7 @@ class GameManager {
             }
         };
 
+        /* @ts-ignore */
         this.game = new Phaser.Game(config);
 
         this.game.events.on(Phaser.Core.Events.READY, () => {
