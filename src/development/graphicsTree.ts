@@ -20,6 +20,11 @@ export default class GraphicsTree {
     branchAbilityInput: HTMLInputElement;
     internodeLengthInput: HTMLInputElement;
     overallGrowthInput: HTMLInputElement;
+    branchWidthDecreaseInput: HTMLInputElement;
+    randomSeedInput: HTMLInputElement;
+    randomSeedCheckbox: HTMLInputElement;
+
+    tree: Tree;
 
 
     constructor(scene: Phaser.Scene){
@@ -33,128 +38,46 @@ export default class GraphicsTree {
         this.gOb = scene.add.graphics();
 
         this._scene.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
-            this.gOb.clear();
-            this.leafClumps.forEach(leafClump => leafClump.destroy())
-            this.growTree({x: 100, y: 100});
-        })
 
-        
+
+            this.gOb.clear();
+            if(this.tree){
+                this.tree.clear();
+            }
+
+            if(!this.randomSeedCheckbox.checked){
+                console.log
+                this.randomSeedInput.value = Math.random().toString();
+            }
+
+            let treeSettings: TreeSettings = {
+                seed: this.randomSeedInput.value.toString(),
+
+                life: 0,
+    
+                lineWidth: this.branchWidthInput.valueAsNumber,
+                lineWidthDecrease: this.branchWidthDecreaseInput.valueAsNumber,
+                
+                growthAmount: this.growthLengthInput.valueAsNumber,
+                wobbliness: this.wobbleInput.valueAsNumber,
+                internodeLength: this.internodeLengthInput.valueAsNumber,
+            
+                branchDelay: this.branchDelayInput.valueAsNumber,
+                abilityToBranch: this.branchAbilityInput.valueAsNumber,
+                newBranchesTerminateSooner: 0,
+                branchTermination: this.overallGrowthInput.valueAsNumber,
+            }
+
+
+            this.tree = new Tree({x: 100, y: 150}, treeSettings, this.gOb, this._scene)
+
+        })
 
         this.gOb.setPostPipeline(pixel);
         let post = this.gOb.postPipelines[0] as PixelatedFX;
         post.setup(this.scale - 2, {NE: 0.1, SE: 0.1, SW: 0, NW: 0});
 
-
     }
-
-    growTree(pos: Position){
-
-        let growthBud = [
-            {
-                pos: {x: pos.x, y: pos.y}, 
-                angle: 0,
-                life: 0
-            }
-        ];
-
-        let treeSettings = {
-            life: 0,
-
-            lineWidth: this.branchWidthInput.value,
-            lineWidthDecrease: 0.98,
-            
-            growthAmount: this.growthLengthInput.value,
-            wobbliness: this.wobbleInput.value,
-            internodeLength: this.internodeLengthInput.value,
-        
-            branchDelay: this.branchDelayInput.value,
-            abilityToBranch: this.branchAbilityInput.value,
-            newBranchesTerminateSooner: 0,
-            branchTermination: this.overallGrowthInput.value,
-        }
-
-        // this._scene.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
-        //     this.step(growthBud, treeSettings)
-        // })
-
-        this._scene.time.addEvent({
-            loop: true,
-            delay: 0.01,
-            callback: () => this.step(growthBud, treeSettings)
-        })
-
-
-    }
-
-
-
-
-    step(growthBud, treeSettings){
-        growthBud.forEach((bud, i) => {
-
-            let choice = Phaser.Math.Between(0,1);
-            let branchColours = [0x816976, 0x4a3838];
-
-            this.gOb.setDefaultStyles({lineStyle: {width: (treeSettings.lineWidth * this.scale), color: branchColours[choice]}, fillStyle: {color: branchColours[choice]}});
-
-
-            this.gOb.beginPath();
-            this.gOb.moveTo(bud.pos.x * this.scale, bud.pos.y * this.scale);
-
-            //Choosing angle
-            let angle = Phaser.Math.Between(90 - (1* treeSettings.wobbliness), 90 + (1 * treeSettings.wobbliness));
-            angle += bud.angle;
-
-            let newX = Math.cos((Math.PI/180) * angle) * treeSettings.growthAmount
-            let newY = Math.sin((Math.PI/180) * angle) * treeSettings.growthAmount;
-
-
-            this.gOb.lineTo((bud.pos.x - newX) * this.scale, (bud.pos.y - newY) * this.scale);
-            this.gOb.stroke();
-            this.gOb.fillCircle((bud.pos.x - newX) * this.scale, (bud.pos.y - newY) * this.scale, treeSettings.lineWidth * 0.5 * this.scale);
-    
-            growthBud[i] = {pos: {x: (bud.pos.x - newX), y: (bud.pos.y - newY)}, angle: bud.angle, life: bud.life + 1};
-
-            if(treeSettings.life > treeSettings.branchDelay && bud.life % treeSettings.internodeLength === 0 && i < treeSettings.abilityToBranch && treeSettings.life < treeSettings.branchTermination){
-                let newAngle = Phaser.Math.Between(0, 90) * Phaser.Math.RND.sign();
-                growthBud.push({pos: {x: (bud.pos.x), y: (bud.pos.y)}, angle: newAngle, life: bud.life + treeSettings.newBranchesTerminateSooner});
-                // this.drawLeafClump(bud);
-
-            }
-
-            if(bud.life > treeSettings.branchTermination){
-                growthBud.splice(i, 1);
-                this.drawLeafClump(bud);
-  
-            }
-
-            if(i === 0){
-                treeSettings.life += 1;
-                treeSettings.lineWidth *= treeSettings.lineWidthDecrease;
-            }
-
-
-        })
-
-    }
-
-    drawLeafClump(bud){
-        let choice = Phaser.Math.Between(0, TreeComponents.LeafComponents.length-1);
-
-
-        this.leafClumps.push( this._scene.add.image(Math.round(bud.pos.x) * this.scale, Math.round(bud.pos.y) * this.scale, 'trees', TreeComponents.LeafComponents[choice].bottom)
-            .setScale(this.scale)
-            .setTint(0x413452) )
-        
-        this.leafClumps.push( this._scene.add.image(Math.round(bud.pos.x) * this.scale, Math.round(bud.pos.y) * this.scale, 'trees', TreeComponents.LeafComponents[choice].middle)
-            .setScale(this.scale)
-            .setTint(0x3b6e7f) )
-        
-        this.leafClumps.push( this._scene.add.image(Math.round(bud.pos.x) * this.scale, Math.round(bud.pos.y) * this.scale, 'trees', TreeComponents.LeafComponents[choice].top)
-            .setScale(this.scale)
-            .setTint(0x66ab8c) )
-    }
-
 
     setupControls() {
 
@@ -195,6 +118,21 @@ export default class GraphicsTree {
 
         gameDiv.appendChild(branchWidthTitle);
         gameDiv.appendChild(this.branchWidthInput);
+
+
+
+
+        let branchWidthDecreaseTitle = document.createElement("b");
+        branchWidthDecreaseTitle.innerText = "branch width decrease";
+        this.branchWidthDecreaseInput = document.createElement("input");
+        this.branchWidthDecreaseInput.type = "range";
+        this.branchWidthDecreaseInput.min = "0.900";
+        this.branchWidthDecreaseInput.max = "0.999";
+        this.branchWidthDecreaseInput.step = "0.001";
+        this.branchWidthDecreaseInput.value = "0.980";
+
+        gameDiv.appendChild(branchWidthDecreaseTitle);
+        gameDiv.appendChild(this.branchWidthDecreaseInput);
 
 
         let branchAbilityTitle = document.createElement("b");
@@ -249,7 +187,174 @@ export default class GraphicsTree {
         gameDiv.appendChild(overallGrowthTitle);
         gameDiv.appendChild(this.overallGrowthInput);
 
+
+        let seedCheckboxTitle = document.createElement("b");
+        seedCheckboxTitle.innerText = "set seed for randomness";
+        this.randomSeedCheckbox = document.createElement("input");
+        this.randomSeedCheckbox.type = "checkbox";
+        this.randomSeedCheckbox.checked = false;
+
+
+        gameDiv.appendChild(seedCheckboxTitle);
+        gameDiv.appendChild(this.randomSeedCheckbox);
+
+        let randomSeedTitle = document.createElement("b");
+        randomSeedTitle.innerText = "seed for randomness";
+        this.randomSeedInput = document.createElement("input");
+        this.randomSeedInput.type = "range";
+        this.randomSeedInput.min = "0.01";
+        this.randomSeedInput.max = "1";
+        this.randomSeedInput.value = "0.5";
+        this.randomSeedInput.step = "0.01";
+
+        gameDiv.appendChild(randomSeedTitle);
+        gameDiv.appendChild(this.randomSeedInput);
+
+
     }
 
 
+}
+
+
+class Tree {
+
+    private _graphicsOb: Phaser.GameObjects.Graphics;
+    private _scene: Phaser.Scene;
+
+    leafClumps: Phaser.GameObjects.Image[] = [];
+
+    private pos: Position;
+    private scale = 4;
+    public treeSettings: TreeSettings;
+
+    private buds: GrowthBud[] = [];
+
+
+    constructor(pos: Position, treeSettings: TreeSettings, graphicsOb: Phaser.GameObjects.Graphics, scene: Phaser.Scene){
+
+        this._graphicsOb = graphicsOb;
+        this._scene = scene;
+
+        this.pos = pos;
+        this.treeSettings = treeSettings;
+
+        this.buds.push(new GrowthBud(this.pos, 0, 0, 1));
+
+
+        Phaser.Math.RND.sow([`${this.treeSettings.seed}`]);
+        for(let i = 0; i < this.treeSettings.branchTermination; i ++){
+            this.generateTree();
+        }
+
+    }
+
+    private generateTree() {
+        this.buds.forEach((bud, i) => {
+            let choice = Phaser.Math.RND.between(0,1);
+            let branchColours = [0x816976, 0x4a3838];
+
+            this._graphicsOb.setDefaultStyles({lineStyle: {width: (this.treeSettings.lineWidth * this.scale), color: branchColours[choice]}, fillStyle: {color: branchColours[choice]}});
+
+            this._graphicsOb.beginPath();
+            this._graphicsOb.moveTo(bud.pos.x * this.scale, bud.pos.y * this.scale);
+
+            //Choosing angle
+            let angle = Phaser.Math.RND.between(90 - (1* this.treeSettings.wobbliness), 90 + (1 * this.treeSettings.wobbliness));
+            angle += bud.angle;
+
+            //stop branches growing below the screen
+            if(bud.pos.y > 140 - (1 * this.scale)){
+                if(angle < 0){
+                    angle = Phaser.Math.RND.between(0, 5);
+                }else if(angle > 180){
+                    angle = Phaser.Math.RND.between(175, 180);
+                }
+            }
+
+            let newX = Math.cos((Math.PI/180) * angle) * (this.treeSettings.growthAmount * bud.growthLength)
+            let newY = Math.sin((Math.PI/180) * angle) * (this.treeSettings.growthAmount * bud.growthLength);
+
+
+            this._graphicsOb.lineTo((bud.pos.x - newX) * this.scale, (bud.pos.y - newY) * this.scale);
+            this._graphicsOb.stroke();
+            this._graphicsOb.fillCircle((bud.pos.x - newX) * this.scale, (bud.pos.y - newY) * this.scale, this.treeSettings.lineWidth * 0.5 * this.scale);
+    
+            bud.pos = {x: (bud.pos.x - newX), y: (bud.pos.y - newY)};
+            bud.life += 1;
+            console.log(bud.life)
+
+            if(this.treeSettings.life > this.treeSettings.branchDelay && bud.life % this.treeSettings.internodeLength === 0 && i < this.treeSettings.abilityToBranch && this.treeSettings.life < this.treeSettings.branchTermination){
+
+                let newAngle = Phaser.Math.RND.between(0, 90) * Phaser.Math.RND.sign();
+                let newGrowthLength = 1 * bud.growthLength;
+                this.buds.push(new GrowthBud(bud.pos, newAngle, bud.life + this.treeSettings.newBranchesTerminateSooner, newGrowthLength));
+                // this.drawLeafClump(bud);
+            }
+
+            //draw leaf clump at end of branch (except initial branch)
+            if(bud.life === this.treeSettings.branchTermination && i !== 0){
+                this.drawLeafClump(bud);
+            }
+
+            if(i === 0){
+                this.treeSettings.life += 1;
+                this.treeSettings.lineWidth *= this.treeSettings.lineWidthDecrease;
+                if(this.treeSettings.lineWidth < 1) this.treeSettings.lineWidth = 1;
+            }
+
+
+        })
+
+    }
+
+    private drawLeafClump(bud: GrowthBud){
+        let choice = Phaser.Math.RND.between(0, TreeComponents.LeafComponents.length-1);
+
+        this.leafClumps.push( this._scene.add.image(Math.round(bud.pos.x) * this.scale, Math.round(bud.pos.y) * this.scale, 'trees', TreeComponents.LeafComponents[choice].bottom)
+            .setScale(this.scale)
+            .setTint(0x413452) )
+        
+        this.leafClumps.push( this._scene.add.image(Math.round(bud.pos.x) * this.scale, Math.round(bud.pos.y) * this.scale, 'trees', TreeComponents.LeafComponents[choice].middle)
+            .setScale(this.scale)
+            .setTint(0x3b6e7f) )
+        
+        this.leafClumps.push( this._scene.add.image(Math.round(bud.pos.x) * this.scale, Math.round(bud.pos.y) * this.scale, 'trees', TreeComponents.LeafComponents[choice].top)
+            .setScale(this.scale)
+            .setTint(0x66ab8c) )
+    }
+
+    public clear(){
+        this.leafClumps.forEach(clump => clump.destroy());
+    }
+}
+
+class GrowthBud {
+
+    pos: Position;
+    angle: number;
+    life: number;
+    growthLength: number;
+
+    constructor(pos: Position, angle: number, life: number, growthLength: number){
+        this.pos = pos;
+        this.angle = angle;
+        this.life = life;
+        this.growthLength = growthLength;
+    }
+
+}
+
+type TreeSettings = {
+    seed: string,
+    life: number,
+    lineWidth: number,
+    lineWidthDecrease: number,
+    growthAmount: number,
+    wobbliness: number,
+    internodeLength: number,
+    branchDelay: number,
+    abilityToBranch: number,
+    newBranchesTerminateSooner: number,
+    branchTermination: number
 }
