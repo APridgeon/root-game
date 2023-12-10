@@ -112,6 +112,7 @@ export default class PlantManager {
     public destroyPlant(plantData: PlantData, scene: Phaser.Scene){
         
         plantData.alive = false;
+        this.plantDisplay.destroyAerialTree(plantData);
 
         scene.events.emit(Events.DeadRootToLand, plantData.__rootData);
         plantData.__rootData = [];

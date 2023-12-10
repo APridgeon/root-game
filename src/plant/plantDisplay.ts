@@ -1,9 +1,13 @@
 import * as Phaser from "phaser";
 import Game_Config from "../game_config";
-import PlantData from "./plantData";
+import PlantData, { Position } from "./plantData";
 import PlantTileSets, { PlantTile } from "./plantTileSets";
 import PlantManager from "./plantManager";
 import PlantGrowthTiles from "./plantGrowthTiles";
+import { Tree, TreeSettings } from "./aerialTree";
+import PixelatedFX from "./pixelatedShader";
+import { Events } from "../events/events";
+import gameManager from "../gameManager/gameManager";
 
 export default class PlantDisplay {
 
@@ -12,6 +16,9 @@ export default class PlantDisplay {
 
     private plantTileMap: Phaser.Tilemaps.Tilemap;
     private plantTileSet: Phaser.Tilemaps.Tileset;
+    private plantTrees: Map<PlantData, Tree> = new Map();
+
+    private graphicsObject: Phaser.GameObjects.Graphics;
 
     private _plantTileLayer: Phaser.Tilemaps.TilemapLayer;
     get plantTileLayer(){
@@ -33,12 +40,37 @@ export default class PlantDisplay {
             .setScale(Game_Config.MAP_SCALE)
             .setVisible(true);
 
+
+        let pixel = (this._scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.getPostPipeline('PixelatedFX') as PixelatedFX;
+        this.graphicsObject = this._scene.add.graphics({x: 0, y:0});
+        this.graphicsObject.setPostPipeline(pixel);
+        let post = this.graphicsObject.postPipelines[0] as PixelatedFX;
+
+        let scale = Game_Config.MAP_SCALE;
+        if(gameManager.mobile){
+            scale *= 2;
+        }
+
+        post.setup(scale - 2, {NE: 0.1, SE: 0.1, SW: 0, NW: 0});
+
+        this._scene.game.events.on(Events.screenSizeChange, () => {
+            this.graphicsObject.resetPostPipeline();
+            this.graphicsObject.setPostPipeline(pixel);
+            let post = this.graphicsObject.postPipelines[0] as PixelatedFX;
+            post.setup(scale - 2, {NE: 0.1, SE: 0.1, SW: 0, NW: 0});
+        })
+
         this.updatePlantDisplay();
 
+        
+        this.addAerialTree(this._plantManager.userPlant);
+        this._plantManager.aiPlants.forEach(aiplant => {
+            this.addAerialTree(aiplant);
+        })
     }
 
     private addToTileIndexData(plantData: PlantData, plantTileSet: Map<PlantTile, integer>): void {
-        PlantGrowthTiles.AddToTileSet(plantData, this.plantTileData);
+        // PlantGrowthTiles.AddToTileSet(plantData, this.plantTileData);
         plantData.__rootData.forEach(pos => {
             this.plantTileData[pos.y][pos.x] = PlantTileSets.ConvertToTileIndex(pos.x, pos.y, plantData, plantTileSet);
         })
@@ -56,5 +88,36 @@ export default class PlantDisplay {
         this._plantTileLayer
             .putTilesAt(this.plantTileData, 0, 0)
 
+    }
+
+    private addAerialTree(plantData: PlantData){
+
+        let treeSettings: TreeSettings = {
+            abilityToBranch: 2,
+            branchDelay: 10,
+            branchTermination: Phaser.Math.Between(10, 40),
+            growthAmount: Phaser.Math.Between(0.7, 1.3),
+            internodeLength: 1,
+            life: 0,
+            lineWidth: 2,
+            lineWidthDecrease: 0.997,
+            newBranchesTerminateSooner: 0,
+            seed: Math.random().toString(),
+            wobbliness: Phaser.Math.Between(30, 80)
+        }
+
+        let scale = Game_Config.MAP_SCALE;
+        if(gameManager.mobile){
+            scale *= 2;
+        }
+
+        let tree = new Tree({x: Game_Config.MAP_tilesToWorld(plantData.startPos.x) + (Game_Config.MAP_RES), y: Game_Config.MAP_tilesToWorld(plantData.startPos.y)}, treeSettings, this.graphicsObject, this._scene);
+        this.plantTrees.set(plantData, tree);
+    }
+
+    public destroyAerialTree(plantData: PlantData){
+        let tree = this.plantTrees.get(plantData);
+        console.log(tree);
+        tree.clear();
     }
 }

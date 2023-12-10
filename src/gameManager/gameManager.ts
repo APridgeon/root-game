@@ -29,7 +29,7 @@ class GameManager {
             backgroundColor: '#ffffff',
             width: screenDim.x,
             height: screenDim.y,
-            scene: [DevScene, MainMenu, Main, UI],
+            scene: [MainMenu, Main, UI],
             pipeline: {'PixelatedFX': PixelatedFX},
             pixelArt: true,
             scale: {

@@ -35,6 +35,7 @@ export default class MainMenu extends Phaser.Scene {
 
         this.load.spritesheet('inputPrompts', 'assets/ui/kenney_1bit_input.png', {frameWidth: 16, frameHeight: 16, startFrame: 0, spacing: 1});
         this.load.spritesheet('plantTilesSpriteSheet', 'assets/plants/rootGameAssets.png', {frameWidth: 8, frameHeight: 8, startFrame: 0});        this.load.spritesheet('UI_tiles', 'assets/ui/GUI_1x_sliced.png', {frameWidth: 8, frameHeight: 8, spacing: 0 });
+        this.load.spritesheet('trees','assets/plants/proceduralTrees.png', {frameWidth: 16, frameHeight: 16});
         
 
     }
