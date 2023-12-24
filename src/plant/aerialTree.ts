@@ -43,54 +43,64 @@ export class Tree {
     private generateTree() {
         this.leafClumps.forEach(clump => {clump.destroy()})
         this.buds.forEach((bud, i) => {
-            let choice = Phaser.Math.RND.between(0,1);
-            let branchColours = [0x816976, 0x4a3838];
 
-            this._graphicsOb.setDefaultStyles({lineStyle: {width: (this.treeSettings.lineWidth * this.scale), color: branchColours[choice]}, fillStyle: {color: branchColours[choice]}});
-
-            this._graphicsOb.beginPath();
-            this._graphicsOb.moveTo(bud.pos.x, bud.pos.y);
-
-            //Choosing angle
-            let angle = Phaser.Math.RND.between(90 - (1* this.treeSettings.wobbliness), 90 + (1 * this.treeSettings.wobbliness));
-            angle += bud.angle;
-
-            //stop branches growing below the screen
-            if(bud.pos.y > (this.pos.y) - (10 * this.scale)){
-                if(angle < 0){
-                    bud.angle += 90
-                }else if(angle > 180){
-                    bud.angle -=90
+            if(bud.growing){
+                let choice = Phaser.Math.RND.between(0,1);
+                let branchColours = [0x816976, 0x4a3838];
+    
+                this._graphicsOb.setDefaultStyles({lineStyle: {width: (this.treeSettings.lineWidth * this.scale), color: branchColours[choice]}, fillStyle: {color: branchColours[choice]}});
+    
+                this._graphicsOb.beginPath();
+                this._graphicsOb.moveTo(bud.pos.x, bud.pos.y);
+    
+                //Choosing angle
+                let angle = Phaser.Math.RND.between(90 - (1* this.treeSettings.wobbliness), 90 + (1 * this.treeSettings.wobbliness));
+                angle += bud.angle;
+    
+                //stop branches growing below the screen
+                if(bud.pos.y > (this.pos.y) - (10 * this.scale)){
+                    if(angle < 0){
+                        bud.angle += 90
+                    }else if(angle > 180){
+                        bud.angle -=90
+                    }
+                }
+    
+                //generate new growth
+                let dx = (Math.cos((Math.PI/180) * angle) * (this.treeSettings.growthAmount * bud.growthLength)) * this.scale;
+                let dy = (Math.sin((Math.PI/180) * angle) * (this.treeSettings.growthAmount * bud.growthLength)) * this.scale;
+    
+                bud.pos = {x: (bud.pos.x - dx), y: (bud.pos.y - dy)};
+    
+                this._graphicsOb.lineTo(bud.pos.x, bud.pos.y);
+                this._graphicsOb.stroke();
+                this._graphicsOb.fillCircle(bud.pos.x, bud.pos.y, this.treeSettings.lineWidth * 0.5 * this.scale);
+        
+                bud.life += 1;
+    
+                //decide whether branching should happen
+                if(this.treeSettings.life > this.treeSettings.branchDelay && bud.life % this.treeSettings.internodeLength === 0 && i < this.treeSettings.abilityToBranch){
+    
+                    let newAngle = Phaser.Math.RND.between(0, 90) * Phaser.Math.RND.sign();
+                    let newGrowthLength = 1 * bud.growthLength;
+                    this.buds.push(new GrowthBud(bud.pos, newAngle, 0, newGrowthLength));
+                    // this.drawLeafClump(bud);
                 }
             }
 
-            //generate new growth
-            let dx = (Math.cos((Math.PI/180) * angle) * (this.treeSettings.growthAmount * bud.growthLength)) * this.scale;
-            let dy = (Math.sin((Math.PI/180) * angle) * (this.treeSettings.growthAmount * bud.growthLength)) * this.scale;
-
-            bud.pos = {x: (bud.pos.x - dx), y: (bud.pos.y - dy)};
-
-            this._graphicsOb.lineTo(bud.pos.x, bud.pos.y);
-            this._graphicsOb.stroke();
-            this._graphicsOb.fillCircle(bud.pos.x, bud.pos.y, this.treeSettings.lineWidth * 0.5 * this.scale);
-    
-            bud.life += 1;
-
-            //decide whether branching should happen
-            if(this.treeSettings.life > this.treeSettings.branchDelay && bud.life % this.treeSettings.internodeLength === 0 && i < this.treeSettings.abilityToBranch && this.treeSettings.life < this.treeSettings.branchTermination){
-
-                let newAngle = Phaser.Math.RND.between(0, 90) * Phaser.Math.RND.sign();
-                let newGrowthLength = 1 * bud.growthLength;
-                this.buds.push(new GrowthBud(bud.pos, newAngle, bud.life + this.treeSettings.newBranchesTerminateSooner, newGrowthLength));
-                // this.drawLeafClump(bud);
-            }
-
+ 
             //draw leaf clump at end of branch (except initial branch)
             if(bud.life > this.treeSettings.branchTermination && i !== 0){
                 this.drawLeafClump(bud);
                 // this.buds.splice(i, 1);
             }
 
+
+            //draw leaf clump at end of branch (except initial branch)
+            if(bud.life > this.treeSettings.newBranchesTerminateSooner && i !== 0){
+                this.drawLeafClump(bud);
+                bud.growing = false;
+            }
 
 
             if(i === 0){
@@ -138,6 +148,21 @@ export class GrowthBud {
     angle: number;
     life: number;
     growthLength: number;
+
+    growing: boolean = true;
+
+
+    // seed: string;
+    // life: number;
+    // lineWidth: number;
+    // lineWidthDecrease: number;
+    // growthAmount: number;
+    // wobbliness: number;
+    // internodeLength: number;
+    // branchDelay: number;
+    // abilityToBranch: number;
+    // newBranchesTerminateSooner: number;
+    // branchTermination: number
 
     constructor(pos: Position, angle: number, life: number, growthLength: number){
         this.pos = pos;

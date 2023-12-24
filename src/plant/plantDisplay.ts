@@ -64,6 +64,8 @@ export default class PlantDisplay {
 
         
         this.addAerialTree(this._plantManager.userPlant);
+        let userTree = this.plantTrees.get(this._plantManager.userPlant);
+        console.log(userTree.treeSettings);
         this._plantManager.aiPlants.forEach(aiplant => {
             this.addAerialTree(aiplant);
         })
@@ -93,16 +95,16 @@ export default class PlantDisplay {
     private addAerialTree(plantData: PlantData){
 
         let treeSettings: TreeSettings = {
-            abilityToBranch: 2,
+            abilityToBranch: 1,
             branchDelay: 10,
-            branchTermination: Phaser.Math.Between(10, 40),
-            growthAmount: Phaser.Math.Between(0.7, 1.3),
-            internodeLength: 1,
+            branchTermination: Phaser.Math.Between(15, 40),
+            growthAmount: Phaser.Math.RND.between(30,100)/100,
+            internodeLength: 5,
             life: 0,
             lineWidth: 2,
-            lineWidthDecrease: 0.997,
-            newBranchesTerminateSooner: 0,
-            seed: Math.random().toString(),
+            lineWidthDecrease: 0.995,
+            newBranchesTerminateSooner: Phaser.Math.RND.between(10, 100),
+            seed: null,
             wobbliness: Phaser.Math.Between(30, 80)
         }
 
