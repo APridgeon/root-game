@@ -5,8 +5,7 @@ import Game_Config from "../game_config";
 import { Position } from "../plant/plantData";
 import GameSizeManager from '../gameSizing/gameSizeManager';
 import MainMenu from '../mainMenu/mainMenu';
-import DevScene from '../development/devScene';
-import PixelatedFX from '../development/pixelatedFX';
+import PixelatedFX from '../plant/pixelatedShader';
 
 
 class GameManager {
