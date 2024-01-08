@@ -95,6 +95,20 @@ export default class CameraManager {
             circleArray.push(circ);
         })
 
+        //draw circle mask for aerial growth
+        let buds = plantManager.plantDisplay.plantTrees.get(plantManager.userPlant).buds
+        for(let i = 0; i < buds.length; i += 2){
+            let x = Game_Config.MAP_tilesToWorld(Game_Config.MAP_worldToTiles(buds[i].pos.x));
+            let y = Game_Config.MAP_tilesToWorld(Game_Config.MAP_worldToTiles(buds[i].pos.y));
+
+            let circ = scene.add.image(x, y, 'circleMask')
+                .setVisible(false)
+                .setScale(Game_Config.MAP_SCALE)
+                .setAlpha(1);
+            this.maskTexture.erase(circ, circ.x , circ.y );
+            circleArray.push(circ);
+        };
+
         //draw masks for anim decorations
         mapManager.mapDisplay.mapAnimFX.forEach(anim => {
             let circ = scene.add.image(anim.image.getCenter().x, anim.image.getCenter().y, 'smallMask').setVisible(false).setScale(Game_Config.MAP_SCALE);

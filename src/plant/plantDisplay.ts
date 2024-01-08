@@ -16,7 +16,7 @@ export default class PlantDisplay {
 
     private plantTileMap: Phaser.Tilemaps.Tilemap;
     private plantTileSet: Phaser.Tilemaps.Tileset;
-    private plantTrees: Map<PlantData, Tree> = new Map();
+    plantTrees: Map<PlantData, Tree> = new Map();
 
     private graphicsObject: Phaser.GameObjects.Graphics;
 
@@ -97,13 +97,13 @@ export default class PlantDisplay {
         let treeSettings: TreeSettings = {
             abilityToBranch: 1,
             branchDelay: 10,
-            branchTermination: Phaser.Math.Between(15, 40),
+            startLeafGrowth: Phaser.Math.Between(10, 20),
             growthAmount: Phaser.Math.RND.between(30,100)/100,
             internodeLength: 5,
             life: 0,
             lineWidth: 2,
             lineWidthDecrease: 0.995,
-            newBranchesTerminateSooner: Phaser.Math.RND.between(10, 100),
+            newBranchesTerminateSooner: Phaser.Math.RND.between(20, 40),
             seed: null,
             wobbliness: Phaser.Math.Between(30, 80)
         }
@@ -115,11 +115,21 @@ export default class PlantDisplay {
 
         let tree = new Tree({x: Game_Config.MAP_tilesToWorld(plantData.startPos.x) + (Game_Config.MAP_RES), y: Game_Config.MAP_tilesToWorld(plantData.startPos.y)}, treeSettings, this.graphicsObject, this._scene);
         this.plantTrees.set(plantData, tree);
+
+        this._scene.input.keyboard.on('keydown-A', () => {
+            console.log("increased width!")
+            tree.buds.forEach(bud => {
+                bud.growing = true;
+            })
+            // treeSettings.startLeafGrowth += 100;
+            treeSettings.newBranchesTerminateSooner += 100;
+        })
+            
     }
 
     public destroyAerialTree(plantData: PlantData){
         let tree = this.plantTrees.get(plantData);
-        console.log(tree);
+        // console.log(tree);
         tree.clear();
     }
 }
