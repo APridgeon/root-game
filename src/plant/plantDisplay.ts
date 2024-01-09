@@ -8,6 +8,7 @@ import { Tree, TreeSettings } from "./aerialTree";
 import PixelatedFX from "./pixelatedShader";
 import { Events } from "../events/events";
 import gameManager from "../gameManager/gameManager";
+import { TreeType } from "./aerialTreeTiles";
 
 export default class PlantDisplay {
 
@@ -101,12 +102,13 @@ export default class PlantDisplay {
             growthAmount: Phaser.Math.RND.between(30,100)/100,
             internodeLength: 5,
             life: 0,
-            lineWidth: 3,
+            lineWidth: 2,
             lineWidthDecrease: 0.995,
             newBranchesTerminateSooner: Phaser.Math.RND.between(20, 40),
             seed: Phaser.Math.RND.integer().toString(),
             wobbliness: Phaser.Math.Between(30, 80),
-            color: Phaser.Display.Color.RandomRGB()
+            color: Phaser.Display.Color.RandomRGB(),
+            treeType: Phaser.Math.Between(0, 2) as TreeType
         }
 
         let scale = Game_Config.MAP_SCALE;

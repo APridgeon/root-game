@@ -3,12 +3,15 @@ import Game_Config from '../game_config';
 import Box from '../UI/box';
 import UI_TileSets from '../UI/UI_TileSets';
 import { Position } from '../plant/plantData';
+import { Events } from '../events/events';
 
 export default class MainMenu extends Phaser.Scene {
 
     tileMap: Phaser.Tilemaps.Tilemap;
     tiles: Phaser.Tilemaps.Tileset;
     skyLayer: Phaser.Tilemaps.TilemapLayer;
+
+    ev: Phaser.Events.EventEmitter;
 
     constructor(){
         super({key: 'MainMenu'});
@@ -43,14 +46,12 @@ export default class MainMenu extends Phaser.Scene {
     create(){
 
         this.generateBackground();
+        this.generateTitleText();
        
-        this.add.bitmapText(50, 200, 'ant_party', 'Welcome to TAPROOT', 60)
-            .setTint(0x000000)
-            .setOrigin(0,0)
-            .setDropShadow(2,2,0xffffff);
-
 
         this.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
+            this.ev.removeAllListeners();
+
             this.scene.start('main');
             this.scene.start('UI');
             this.scene.stop();
@@ -65,6 +66,37 @@ export default class MainMenu extends Phaser.Scene {
             .forEachTile(tile => tile.index = 0)
             .setOrigin(0,0)
             .setScale(2);
+    }
+
+    generateTitleText(){
+
+        let titleText = this.add.bitmapText(50, 100, 'ant_party', 'Welcome to TAPROOT', 60)
+            .setTint(0x333333)
+            .setOrigin(0,0)
+            .setDropShadow(2,2,0xffffff);
+
+        titleText.postFX.addShine(1, 0.8, 3,false);
+
+        if(this.scale.width < titleText.width - 100){
+            titleText.setText('Welcome\nto\nTAPROOT')
+            // titleText.setPosition(10, 100)
+            titleText.setFontSize(40)
+        }
+
+        this.ev = this.game.events.on(Events.screenSizeChange, (screenDim: Position) => {
+            if(screenDim.x < titleText.width){
+                titleText.setText('Welcome\nto\nTAPROOT')
+                // titleText.setPosition(10, 100)
+                titleText.setFontSize(40)
+            } else {
+                titleText.setText('Welcome to TAPROOT')
+                // titleText.setPosition(50, 100)
+                titleText.setFontSize(60)
+            }
+
+            titleText.resetPostPipeline();
+        })
+
     }
 
 }
