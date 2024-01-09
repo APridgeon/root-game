@@ -91,14 +91,14 @@ export class Tree {
  
             //draw leaf clump at end of branch (except initial branch)
             if(bud.life > this.treeSettings.startLeafGrowth && i !== 0){
-                this.drawLeafClump(bud);
+                this.drawLeafClump(bud, this.treeSettings.color);
                 // this.buds.splice(i, 1);
             }
 
 
             //draw leaf clump at end of branch (except initial branch)
             if(bud.life > this.treeSettings.newBranchesTerminateSooner && i !== 0){
-                this.drawLeafClump(bud);
+                this.drawLeafClump(bud, this.treeSettings.color);
                 bud.growing = false;
             }
 
@@ -114,22 +114,38 @@ export class Tree {
 
     }
 
-    private drawLeafClump(bud: GrowthBud){
-        // let choice = Phaser.Math.RND.between(0, TreeComponents.LeafComponents.length-1);
+    private drawLeafClump(bud: GrowthBud, colour: Phaser.Display.Color){
+
+        let hue = colour.h;
+        let h1 = colour.h - 0.2;
+        if(h1 < 0){
+            h1 = 1 - h1;
+        }
+        let h2 = colour.h - 0.4;
+        if(h2 < 0){
+            h2 = 1 - h2;
+        }
+
+        let c1 = colour.clone().setFromHSV(colour.h, 0.37, 0.32);
+        let c2 = colour.clone().setFromHSV(h1, 0.54, 0.50);
+        let c3 = colour.clone().setFromHSV(h2, 0.4, 0.6);
 
         this.leafClumps.push( this._scene.add.image(Math.round(bud.pos.x/this.scale) * this.scale, Math.round(bud.pos.y/this.scale) * this.scale, 'trees', TreeComponents.LeafComponents[bud.leafChoice].bottom)
             .setScale(this.scale)
-            .setTint(0x413452)
+            .setTint(c1.color)
+            // .setTint(0x413452)
             .setDepth(5) )
         
         this.leafClumps.push( this._scene.add.image(Math.round(bud.pos.x/this.scale) * this.scale, Math.round(bud.pos.y/this.scale) * this.scale, 'trees', TreeComponents.LeafComponents[bud.leafChoice].middle)
             .setScale(this.scale)
-            .setTint(0x3b6e7f)
+            .setTint(c2.color)
+            // .setTint(0x3b6e7f)
             .setDepth(5) )
         
         this.leafClumps.push( this._scene.add.image(Math.round(bud.pos.x/this.scale) * this.scale, Math.round(bud.pos.y/this.scale) * this.scale,  'trees', TreeComponents.LeafComponents[bud.leafChoice].top)
             .setScale(this.scale)
-            .setTint(0x66ab8c)
+            .setTint(c3.color)
+            // .setTint(0x66ab8c)
             .setDepth(5) )
     }
 
@@ -156,19 +172,6 @@ export class GrowthBud {
 
     leafChoice: number = Phaser.Math.RND.between(0, TreeComponents.LeafComponents.length-1);
 
-
-    // seed: string;
-    // life: number;
-    // lineWidth: number;
-    // lineWidthDecrease: number;
-    // growthAmount: number;
-    // wobbliness: number;
-    // internodeLength: number;
-    // branchDelay: number;
-    // abilityToBranch: number;
-    // newBranchesTerminateSooner: number;
-    // startLeafGrowth: number
-
     constructor(pos: Position, angle: number, life: number, growthLength: number){
         this.pos = pos;
         this.angle = angle;
@@ -189,5 +192,6 @@ export type TreeSettings = {
     branchDelay: number,
     abilityToBranch: number,
     newBranchesTerminateSooner: number,
-    startLeafGrowth: number
+    startLeafGrowth: number,
+    color: Phaser.Display.Color
 }

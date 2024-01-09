@@ -101,11 +101,12 @@ export default class PlantDisplay {
             growthAmount: Phaser.Math.RND.between(30,100)/100,
             internodeLength: 5,
             life: 0,
-            lineWidth: 2,
+            lineWidth: 3,
             lineWidthDecrease: 0.995,
             newBranchesTerminateSooner: Phaser.Math.RND.between(20, 40),
-            seed: null,
-            wobbliness: Phaser.Math.Between(30, 80)
+            seed: Phaser.Math.RND.integer().toString(),
+            wobbliness: Phaser.Math.Between(30, 80),
+            color: Phaser.Display.Color.RandomRGB()
         }
 
         let scale = Game_Config.MAP_SCALE;

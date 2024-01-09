@@ -128,9 +128,12 @@ export default class CameraManager {
 
         scene.input.on("pointermove", p => {
             if (!p.isDown) return;
+
+            let absLengthX = (p.x - p.prevPosition.x) / this.cam.zoom;
+            let absLengthY = (p.y - p.prevPosition.y) /  this.cam.zoom;
         
-            this.cam.scrollX -= (p.x - p.prevPosition.x) / this.cam.zoom;
-            this.cam.scrollY -= (p.y - p.prevPosition.y) /  this.cam.zoom;
+            this.cam.scrollX -=  Math.ceil(absLengthX/Game_Config.MAP_SCALE) * Game_Config.MAP_SCALE;
+            this.cam.scrollY -=  Math.ceil(absLengthY/Game_Config.MAP_SCALE) * Game_Config.MAP_SCALE;
 
         })
 
