@@ -1,0 +1,32 @@
+body {font-family: monospace; width: 100%; display: flex; flex-direction: column; align-items: center; margin: 0px;}
+#body-holder {display: flex; flex-direction: column; width: 800px;}
+
+#Title {margin: 20px;display: flex;flex-direction: column;justify-content: center; align-items:center;}
+#Title h1 {font-weight: bold; font-size: 30px;}
+#Title img {width: 100px;}
+
+.Section { margin: 20px; display: flex; flex-direction: column;justify-content: center;align-items:start;}
+.Section h2 {font-weight: bold; font-size: 20px; margin: 0px;}
+.Section h3 {margin: 0px;}
+.Section p { font-weight: normal; font-size: 12px;}
+
+.Content {font-weight: normal; font-size: 12px; margin: 20px;}
+.Content div {margin-bottom: 20px;}
+.Content h1 {font-weight: bold; font-size: 16px; margin: 0px;}
+.Content h2 {font-weight: bold; font-size: 12px; margin: 0px;}
+.Content p {font-weight: normal;  margin: 0px;}
+.Content img {margin-top: 10px; margin-bottom: 10px; width: 300px;}
+
+.Members-content { display: flex; flex-direction: row; max-width: 800px; flex-wrap: wrap; align-items: center; justify-content: center;}
+.Member {width: 250px;margin: 20px;display: flex;flex-direction: column; align-items: center;text-align: center;}
+.Member h1 {font-weight: bold; font-size: 12px; margin: 0px;}
+.Member h2 {font-weight: normal; font-size: 12px; margin: 0px;}
+.Member p {font-weight: normal;  margin: 0px;}
+.Member img { height: 150px; border-radius: 20px; object-fit: cover;}
+
+#game {display: flex; flex-direction: column;}
+
+@media (max-width: 600px) {
+    #body-holder {width: 400px;}
+    #Members-content {max-width: 500px;}
+}

@@ -1,4 +1,5 @@
 import { Events } from "../events/events";
+import gameManager from "../gameManager/gameManager";
 import Game_Config from "../game_config";
 import { Position } from "../plant/plantData";
 import { waterStats } from "../plant/waterHandling";
@@ -139,7 +140,6 @@ export default class UI extends Phaser.Scene {
             }
 
         }, this);
-
 
         this.game.events.on(Events.screenSizeChange, (screenDim: Position) => {
             this.resize(screenDim);
