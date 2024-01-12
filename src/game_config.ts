@@ -51,4 +51,8 @@ export default class Game_Config {
         return Math.floor(world/(this.UI_RES*this.UI_SCALE));
     }
 
+    static UI_roundWorldToTileFactor(world: integer, offset = 0){
+        return this.UI_tilesToWorld(this.UI_worldToTiles(world + offset));
+    }
+
 }

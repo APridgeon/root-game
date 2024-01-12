@@ -33,9 +33,9 @@ export default class CameraManager {
         this.cam.setBounds(Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y));
         
         
-        if(gameManager.mobile){
-            this.cam.setZoom(4);
-        }
+        // if(gameManager.mobile){
+        //     this.cam.setZoom(4);
+        // }
 
         this.maskTexture = scene.add.renderTexture(0, 0, Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y))
             .setOrigin(0,0)
@@ -61,11 +61,11 @@ export default class CameraManager {
 
         scene.game.events.on(Events.screenSizeChange, (screenDim: Position) => {
             console.log(`the camera has listened! screenDim: ${JSON.stringify(screenDim)}`);
-            if(gameManager.mobile && scene.scale.isFullscreen){
-                this.cam.setZoom(2);
-            } else if(gameManager.mobile){
-                this.cam.setZoom(4);
-            }
+            // if(gameManager.mobile && scene.scale.isFullscreen){
+            //     this.cam.setZoom(2);
+            // } else if(gameManager.mobile){
+            //     this.cam.setZoom(4);
+            // }
 
             this.updateMask(scene, plantManager, mapManager);
 

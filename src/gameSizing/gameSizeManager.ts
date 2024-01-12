@@ -34,18 +34,12 @@ export default class GameSizeManager {
         
         
         if(this.game.scale.isFullscreen) {
-            if(this.screenDim.y > this.screenDim.x){
-                this.screenDim = {x: screen.availWidth, y: screen.availHeight-100};
-            } else {
-                this.screenDim = {x: screen.availWidth-100, y: screen.availHeight};
-            }
+            this.screenDim = {x: screen.availWidth, y: screen.availHeight};
         } else if(!gameManager.mobile){
             this.screenDim = {x: 800, y: 600};
         } else if(gameManager.mobile){
-            this.screenDim = {x: window.innerWidth - 100 , y: window.innerHeight - 100};
+            this.screenDim = {x: screen.availWidth - 100 , y: screen.availHeight - 100};
         }
-
-        console.log(`Game size: ${window.innerWidth}`);
 
         this.game.scale.resize(this.screenDim.x, this.screenDim.y);
         this.game.events.emit(Events.screenSizeChange, this.screenDim);

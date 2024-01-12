@@ -84,7 +84,7 @@ export default class UI extends Phaser.Scene {
 
         this.mouse = this.add.image(Game_Config.UI_tilesToWorld(20), this.game.scale.height - Game_Config.UI_tilesToWorld(3.5), 'inputPrompts', (3 * 34) + 9)
             .setOrigin(0, 0)
-            .setScale(2)
+            .setScale(Game_Config.UI_SCALE)
             .setTint(0x000000)
 
 
@@ -115,7 +115,7 @@ export default class UI extends Phaser.Scene {
 
         this.fullscreenButton = this.add.image(this.game.scale.width - Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(2), 'inputPrompts', (10 * 34) + 15)
             .setOrigin(0, 0)
-            .setScale(2)
+            .setScale(Game_Config.UI_SCALE)
             .setTint(0xffffff)
             .setInteractive();
 
@@ -141,6 +141,10 @@ export default class UI extends Phaser.Scene {
 
         }, this);
 
+
+        this.cameras.main.setZoom(1);
+
+
         this.game.events.on(Events.screenSizeChange, (screenDim: Position) => {
             this.resize(screenDim);
         })
@@ -150,7 +154,8 @@ export default class UI extends Phaser.Scene {
 
     private resize(screenDim: Position){
 
-        this.fullscreenButton.setPosition(screenDim.x - Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(2));
+        this.fullscreenButton
+            .setPosition(Game_Config.UI_roundWorldToTileFactor(screenDim.x, -1) - Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(2))
         this.barometer.setPosition({x: Game_Config.UI_tilesToWorld(1), y: screenDim.y - Game_Config.UI_tilesToWorld(7)});
         this.box.setPosition({x: 0, y: screenDim.y - Game_Config.UI_tilesToWorld(5)});
         this.box.SetBoxSize(Game_Config.UI_worldToTiles(screenDim.x) , 5);

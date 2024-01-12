@@ -39,7 +39,7 @@ export default class Barometer {
         ];
 
         this.barometerLayer
-            .setScale(Game_Config.MAP_SCALE)
+            .setScale(Game_Config.UI_SCALE)
             .putTilesAt(barometerData, 0 ,0);
 
         this.setWaterBar(Game_Config.PLANT_DATA_WATER_START_LEVEL);
@@ -58,6 +58,12 @@ export default class Barometer {
         this.barometerLayer.setPosition(pos.x, pos.y);
         this.waterSprite[0].setPosition(pos.x, pos.y);
         this.waterSprite[1].setPosition(pos.x, pos.y + Game_Config.UI_tilesToWorld(1));
+    }
+
+    public setScale(scale: integer){
+        this.barometerLayer.setScale(scale);
+        this.waterSprite[0].setScale(scale)
+        this.waterSprite[1].setPosition(scale);
     }
 
 

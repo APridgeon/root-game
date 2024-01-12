@@ -48,10 +48,7 @@ export default class PlantDisplay {
         let post = this.graphicsObject.postPipelines[0] as PixelatedFX;
 
         let scale = Game_Config.MAP_SCALE;
-        if(gameManager.mobile){
-            scale *= 2;
-        }
-
+        
         post.setup(scale - 2, {NE: 0.1, SE: 0.1, SW: 0, NW: 0});
 
         this._scene.game.events.on(Events.screenSizeChange, () => {
