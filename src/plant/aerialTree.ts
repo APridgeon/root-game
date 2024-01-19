@@ -136,7 +136,8 @@ export class Tree {
             .setScale(this.scale)
             .setTint(c1.color)
             // .setTint(0x413452)
-            .setDepth(5) )
+            .setDepth(5) 
+        )
         
         this.leafClumps.push( this._scene.add.image(Math.round(bud.pos.x/this.scale) * this.scale, Math.round(bud.pos.y/this.scale) * this.scale, 'trees', leafFrame.middle)
             .setScale(this.scale)
@@ -149,6 +150,7 @@ export class Tree {
             .setTint(c3.color)
             // .setTint(0x66ab8c)
             .setDepth(5) )
+        
     }
 
     public clear(){
