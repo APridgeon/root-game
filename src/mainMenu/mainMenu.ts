@@ -6,12 +6,15 @@ import { Position } from '../plant/plantData';
 import { Events } from '../events/events';
 import SkyManager from '../map/display/skyManager';
 import TimeOfDayManager, { TimeOfDay } from '../general/timeOfDay';
+import TitleText from './titleText';
 
 export default class MainMenu extends Phaser.Scene {
 
     tileMap: Phaser.Tilemaps.Tilemap;
     tiles: Phaser.Tilemaps.Tileset;
     skyLayer: Phaser.Tilemaps.TilemapLayer;
+
+    titleText: Phaser.GameObjects.BitmapText;
 
     ev: Phaser.Events.EventEmitter;
 
@@ -48,7 +51,8 @@ export default class MainMenu extends Phaser.Scene {
     create(){
 
         // this.generateBackground();
-        this.generateTitleText();
+        // this.generateTitleText();
+        let title = new TitleText(this);
 
 
         this.tileMap = this.make.tilemap({tileHeight: Game_Config.UI_RES, tileWidth: Game_Config.UI_RES, height: Game_Config.MAP_SIZE.y, width: Game_Config.MAP_SIZE.x});
@@ -57,11 +61,11 @@ export default class MainMenu extends Phaser.Scene {
         new TimeOfDayManager(this);
         new SkyManager(this.tileMap, this);
 
-        // let box = new Box(this.tileMap, UI_TileSets.boxStyle3, 0, Game_Config.UI_tilesToWorld(4), Game_Config.UI_worldToTiles(this.game.scale.width), 10);
+        let box = new Box(this.tileMap, UI_TileSets.boxStyle3, 0, Game_Config.UI_tilesToWorld(4), Game_Config.UI_worldToTiles(this.game.scale.width), 10);
        
 
         this.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
-            this.ev.removeAllListeners();
+            title.clickEvent.removeAllListeners();
 
             this.scene.start('main');
             this.scene.start('UI');
@@ -79,37 +83,5 @@ export default class MainMenu extends Phaser.Scene {
             .setScale(2);
     }
 
-    generateTitleText(){
-
-        let titleText = this.add.bitmapText(Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(6), 'ant_party', 'Welcome to TAPROOT', 60)
-            .setTint(0x333333)
-            .setOrigin(0,0)
-            .setDropShadow(2,2,0xffffff)
-            .setDepth(10);
-
-        titleText.postFX.addShine(1, 0.8, 3,false);
-
-        if(this.scale.width < titleText.width - Game_Config.UI_tilesToWorld(2)){
-            titleText.setText('Welcome\nto\nTAPROOT')
-            titleText.setPosition(Game_Config.UI_tilesToWorld(1), Game_Config.UI_tilesToWorld(6))
-            titleText.setFontSize(40)
-        }
-
-        this.ev = this.game.events.on(Events.screenSizeChange, (screenDim: Position) => {
-            if(screenDim.x <  titleText.width - Game_Config.UI_tilesToWorld(2)){
-                titleText.setText('Welcome\nto\nTAPROOT')
-                titleText.setPosition(Game_Config.UI_tilesToWorld(1), Game_Config.UI_tilesToWorld(6))
-                titleText.setFontSize(40)
-            } else {
-                titleText.setText('Welcome to TAPROOT')
-                titleText.setPosition(Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(6))
-                titleText.setFontSize(60)
-            }
-
-            titleText.resetPostPipeline();
-            titleText.postFX.addShine(1, 0.8, 3,false);
-        })
-
-    }
-
+    
 }
