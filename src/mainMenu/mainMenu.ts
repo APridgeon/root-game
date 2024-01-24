@@ -49,20 +49,13 @@ export default class MainMenu extends Phaser.Scene {
     }
 
     create(){
-
-        // this.generateBackground();
-        // this.generateTitleText();
-        let title = new TitleText(this);
-
-
         this.tileMap = this.make.tilemap({tileHeight: Game_Config.UI_RES, tileWidth: Game_Config.UI_RES, height: Game_Config.MAP_SIZE.y, width: Game_Config.MAP_SIZE.x});
         this.tiles = this.tileMap.addTilesetImage('UI_tiles', 'UI_tiles', Game_Config.UI_RES, Game_Config.UI_RES, 0, 0);
 
         new TimeOfDayManager(this);
         new SkyManager(this.tileMap, this);
 
-        let box = new Box(this.tileMap, UI_TileSets.boxStyle3, 0, Game_Config.UI_tilesToWorld(4), Game_Config.UI_worldToTiles(this.game.scale.width), 10);
-       
+        let title = new TitleText(this);
 
         this.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
             title.clickEvent.removeAllListeners();

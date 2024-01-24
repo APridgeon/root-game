@@ -39,8 +39,9 @@ class Synth {
     public playNote(freq: number, length: number): void {
 
         this.osc.frequency.setValueAtTime(freq, this._ctx.currentTime);
+        this.osc.frequency.setValueAtTime(0, this._ctx.currentTime + length);
         this.gain.gain.linearRampToValueAtTime(this.volume, this._ctx.currentTime + length);
-        this.gain.gain.setValueAtTime(0.001, this._ctx.currentTime + length);
+        // this.gain.gain.setValueAtTime(0.001, this._ctx.currentTime + length);
     }
 
 }

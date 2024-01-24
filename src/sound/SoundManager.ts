@@ -9,7 +9,10 @@ class SoundManager {
     private ctx: AudioContext;
     private synth: Synth;
 
+    private soundEvent: Phaser.Time.TimerEvent;
+
     private notes: number[] = [130.81, 146.83,  164.81, 196.00, 220.00];
+    private times: number[] = [500, 250, 125];
 
     constructor(scene: Phaser.Scene){
 
@@ -40,17 +43,20 @@ class SoundManager {
     private generalSounds(): void {
         this._scene.events.on('audio Initiated', () => {
 
-            this._scene.time.addEvent({
-                delay: 1000,
+            this.soundEvent = this._scene.time.addEvent({
+                delay: 500,
                 loop: true,
                 callback: () => {
                     let note = this.notes[Phaser.Math.RND.integerInRange(0, this.notes.length - 1)];
+                    let time = this.times[Phaser.Math.RND.integerInRange(0, this.times.length - 1)];
                     this.synth.playNote(note, 0.49);
+                    this.soundEvent.delay = time;
 
                 }
             })
 
         })
+
     }
 
 

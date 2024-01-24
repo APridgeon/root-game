@@ -19,6 +19,7 @@ export default class UI extends Phaser.Scene {
     box: Box;
     barometer: Barometer;
     fullscreenButton: Phaser.GameObjects.Image;
+    soundButton: Phaser.GameObjects.Image;
     mouse: Phaser.GameObjects.Image;
 
     waterText: Phaser.GameObjects.BitmapText;
@@ -141,6 +142,19 @@ export default class UI extends Phaser.Scene {
 
         }, this);
 
+        this.soundButton = this.add.image(this.game.scale.width - Game_Config.UI_tilesToWorld(7), Game_Config.UI_tilesToWorld(2), 'inputPrompts', (24 * 34) + 3)
+            .setOrigin(0, 0)
+            .setScale(Game_Config.UI_SCALE)
+            .setTint(0xffffff)
+            .setInteractive();
+
+        this.soundButton.on(Phaser.Input.Events.POINTER_OVER, () => {
+            this.soundButton.setTint(0xff4444);
+        }, this);
+        this.soundButton.on(Phaser.Input.Events.POINTER_OUT, () => {
+            this.soundButton.setTint(0xffffff);
+        }, this);
+
 
         this.cameras.main.setZoom(1);
 
@@ -156,6 +170,8 @@ export default class UI extends Phaser.Scene {
 
         this.fullscreenButton
             .setPosition(Game_Config.UI_roundWorldToTileFactor(screenDim.x, -1) - Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(2))
+        this.soundButton
+                .setPosition(Game_Config.UI_roundWorldToTileFactor(screenDim.x, -1) - Game_Config.UI_tilesToWorld(7), Game_Config.UI_tilesToWorld(2))
         this.barometer.setPosition({x: Game_Config.UI_tilesToWorld(1), y: screenDim.y - Game_Config.UI_tilesToWorld(7)});
         this.box.setPosition({x: 0, y: screenDim.y - Game_Config.UI_tilesToWorld(5)});
         this.box.SetBoxSize(Game_Config.UI_worldToTiles(screenDim.x) , 5);
