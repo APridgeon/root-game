@@ -50,6 +50,7 @@ class SoundManager {
                     let note = this.notes[Phaser.Math.RND.integerInRange(0, this.notes.length - 1)];
                     let time = this.times[Phaser.Math.RND.integerInRange(0, this.times.length - 1)];
                     this.synth.playNote(note, 0.49);
+                    // @ts-ignore
                     this.soundEvent.delay = time;
 
                 }
