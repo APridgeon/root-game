@@ -28,6 +28,15 @@ class SoundManager {
             //     this.playNote(note, 0.4);
             // })
 
+            scene.game.events.on(Events.soundToggle, () => {
+                console.log("sound toggle!")
+                if(this.soundEvent.paused){
+                    this.soundEvent.paused = false;
+                } else {
+                    this.soundEvent.paused = true;
+                }
+            })
+
 
     }
 

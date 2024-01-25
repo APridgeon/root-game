@@ -12,5 +12,6 @@ export enum Events {
     DeadRootToLand = 'deadRootToLand',
     TimeOfDayChange = 'timeOfDayChange',
 
-    screenSizeChange = 'screenSizeChange'
+    screenSizeChange = 'screenSizeChange',
+    soundToggle = 'soundToggle'
 }

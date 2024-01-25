@@ -155,6 +155,10 @@ export default class UI extends Phaser.Scene {
             this.soundButton.setTint(0xffffff);
         }, this);
 
+        this.soundButton.on(Phaser.Input.Events.POINTER_UP, () => {
+            this.game.events.emit(Events.soundToggle);
+        })
+
 
         this.cameras.main.setZoom(1);
 
