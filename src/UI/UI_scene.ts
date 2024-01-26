@@ -7,6 +7,7 @@ import UI_TileSets from "./UI_TileSets";
 import Barometer from "./barometer";
 import Box from "./box";
 import * as Phaser from "phaser";
+import Button from "./button";
 
 export default class UI extends Phaser.Scene {
 
@@ -18,8 +19,8 @@ export default class UI extends Phaser.Scene {
 
     box: Box;
     barometer: Barometer;
-    fullscreenButton: Phaser.GameObjects.Image;
-    soundButton: Phaser.GameObjects.Image;
+    fullscreenButton: Button;
+    soundButton: Button;
     mouse: Phaser.GameObjects.Image;
 
     waterText: Phaser.GameObjects.BitmapText;
@@ -113,53 +114,22 @@ export default class UI extends Phaser.Scene {
                 .setScale(Game_Config.FONT_SCALE * 2)
         })
 
-
-        this.fullscreenButton = this.add.image(this.game.scale.width - Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(2), 'inputPrompts', (10 * 34) + 15)
-            .setOrigin(0, 0)
-            .setScale(Game_Config.UI_SCALE)
-            .setTint(0xffffff)
-            .setInteractive();
-
-        this.fullscreenButton.on(Phaser.Input.Events.POINTER_OVER, () => {
-            this.fullscreenButton.setTint(0xff4444);
-        }, this);
-        this.fullscreenButton.on(Phaser.Input.Events.POINTER_OUT, () => {
-            this.fullscreenButton.setTint(0xffffff);
-        }, this);
-
-        this.fullscreenButton.on(Phaser.Input.Events.POINTER_UP, function ()
-        {
-            let test = this as Phaser.Scene;
-
-            if (this.scale.isFullscreen)
-            {
-                this.scale.stopFullscreen();
-            }
-            else
-            {
-                this.scale.startFullscreen();
-            }
-
-        }, this);
-
-        this.soundButton = this.add.image(this.game.scale.width - Game_Config.UI_tilesToWorld(7), Game_Config.UI_tilesToWorld(2), 'inputPrompts', (24 * 34) + 3)
-            .setOrigin(0, 0)
-            .setScale(Game_Config.UI_SCALE)
-            .setTint(0xffffff)
-            .setInteractive();
-
-        this.soundButton.on(Phaser.Input.Events.POINTER_OVER, () => {
-            this.soundButton.setTint(0xff4444);
-        }, this);
-        this.soundButton.on(Phaser.Input.Events.POINTER_OUT, () => {
-            this.soundButton.setTint(0xffffff);
-        }, this);
-
-        this.soundButton.on(Phaser.Input.Events.POINTER_UP, () => {
+        this.soundButton = new Button(this, {x: Game_Config.UI_roundWorldToTileFactor(this.game.scale.width) - Game_Config.UI_tilesToWorld(7), y: Game_Config.UI_tilesToWorld(2)}, (24 * 34) + 3);
+        this.soundButton.image.on(Phaser.Input.Events.POINTER_UP, () => {
             this.game.events.emit(Events.soundToggle);
         })
 
-
+        this.fullscreenButton = new Button(this, {x: Game_Config.UI_roundWorldToTileFactor(this.game.scale.width) - Game_Config.UI_tilesToWorld(4), y: Game_Config.UI_tilesToWorld(2)}, (10 * 34) + 15);
+        this.fullscreenButton.image.on(Phaser.Input.Events.POINTER_UP, function () {
+            if (this.scale.isFullscreen){
+                this.scale.stopFullscreen();
+            }
+            else{
+                this.scale.startFullscreen();
+            }
+        }, this);
+      
+        
         this.cameras.main.setZoom(1);
 
 
@@ -171,11 +141,6 @@ export default class UI extends Phaser.Scene {
 
 
     private resize(screenDim: Position){
-
-        this.fullscreenButton
-            .setPosition(Game_Config.UI_roundWorldToTileFactor(screenDim.x, -1) - Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(2))
-        this.soundButton
-                .setPosition(Game_Config.UI_roundWorldToTileFactor(screenDim.x, -1) - Game_Config.UI_tilesToWorld(7), Game_Config.UI_tilesToWorld(2))
         this.barometer.setPosition({x: Game_Config.UI_tilesToWorld(1), y: screenDim.y - Game_Config.UI_tilesToWorld(7)});
         this.box.setPosition({x: 0, y: screenDim.y - Game_Config.UI_tilesToWorld(5)});
         this.box.SetBoxSize(Game_Config.UI_worldToTiles(screenDim.x) , 5);

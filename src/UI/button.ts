@@ -1,6 +1,7 @@
 import { Events } from "../events/events";
 import Game_Config from "../game_config";
 import { Position } from "../plant/plantData";
+import * as Phaser from "phaser";
 
 export default class Button {
 
@@ -11,14 +12,27 @@ export default class Button {
     offset: Position;
     imageIndex: number;
 
+    top: boolean;
+    right: boolean;
+
     constructor(scene: Phaser.Scene, pos: Position, imageIndex: number){
         this._scene = scene;
         this.pos = pos;
+        this.offset = {x: Game_Config.UI_roundWorldToTileFactor(this._scene.game.scale.width) - pos.x, y: Game_Config.UI_roundWorldToTileFactor(this._scene.game.scale.height) - pos.y};
         this.imageIndex = imageIndex;
 
+
+        this.checkPosition();
         this.createImage();
         this.setupInteraction();
         this.setupEvents();
+    }
+
+    checkPosition(){
+        // this.right = (this.pos.x > (this._scene.game.scale.width/2)) ? true : false;
+        // this.top = (this.pos.y > (this._scene.game.scale.height/2)) ? false : true;
+        this.top = true;
+        this.right = true;
     }
 
     createImage(){
@@ -39,8 +53,11 @@ export default class Button {
     }
 
     setupEvents(){
+
         this._scene.game.events.on(Events.screenSizeChange, (screenDim: Position) => {
-            this.image.setPosition(Game_Config.UI_roundWorldToTileFactor(screenDim.x, -1) - Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(2))
+            let x = (this.right) ? Game_Config.UI_roundWorldToTileFactor(screenDim.x) - this.offset.x : this.pos.x;
+            let y = (this.top) ? this.pos.y : Game_Config.UI_roundWorldToTileFactor(screenDim.y) - this.offset.y;
+            this.image.setPosition(x, y);
         })
     }
 
