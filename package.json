@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "phaser": "^3.60.0",
-    "Phaser": "npm:phaser@^3.60.0-beta.22",
     "phaser3-rex-plugins": "^1.1.84"
   }
 }
