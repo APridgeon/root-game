@@ -10,12 +10,16 @@ export default class Box {
     boxLayer: Phaser.Tilemaps.TilemapLayer;
     boxStyle: Map<BoxTiles, integer>;
     pos: Position;
+    width: number;
+    height: number
 
     constructor(tilemap: Phaser.Tilemaps.Tilemap, boxStyle: Map<BoxTiles, integer>, x: number, y: number, width: number, height: number){
         this.pos = {x: x, y: y};
         this.tilemap = tilemap;
         this.boxLayer = this.tilemap.createBlankLayer(this.layerName,'UI_tiles', this.pos.x, this.pos.y);
         this.boxStyle = boxStyle;
+        this.width = width;
+        this.height = height;
 
         let boxData = [[this.boxStyle.get(BoxTiles.topLeft), Array(width - 2).fill(this.boxStyle.get(BoxTiles.top)), this.boxStyle.get(BoxTiles.topRight)].flat(1)];
         Array(height - 2).fill([this.boxStyle.get(BoxTiles.left),  Array(width - 2).fill(this.boxStyle.get(BoxTiles.surrounded)), this.boxStyle.get(BoxTiles.right)].flat(1)).forEach(row => boxData.push(row));

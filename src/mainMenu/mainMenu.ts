@@ -7,6 +7,7 @@ import { Events } from '../events/events';
 import SkyManager from '../map/display/skyManager';
 import TimeOfDayManager, { TimeOfDay } from '../general/timeOfDay';
 import TitleText from './titleText';
+import PlayerChoices from './playerChoices';
 
 export default class MainMenu extends Phaser.Scene {
 
@@ -56,6 +57,7 @@ export default class MainMenu extends Phaser.Scene {
         new SkyManager(this.tileMap, this);
 
         let title = new TitleText(this);
+        new PlayerChoices(this);
 
         this.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
             title.clickEvent.removeAllListeners();
