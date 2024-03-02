@@ -15,7 +15,7 @@ export default class MainMenu extends Phaser.Scene {
     tiles: Phaser.Tilemaps.Tileset;
     skyLayer: Phaser.Tilemaps.TilemapLayer;
 
-    titleText: Phaser.GameObjects.BitmapText;
+    title: TitleText;
 
     ev: Phaser.Events.EventEmitter;
 
@@ -57,6 +57,7 @@ export default class MainMenu extends Phaser.Scene {
         new SkyManager(this.tileMap, this);
 
         let title = new TitleText(this);
+        this.title = title;
         new PlayerChoices(this);
 
         this.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
