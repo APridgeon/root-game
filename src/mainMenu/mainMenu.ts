@@ -54,9 +54,7 @@ export default class MainMenu extends Phaser.Scene {
         this.tiles = this.tileMap.addTilesetImage('UI_tiles', 'UI_tiles', Game_Config.UI_RES, Game_Config.UI_RES, 0, 0);
 
         new TimeOfDayManager(this);
-        let skyManager = new SkyManager(this.tileMap, this);
-        skyManager._currentTileLayer.y += (Game_Config.UI_tilesToWorld(7))
-        skyManager._newTileLayer.y += (Game_Config.UI_tilesToWorld(7))
+        new SkyManager(this.tileMap, this);
 
         let title = new TitleText(this);
         this.title = title;

@@ -58,8 +58,8 @@ export default class TitleText {
 
         this.bitmapText.setPosition(pos.x, pos.y)
         this.bitmapText.setFontSize(fontSize)
-        this.backgroundBox.setPosition({x: Game_Config.UI_tilesToWorld(0), y: Game_Config.UI_tilesToWorld(0)});
-        this.backgroundBox.SetBoxSize(Game_Config.UI_worldToTiles(this._scene.game.scale.width), Game_Config.UI_worldToTiles(this.bitmapText.height) + 4);
+        this.backgroundBox.setPosition({x: pos.x - Game_Config.UI_tilesToWorld(2), y: pos.y - Game_Config.UI_tilesToWorld(2)});
+        this.backgroundBox.SetBoxSize(Game_Config.UI_worldToTiles(this.bitmapText.width) + 4, Game_Config.UI_worldToTiles(this.bitmapText.height) + 4);
         
         this.bitmapText.resetPostPipeline();
         this.bitmapText.postFX.addShine(1, 0.8, 3,false);
