@@ -14,8 +14,8 @@ class SkyManager {
     private transitionDuration = 5000;
 
     private _tilemap: Phaser.Tilemaps.Tilemap;
-    private _currentTileLayer: Phaser.Tilemaps.TilemapLayer;
-    private _newTileLayer: Phaser.Tilemaps.TilemapLayer;
+    _currentTileLayer: Phaser.Tilemaps.TilemapLayer;
+    _newTileLayer: Phaser.Tilemaps.TilemapLayer;
     private _currentTileSet: Phaser.Tilemaps.Tileset;
     private _newTileSet: Phaser.Tilemaps.Tileset;
 
