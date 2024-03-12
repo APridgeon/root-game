@@ -116,11 +116,17 @@ export default class PlayerChoices {
             this.plantChoices.forEach((text,i) => {
                 text.setPosition(Game_Config.UI_tilesToWorld(6), Game_Config.UI_tilesToWorld(11 + 2 + i))
             })
+            this.plantChoicesRects.forEach((rect, i) => {
+                rect.setPosition(Game_Config.UI_tilesToWorld(6), Game_Config.UI_tilesToWorld(11 + 2 + i))
+            })
         } else {
             this.backgroundBox.setPosition({x: Game_Config.UI_tilesToWorld(2), y: Game_Config.UI_tilesToWorld(15)})
             this.titleText.setPosition(Game_Config.UI_tilesToWorld(3), Game_Config.UI_tilesToWorld(16))
             this.plantChoices.forEach((text,i) => {
                 text.setPosition(Game_Config.UI_tilesToWorld(3), Game_Config.UI_tilesToWorld(16 + 2 + i))
+            })
+            this.plantChoicesRects.forEach((rect, i) => {
+                rect.setPosition(Game_Config.UI_tilesToWorld(3), Game_Config.UI_tilesToWorld(16 + 2 + i))
             })
         }
     }
