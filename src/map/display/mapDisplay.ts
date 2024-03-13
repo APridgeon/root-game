@@ -55,7 +55,7 @@ export default class RuleTileMapDisplay
         this._tilemap = scene.make.tilemap({tileWidth: Game_Config.MAP_RES, tileHeight: Game_Config.MAP_RES, width: Game_Config.MAP_SIZE.x, height: Game_Config.MAP_SIZE.y});
         this.tiles = this._tilemap.addTilesetImage(texture, null, Game_Config.MAP_RES, Game_Config.MAP_RES, 0, 0);
 
-        new SkyManager(this._tilemap, scene);
+        new SkyManager(scene);
         this.setUpTileLayers();
         this.setUpBackgrounds();
         this.setUpAnimations();

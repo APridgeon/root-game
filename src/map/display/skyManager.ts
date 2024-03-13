@@ -7,13 +7,14 @@ import { Position } from "../../plant/plantData";
 
 class SkyManager {
 
+
     private _scene: Phaser.Scene;
     private timeOfDay: TimeOfDay;
     private timeOfDaySkyTextures: Map<TimeOfDay, string>;
     private skyResolution: Position  = {x: 150, y: 250}; 
-    private transitionDuration = 5000;
+    private transitionDuration = 3000;
 
-    private _tilemap: Phaser.Tilemaps.Tilemap;
+    skyTileMap: Phaser.Tilemaps.Tilemap;
     private _currentTileLayer: Phaser.Tilemaps.TilemapLayer;
     private _newTileLayer: Phaser.Tilemaps.TilemapLayer;
     private _currentTileSet: Phaser.Tilemaps.Tileset;
@@ -23,11 +24,10 @@ class SkyManager {
     private cloudsAlphaTween: Phaser.Tweens.Tween;
 
 
-    constructor(tilemap: Phaser.Tilemaps.Tilemap, scene: Phaser.Scene){
+    constructor(scene: Phaser.Scene){
         this._scene = scene;
 
         this.timeOfDay = TimeOfDay.Dawn;
-        this._tilemap = tilemap;
 
         this.generateTilesets();
         this.setupSkyTileLayer();
@@ -46,41 +46,57 @@ class SkyManager {
             [TimeOfDay.Night, 'sky-night']
         ])
 
-        this._currentTileSet = this._tilemap.addTilesetImage('current', this.timeOfDaySkyTextures.get(this.timeOfDay), this.skyResolution.x, this.skyResolution.y, 0, 0);
-        this._newTileSet = this._tilemap.addTilesetImage('new', this.timeOfDaySkyTextures.get(this.timeOfDay), this.skyResolution.x, this.skyResolution.y, 0, 0);
+        this.skyTileMap = this._scene.make.tilemap({tileHeight: this.skyResolution.y, tileWidth: this.skyResolution.x})
+
+        this._currentTileSet = this.skyTileMap.addTilesetImage('current', this.timeOfDaySkyTextures.get(this.timeOfDay), this.skyResolution.x, this.skyResolution.y, 0, 0);
+        this._newTileSet = this.skyTileMap.addTilesetImage('new', this.timeOfDaySkyTextures.get(this.timeOfDay), this.skyResolution.x, this.skyResolution.y, 0, 0);
 
     }
 
     private setupSkyTileLayer(): void {
-        this._currentTileLayer = this._tilemap.createBlankLayer('skyBackground', this._currentTileSet, 0,  0, Math.round((Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x))/this.skyResolution.x) + 1, 1)
+        this._currentTileLayer = this.skyTileMap.createBlankLayer('skyBackground', this._currentTileSet, 0, 0, undefined, 1)
             .setAlpha(1)
             .setDepth(-5)
             .setOrigin(0, 0)
-            .setScale(((Game_Config.MAP_SCALE/Game_Config.MAP_RES)*(this.skyResolution.x)), ((Game_Config.MAP_SCALE/Game_Config.MAP_RES)*(this.skyResolution.y)))
-            .forEachTile(tile => tile.index = 0);
+            .setScale(Game_Config.MAP_SCALE)
+            .forEachTile(tile => tile.index = 0)
 
 
-        this._newTileLayer = this._tilemap.createBlankLayer('newSkyBackground', this._newTileSet, 0, 0, Math.round((Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x))/this.skyResolution.x) + 1, 1)
-            .setAlpha(0)
+        this._newTileLayer = this.skyTileMap.createBlankLayer('newSkyBackground', this._newTileSet, 0, 0, undefined, 1)
+            .setAlpha(1)
+            .setDepth(-4)
             .setOrigin(0, 0)
-            .setScale(((Game_Config.MAP_SCALE/Game_Config.MAP_RES)*(this.skyResolution.x)), ((Game_Config.MAP_SCALE/Game_Config.MAP_RES)*(this.skyResolution.y)))
-            .forEachTile(tile => tile.index = 0);
+            .setScale(Game_Config.MAP_SCALE)
+            .forEachTile(tile => {
+                tile.index = 0;
+                tile.alpha = 0;
+            });
+        
     }
 
     private setSkyTileSetTransition(){
         let newTexture = this._scene.textures.get(this.timeOfDaySkyTextures.get(this.timeOfDay))
         this._newTileSet.setImage(newTexture);
 
-        this._scene.tweens.add({
-            targets: this._newTileLayer,
-            duration: this.transitionDuration,
-            alpha: 1,
-            ease: 'linear',
-            onComplete: () => {
+        //TODO: reuse timer events 
+
+        let fade = this._scene.time.addEvent({
+            delay: 250,
+            callback: () => {
+                this._newTileLayer.forEachTile( tile => tile.setAlpha(tile.alpha + 0.05))
+            }, 
+            repeat: 19
+        })
+        let fadeEnd = this._scene.time.addEvent({
+            delay: 500 * 10,
+            callback: () => {
                 this._currentTileSet.setImage(newTexture);
-                this._newTileLayer.setAlpha(0);
+                this._newTileLayer.forEachTile(tile => tile.setAlpha(0))
+                fade.destroy();
+                fadeEnd.destroy();
             }
         })
+
     }
 
     private setupEvents(){
