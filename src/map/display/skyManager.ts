@@ -75,20 +75,21 @@ class SkyManager {
     }
 
     private setSkyTileSetTransition(){
+        
         let newTexture = this._scene.textures.get(this.timeOfDaySkyTextures.get(this.timeOfDay))
         this._newTileSet.setImage(newTexture);
 
         //TODO: reuse timer events 
 
         let fade = this._scene.time.addEvent({
-            delay: 250,
+            delay: this.transitionDuration/20,
             callback: () => {
                 this._newTileLayer.forEachTile( tile => tile.setAlpha(tile.alpha + 0.05))
             }, 
             repeat: 19
         })
         let fadeEnd = this._scene.time.addEvent({
-            delay: 500 * 10,
+            delay: this.transitionDuration,
             callback: () => {
                 this._currentTileSet.setImage(newTexture);
                 this._newTileLayer.forEachTile(tile => tile.setAlpha(0))

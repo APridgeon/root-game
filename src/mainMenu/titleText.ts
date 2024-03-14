@@ -46,13 +46,21 @@ export default class TitleText {
     setCorrectSize(screenDim: Position){
         let pos: Position;
         let fontSize;
+
         if(screenDim.x <  this.bitmapText.width - Game_Config.UI_tilesToWorld(2)){
             this.bitmapText.setText('Welcome\nto\nTAPROOT')
-            pos = { x: Game_Config.UI_tilesToWorld(3), y: Game_Config.UI_tilesToWorld(4)};
+            let textWidth = 195;
+
+            let xOffset = screenDim.x - textWidth;
+            let titleXMargin = xOffset/2;
+            pos = { x: Game_Config.UI_roundWorldToTileFactor(titleXMargin), y: Game_Config.UI_tilesToWorld(4)};
             fontSize = 40;
         } else {
             this.bitmapText.setText('Welcome to TAPROOT')
-            pos = { x: Game_Config.UI_tilesToWorld(4), y: Game_Config.UI_tilesToWorld(2)};
+            let textWidth = 660
+            let xOffset = screenDim.x - textWidth;
+            let titleXMargin = xOffset/2;
+            pos = { x: Game_Config.UI_roundWorldToTileFactor(titleXMargin), y: Game_Config.UI_tilesToWorld(2)};
             fontSize = 60;
         }
 
