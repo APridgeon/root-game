@@ -43,11 +43,13 @@ export default class PlantDisplay {
 
 
         let pixel = (this._scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.getPostPipeline('PixelatedFX') as PixelatedFX;
-        this.graphicsObject = this._scene.add.graphics({x: 0, y:0});
+        this.graphicsObject = this._scene.add.graphics({x:0, y:0});
         this.graphicsObject.setPostPipeline(pixel);
         let post = this.graphicsObject.postPipelines[0] as PixelatedFX;
 
         let scale = Game_Config.MAP_SCALE;
+        if(gameManager.mobile) scale *= 1.5;
+        console.log(this._scene.cameras.main.zoom)
         
         post.setup(scale - 2, {NE: 0.1, SE: 0.1, SW: 0, NW: 0});
 

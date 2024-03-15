@@ -13,7 +13,7 @@ const fragShader = `
     varying vec2 outTexCoord;
     void main ()
     {
-        float pixelSize = floor(2.0 + amount);
+        float pixelSize = floor(2.0 + (amount));
         vec2 center = pixelSize * floor(outTexCoord * resolution / pixelSize) + pixelSize * vec2(0.5, 0.5);
         vec2 corner1 = center + pixelSize * vec2(-0.5, -0.5);
         vec2 corner2 = center + pixelSize * vec2(+0.5, -0.5);
