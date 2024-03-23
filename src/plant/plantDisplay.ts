@@ -40,7 +40,7 @@ export default class PlantDisplay {
             .setScale(Game_Config.MAP_SCALE)
             .setVisible(true);
 
-        this.im = this.scene.add.image(0, 0, undefined)
+        this.graphicsIm = this.scene.add.image(0, 0, undefined)
             .setOrigin(0, 0)
             .setDepth(100000)
             .setTint(0xff0000)
