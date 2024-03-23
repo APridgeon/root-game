@@ -27,8 +27,6 @@ export default class PlantDisplay {
         return this._plantTileLayer;
     }
 
-    private plantTileData: number[][] =  [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
-
     constructor(scene: Main, plantManager: PlantManager){
 
         this._scene = scene;
@@ -65,32 +63,32 @@ export default class PlantDisplay {
 
         
         this.addAerialTree(this._plantManager.userPlant, true);
-        let userTree = this.plantTrees.get(this._plantManager.userPlant);
-        console.log(userTree.treeSettings);
+
         this._plantManager.aiPlants.forEach(aiplant => {
             this.addAerialTree(aiplant);
         })
     }
 
     private addToTileIndexData(plantData: PlantData, plantTileSet: Map<PlantTile, integer>): void {
-        // PlantGrowthTiles.AddToTileSet(plantData, this.plantTileData);
-        plantData.__rootData.forEach(pos => {
-            this.plantTileData[pos.y][pos.x] = PlantTileSets.ConvertToTileIndex(pos.x, pos.y, plantData, plantTileSet);
-        })
+        if(plantData.alive){
+            plantData.__rootData.forEach(pos => {
+                let index = PlantTileSets.ConvertToTileIndex(pos.x, pos.y, plantData, plantTileSet);
+                this.plantTileLayer.putTileAt(index, pos.x, pos.y)
+            })
+        } else {
+            plantData.__rootData.forEach(pos => {
+                this.plantTileLayer.putTileAt(-1, pos.x, pos.y)
+            })
+            plantData.__rootData = [];
+        }
+        
     }
 
     public updatePlantDisplay(): void {
-
-        this.plantTileData = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
-
         this.addToTileIndexData(this._plantManager.userPlant, PlantTileSets.rootSet1);
         this._plantManager.aiPlants.forEach(aiplant => {
             this.addToTileIndexData(aiplant, PlantTileSets.rootSet1);
         })
-
-        this._plantTileLayer
-            .putTilesAt(this.plantTileData, 0, 0)
-
     }
 
     private addAerialTree(plantData: PlantData, user: boolean = false){
@@ -128,8 +126,7 @@ export default class PlantDisplay {
             tree.buds.forEach(bud => {
                 bud.growing = true;
             })
-            // treeSettings.startLeafGrowth += 100;
-            treeSettings.newBranchesTerminateSooner += 100;
+            treeSettings.lineWidth += 0.2
         })
             
     }

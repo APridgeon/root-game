@@ -116,7 +116,7 @@ export default class PlantManager {
         this.plantDisplay.destroyAerialTree(plantData);
 
         scene.events.emit(Events.DeadRootToLand, plantData.__rootData);
-        plantData.__rootData = [];
+        // plantData.__rootData = [];
 
         if(plantData === this._userPlant){
             scene.events.emit(Events.GameOver);
