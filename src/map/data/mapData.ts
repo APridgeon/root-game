@@ -8,11 +8,11 @@ import MapManager from "../mapManager";
 
 export default class MapData {
 
-    public _landGenerator: LandGenerator;
+    landGenerator: LandGenerator;
     _mapManager: MapManager;
 
     get landDataBeforeHoles(){
-        return this._landGenerator.landDataBeforeHoles;
+        return this.landGenerator.landDataBeforeHoles;
     }
 
     private _waterGenerator: WaterGenerator;
@@ -33,7 +33,7 @@ export default class MapData {
         this._mapManager = mapManager;
         this.noise = noise;
 
-        this._landGenerator = new LandGenerator(this, this.noise);
+        this.landGenerator = new LandGenerator(this, this.noise);
         this._waterGenerator = new WaterGenerator(this, this.noise);
 
 

@@ -21,10 +21,7 @@ export default class RuleTileMapDisplay
     private waterDataTextureIndex: number[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
     private landBeforeHolesTextureIndex: number[][] =  [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
     
-    private _tilemap: Phaser.Tilemaps.Tilemap;
-    get tilemap(){
-        return this._tilemap
-    }
+    tilemap: Phaser.Tilemaps.Tilemap;
 
     private tiles: Phaser.Tilemaps.Tileset;
     private soilTiles: Phaser.Tilemaps.Tileset;
@@ -33,10 +30,7 @@ export default class RuleTileMapDisplay
     private waterTileLayer: Phaser.Tilemaps.TilemapLayer;
 
 
-    private _mapAnimFX: MapAnimFX[] = [];
-    get mapAnimFX(){
-        return this._mapAnimFX;
-    }
+    mapAnimFX: MapAnimFX[] = [];
 
     private soilBackgroundTileLayer: Phaser.Tilemaps.TilemapLayer;
 
@@ -47,13 +41,13 @@ export default class RuleTileMapDisplay
         this._mapData = mapData;
         this._texture = texture;
 
-        this.convertToRuleTileData2(this._mapData._landGenerator.landData);
+        this.convertToRuleTileData2(this._mapData.landGenerator.landData);
         this.waterDataTextureIndex = this.convertToRuleTileData(this._mapData.waterData, RuleTileSets.waterTileSet);
         this.landBeforeHolesTextureIndex = this.convertToRuleTileData(this._mapData.landDataBeforeHoles, RuleTileSets.landTileSet);
 
 
-        this._tilemap = scene.make.tilemap({tileWidth: Game_Config.MAP_RES, tileHeight: Game_Config.MAP_RES, width: Game_Config.MAP_SIZE.x, height: Game_Config.MAP_SIZE.y});
-        this.tiles = this._tilemap.addTilesetImage(texture, null, Game_Config.MAP_RES, Game_Config.MAP_RES, 0, 0);
+        this.tilemap = scene.make.tilemap({tileWidth: Game_Config.MAP_RES, tileHeight: Game_Config.MAP_RES, width: Game_Config.MAP_SIZE.x, height: Game_Config.MAP_SIZE.y});
+        this.tiles = this.tilemap.addTilesetImage(texture, null, Game_Config.MAP_RES, Game_Config.MAP_RES, 0, 0);
 
         new SkyManager(scene);
         this.setUpTileLayers();
@@ -92,7 +86,7 @@ export default class RuleTileMapDisplay
     }
 
     public updateRuleTileMap(){
-        this.convertToRuleTileData2(this._mapData._landGenerator.landData);
+        this.convertToRuleTileData2(this._mapData.landGenerator.landData);
         this.waterDataTextureIndex = this.convertToRuleTileData(this._mapData.waterData, RuleTileSets.waterTileSet);
 
         this.landTileLayer.putTilesAt(this.landDataTextureIndex, 0, 0);
@@ -112,7 +106,7 @@ export default class RuleTileMapDisplay
         let W: Position = {x: pos.x - 1, y: pos.y};
 
         let tileArray = [N, E, S, W, pos];
-        let landData = this._mapData._landGenerator.landData
+        let landData = this._mapData.landGenerator.landData
         let waterData = this._mapData.waterData;
 
         tileArray.forEach(tile => {
@@ -138,13 +132,13 @@ export default class RuleTileMapDisplay
 
     private setUpBackgrounds(): void {
                 
-        let cloneOfTileLayer = this._tilemap.createBlankLayer('landBeforeHoles', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
+        let cloneOfTileLayer = this.tilemap.createBlankLayer('landBeforeHoles', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
         .setOrigin(0, 0)
         .setAlpha(1)
         .setScale(Game_Config.MAP_SCALE)
         .putTilesAt(this.landBeforeHolesTextureIndex, 0, 0)
 
-        this.soilBackgroundTileLayer = this._tilemap.createBlankLayer('soilBackground', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
+        this.soilBackgroundTileLayer = this.tilemap.createBlankLayer('soilBackground', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
             .setOrigin(0, 0)
             .setAlpha(0.4)
             .setScale(Game_Config.MAP_SCALE)
@@ -158,13 +152,13 @@ export default class RuleTileMapDisplay
 
     private setUpTileLayers(): void {
 
-        this.landTileLayer = this._tilemap.createBlankLayer('land', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
+        this.landTileLayer = this.tilemap.createBlankLayer('land', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
             .setOrigin(0, 0)
             .setScale(Game_Config.MAP_SCALE)
             .putTilesAt(this.landDataTextureIndex, 0, 0)
             .setDepth(1);
 
-        this.waterTileLayer = this._tilemap.createBlankLayer('water', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
+        this.waterTileLayer = this.tilemap.createBlankLayer('water', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
             .setOrigin(0,0)
             .setScale(Game_Config.MAP_SCALE)
             .putTilesAt(this.waterDataTextureIndex, 0, 0)
@@ -184,7 +178,7 @@ export default class RuleTileMapDisplay
         for(let x = 0; x < Game_Config.MAP_SIZE.x; x++){
             for(let y = Game_Config.MAP_UGROUND_HOLE_LEVEL; y < Game_Config.MAP_SIZE.y; y++){
 
-                if(this._mapData._landGenerator.landData[y][x].landType === LandTypes.Hole){
+                if(this._mapData.landGenerator.landData[y][x].landType === LandTypes.Hole){
                     let threshold = Math.random();
                     if(threshold < 0.05){
 
@@ -192,11 +186,11 @@ export default class RuleTileMapDisplay
                         this.mapAnimFX.push(worms);
 
                     } 
-                    // else if(threshold < 0.08){
+                    else if(threshold < 0.08){
 
-                    //     let mushrooms = new MapAnimFX({x: x, y: y}, AnimatedTile.Mushroom, scene, this.mapAnimFX, 100, false);
-                    //     this.mapAnimFX.push(mushrooms);
-                    // }
+                        let mushrooms = new MapAnimFX({x: x, y: y}, AnimatedTile.Mushroom, scene, this.mapAnimFX, 100, false);
+                        this.mapAnimFX.push(mushrooms);
+                    }
                 }
             }
         }
@@ -206,7 +200,7 @@ export default class RuleTileMapDisplay
 
         let newFX = new MapAnimFX(pos, anim, scene, this.mapAnimFX, 100);
 
-        this._mapAnimFX.push(newFX);
+        this.mapAnimFX.push(newFX);
 
     }
 

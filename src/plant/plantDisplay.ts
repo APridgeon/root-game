@@ -13,46 +13,62 @@ import Main from "../game";
 
 export default class PlantDisplay {
 
-    private _scene: Main;
-    private _plantManager: PlantManager;
+    scene: Main;
+    plantManager: PlantManager;
 
-    private plantTileMap: Phaser.Tilemaps.Tilemap;
-    private plantTileSet: Phaser.Tilemaps.Tileset;
+    plantTileMap: Phaser.Tilemaps.Tilemap;
+    plantTileSet: Phaser.Tilemaps.Tileset;
+    plantTileLayer: Phaser.Tilemaps.TilemapLayer;
+
     plantTrees: Map<PlantData, Tree> = new Map();
+    graphicsObject: Phaser.GameObjects.Graphics;
 
-    private graphicsObject: Phaser.GameObjects.Graphics;
+    graphicsIm: Phaser.GameObjects.Image;
 
-    private _plantTileLayer: Phaser.Tilemaps.TilemapLayer;
-    get plantTileLayer(){
-        return this._plantTileLayer;
-    }
+    
 
     constructor(scene: Main, plantManager: PlantManager){
 
-        this._scene = scene;
-        this._plantManager = plantManager;
+        this.scene = scene;
+        this.plantManager = plantManager;
 
         this.plantTileMap = scene.make.tilemap({width: Game_Config.MAP_SIZE.x, height: Game_Config.MAP_SIZE.y, tileWidth: Game_Config.MAP_RES, tileHeight: Game_Config.MAP_RES});
         this.plantTileSet = this.plantTileMap.addTilesetImage('plantTiles', null, Game_Config.MAP_RES, Game_Config.MAP_RES, 0, 0);
-        this._plantTileLayer = this.plantTileMap.createBlankLayer('plant', this.plantTileSet, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0))
+        this.plantTileLayer = this.plantTileMap.createBlankLayer('plant', this.plantTileSet, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0))
             .setOrigin(0,0)
             .setDepth(10)
             .setScale(Game_Config.MAP_SCALE)
             .setVisible(true);
 
+        this.im = this.scene.add.image(0, 0, undefined)
+            .setOrigin(0, 0)
+            .setDepth(100000)
+            .setTint(0xff0000)
 
-        let pixel = (this._scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.getPostPipeline('PixelatedFX') as PixelatedFX;
-        this.graphicsObject = this._scene.add.graphics({x:0, y:0});
+
+        let pixel = (this.scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.getPostPipeline('PixelatedFX') as PixelatedFX;
+        this.graphicsObject = this.scene.add.graphics({x:0, y:0});
         this.graphicsObject.setPostPipeline(pixel);
         let post = this.graphicsObject.postPipelines[0] as PixelatedFX;
 
         let scale = Game_Config.MAP_SCALE;
         if(gameManager.mobile) scale *= 1.5;
-        console.log(this._scene.cameras.main.zoom)
+        console.log(this.scene.cameras.main.zoom)
         
         post.setup(scale - 2, {NE: 0.1, SE: 0.1, SW: 0, NW: 0});
 
-        this._scene.game.events.on(Events.screenSizeChange, () => {
+        this.scene.game.events.on(Events.screenSizeChange, () => {
+            this.graphicsObject.generateTexture('test1')
+            
+            this.graphicsIm.setTexture('test1');
+            this.graphicsIm.resetPostPipeline();
+            this.graphicsIm.setPostPipeline(pixel);
+            
+            let post2 = this.graphicsIm.postPipelines[0] as PixelatedFX;
+            post2.setup(scale - 2, {NE: 0.1, SE: 0.1, SW: 0, NW: 0});
+
+            
+
             this.graphicsObject.resetPostPipeline();
             this.graphicsObject.setPostPipeline(pixel);
             let post = this.graphicsObject.postPipelines[0] as PixelatedFX;
@@ -62,9 +78,9 @@ export default class PlantDisplay {
         this.updatePlantDisplay();
 
         
-        this.addAerialTree(this._plantManager.userPlant, true);
+        this.addAerialTree(this.plantManager.userPlant, true);
 
-        this._plantManager.aiPlants.forEach(aiplant => {
+        this.plantManager.aiPlants.forEach(aiplant => {
             this.addAerialTree(aiplant);
         })
     }
@@ -85,8 +101,8 @@ export default class PlantDisplay {
     }
 
     public updatePlantDisplay(): void {
-        this.addToTileIndexData(this._plantManager.userPlant, PlantTileSets.rootSet1);
-        this._plantManager.aiPlants.forEach(aiplant => {
+        this.addToTileIndexData(this.plantManager.userPlant, PlantTileSets.rootSet1);
+        this.plantManager.aiPlants.forEach(aiplant => {
             this.addToTileIndexData(aiplant, PlantTileSets.rootSet1);
         })
     }
@@ -110,7 +126,7 @@ export default class PlantDisplay {
         }
 
         if(user){
-            treeSettings.treeType = this._scene.playerData
+            treeSettings.treeType = this.scene.playerData
         }
 
         let scale = Game_Config.MAP_SCALE;
@@ -118,10 +134,10 @@ export default class PlantDisplay {
             scale *= 2;
         }
 
-        let tree = new Tree({x: Game_Config.MAP_tilesToWorld(plantData.startPos.x) + (Game_Config.MAP_RES), y: Game_Config.MAP_tilesToWorld(plantData.startPos.y)}, treeSettings, this.graphicsObject, this._scene);
+        let tree = new Tree({x: Game_Config.MAP_tilesToWorld(plantData.startPos.x) + (Game_Config.MAP_RES), y: Game_Config.MAP_tilesToWorld(plantData.startPos.y)}, treeSettings, this.graphicsObject, this.scene);
         this.plantTrees.set(plantData, tree);
 
-        this._scene.input.keyboard.on('keydown-A', () => {
+        this.scene.input.keyboard.on('keydown-A', () => {
             console.log("increased width!")
             tree.buds.forEach(bud => {
                 bud.growing = true;

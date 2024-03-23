@@ -22,8 +22,8 @@ export default class MapManager {
 
         scene.events.on(Events.DeadRootToLand, (deadRootPos: Position[]) => {
             deadRootPos.forEach(pos => {
-                    this.mapData._landGenerator.landData[pos.y][pos.x].landType = LandTypes.DeadRoot;
-                    this.mapData._landGenerator.landData[pos.y][pos.x].landStrength = 2;
+                    this.mapData.landGenerator.landData[pos.y][pos.x].landType = LandTypes.DeadRoot;
+                    this.mapData.landGenerator.landData[pos.y][pos.x].landStrength = 2;
                     this.mapDisplay.updateTile(pos);
             })
         })
@@ -42,12 +42,12 @@ export default class MapManager {
             return false;
         }
 
-        if(!this.mapData._landGenerator.landData[pos.y][pos.x]){
+        if(!this.mapData.landGenerator.landData[pos.y][pos.x]){
             console.log(JSON.stringify(pos) + " is not accessible")
             return false;
         }
 
-        if(this.mapData._landGenerator.landData[pos.y][pos.x].isLand()){
+        if(this.mapData.landGenerator.landData[pos.y][pos.x].isLand()){
                 result = true;
             }
         
@@ -73,11 +73,11 @@ export default class MapManager {
      * @returns If tile is destroyed position is returned
      */
     public DestroyTile(pos: Position): Position|void {
-        this.mapData._landGenerator.landData[pos.y][pos.x].destroy();
+        this.mapData.landGenerator.landData[pos.y][pos.x].destroy();
     }
 
     public AttackTile(pos: Position, plant: PlantData){
-        let destroyed = this.mapData._landGenerator.landData[pos.y][pos.x].attack(plant);
+        let destroyed = this.mapData.landGenerator.landData[pos.y][pos.x].attack(plant);
         if(destroyed){
             this.mapDisplay.updateTile(pos);
             return pos;

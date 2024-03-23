@@ -12,47 +12,33 @@ import Main from "../game";
 
 export default class PlantManager {
 
-    private _scene: Phaser.Scene;
-    private _mapManager: MapManager;
+    scene: Phaser.Scene;
+    mapManager: MapManager;
+    plantDisplay: PlantDisplay;
 
-    private _userPlant: PlantData;
-    get userPlant(){
-        return this._userPlant;
-    }
+    userPlant: PlantData;
+    aiPlants: PlantData[] = [];
 
-    private _aiPlants: PlantData[] = [];
-    get aiPlants(){
-        return this._aiPlants;
-    }
-
-    private _plantDisplay: PlantDisplay;
-    get plantDisplay(){
-        return this._plantDisplay;
-    }
-
-    private _gameOver: boolean = false;
-    get gameOver(){
-        return this._gameOver;
-    }
+    gameOver: boolean = false;
 
     constructor(scene: Main, mapManager: MapManager){
 
-        this._scene = scene;
-        this._mapManager = mapManager;
+        this.scene = scene;
+        this.mapManager = mapManager;
 
         let plantHeight: number;
 
         for(let y = 0; y < Game_Config.MAP_SIZE.y; y++){
-            if(this._mapManager.mapData._landGenerator.landData[y][Game_Config.PLANT_STARTING_POSX].landType !== LandTypes.None){
+            if(this.mapManager.mapData.landGenerator.landData[y][Game_Config.PLANT_STARTING_POSX].landType !== LandTypes.None){
                 plantHeight = y;
                 break;
             }
         }
-        this._userPlant = new PlantData(scene, {x: Game_Config.PLANT_STARTING_POSX, y: plantHeight }, false);
-        this._mapManager.DestroyTile({x: Game_Config.PLANT_STARTING_POSX, y: plantHeight});
+        this.userPlant = new PlantData(scene, {x: Game_Config.PLANT_STARTING_POSX, y: plantHeight }, false);
+        this.mapManager.DestroyTile({x: Game_Config.PLANT_STARTING_POSX, y: plantHeight});
 
         this.PlacePlants(scene);
-        this._plantDisplay = new PlantDisplay(scene, this);
+        this.plantDisplay = new PlantDisplay(scene, this);
 
         new WaterHandler(scene, mapManager);
 
@@ -99,11 +85,11 @@ export default class PlantManager {
     }
 
     public checkPlantWaterLevels(scene: Phaser.Scene){
-        if(this._userPlant.water < 0){
-            this.destroyPlant(this._userPlant, scene);
+        if(this.userPlant.water < 0){
+            this.destroyPlant(this.userPlant, scene);
 
         };
-        this._aiPlants.forEach(plant => {
+        this.aiPlants.forEach(plant => {
             if(plant.water < 0){
                 this.destroyPlant(plant, scene);
             }
@@ -116,9 +102,10 @@ export default class PlantManager {
         this.plantDisplay.destroyAerialTree(plantData);
 
         scene.events.emit(Events.DeadRootToLand, plantData.__rootData);
-        // plantData.__rootData = [];
+        this.plantDisplay.updatePlantDisplay();
+        plantData.__rootData = [];
 
-        if(plantData === this._userPlant){
+        if(plantData === this.userPlant){
             scene.events.emit(Events.GameOver);
 
         }
@@ -126,13 +113,13 @@ export default class PlantManager {
 
     private PlacePlants(scene: Phaser.Scene): void {
         for(let x = 1; x < Game_Config.MAP_SIZE.x - 1; x+=6){
-            if(!(x > this._userPlant.startPos.x - 3 && x < this._userPlant.startPos.x + 3) && Math.random() > 0.5){
+            if(!(x > this.userPlant.startPos.x - 3 && x < this.userPlant.startPos.x + 3) && Math.random() > 0.5){
                 
 
                 let plantHeight: number;
 
                 for(let y = 0; y < Game_Config.MAP_SIZE.y; y++){
-                    if(this._mapManager.isLandTileAccessible({x: x, y: y})){
+                    if(this.mapManager.isLandTileAccessible({x: x, y: y})){
                         plantHeight = y;
                         break;
                     }
@@ -142,8 +129,8 @@ export default class PlantManager {
 
                 
                 let aiPlant = new PlantData(scene, {x: x, y: plantHeight}, true);
-                this._mapManager.DestroyTile({x: x, y: plantHeight});
-                this._aiPlants.push(aiPlant);
+                this.mapManager.DestroyTile({x: x, y: plantHeight});
+                this.aiPlants.push(aiPlant);
             }
         }
     }
@@ -152,7 +139,7 @@ export default class PlantManager {
 
 
 
-        this._scene.events.on(Events.RootGrowthRequest, (rootData: RootData) => {
+        this.scene.events.on(Events.RootGrowthRequest, (rootData: RootData) => {
 
             let directionTowardsPlant = this.checkIfPlantIsClose(rootData.plant, rootData.coords);
             
@@ -166,12 +153,12 @@ export default class PlantManager {
 
         })
 
-        this._scene.events.on(Events.AerialGrowth, (plantData: PlantData) => {
+        this.scene.events.on(Events.AerialGrowth, (plantData: PlantData) => {
             plantData.aerialGrowth(plantData);
         });
 
-        this._scene.events.on(Events.GameOver, () => {
-            this._gameOver = true;
+        this.scene.events.on(Events.GameOver, () => {
+            this.gameOver = true;
         })
 
     }

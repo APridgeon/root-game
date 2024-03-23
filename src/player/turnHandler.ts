@@ -30,16 +30,10 @@ export default class TurnHandler {
             this.playerRootCreation();
             this.aiRootCreation();
 
-            this.playerAerialGrowth();
-            this.aiAerialGrowth();
-
             plantManager.checkPlantWaterLevels(scene);
-
             plantManager.plantDisplay.updatePlantDisplay();
 
-
             this._turnNo += 1;
-
             this._scene.events.emit(Events.UpdateUIText, this._turnNo);
 
         })
@@ -108,22 +102,6 @@ export default class TurnHandler {
                 aiplant.newRootLocation = null;
                 aiplant.newRootDirection = Direction.None;
                 plant.strength = Game_Config.PLANT_STRENGTH;
-            }
-        })
-    }
-
-    private playerAerialGrowth(): void {
-
-        if(this._plantManager.userPlant.__rootData.length > 10){
-            this._scene.events.emit(Events.AerialGrowth, this._plantManager.userPlant);
-        }
-
-    }
-
-    private aiAerialGrowth(): void {
-        this._plantManager.aiPlants.forEach(plantData => {
-            if(plantData.__rootData.length > 10){
-                this._scene.events.emit(Events.AerialGrowth, plantData);
             }
         })
     }

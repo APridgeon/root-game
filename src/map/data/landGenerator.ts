@@ -20,7 +20,7 @@ class LandGenerator {
     private _mapData: MapData;
     private _noise: Perlin;
 
-    private _landDataBeforeHoles: boolean[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(false));
+    landDataBeforeHoles: boolean[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(false));
 
     public landData: LandData[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x));
 
@@ -36,9 +36,6 @@ class LandGenerator {
     private landWobbleFrequency = 0.03;
 
 
-    get landDataBeforeHoles(){
-        return this._landDataBeforeHoles;
-    }
 
     constructor(mapData: MapData, noise: Perlin){
 
@@ -65,7 +62,7 @@ class LandGenerator {
             let groundLevelAlt = Phaser.Math.RoundTo(noiseValue*this.landWobbleAmplitude, 0);
 
             for(let y = this.groundLevel + groundLevelAlt; y < this.size.y; y++){
-                this._landDataBeforeHoles[y][x] = true;
+                this.landDataBeforeHoles[y][x] = true;
                 this.landData[y][x] = new LandData(LandTypes.Normal, {x: x, y: y});
             }
 
