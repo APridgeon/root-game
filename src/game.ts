@@ -11,6 +11,7 @@ import TimeOfDayManager from './general/timeOfDay';
 import SoundManager from './sound/SoundManager';
 import { Position } from './plant/plantData';
 import gameManager from './gameManager/gameManager';
+import { TreeType } from './plant/aerialTreeTiles';
 
 export default class Main extends Phaser.Scene
 {
@@ -20,10 +21,17 @@ export default class Main extends Phaser.Scene
     mapManager: MapManager;
     updateAnimTime: number = 150;
 
+    playerData: TreeType;
+
 
     constructor ()
     {
         super('main');
+    }
+
+    init(data){
+        this.playerData = data.treeChoice;
+        console.log("playerData is: " + this.playerData)
     }
 
     preload ()

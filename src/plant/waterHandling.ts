@@ -40,6 +40,7 @@ export default class WaterHandler {
                 this._mapManager.mapData.waterAmount[pos.y][pos.x] = 0;
                 this._mapManager.mapData.waterData[pos.y][pos.x] = false;
             }
+            this._mapManager.mapDisplay.updateTile(pos);
         })
     }
 

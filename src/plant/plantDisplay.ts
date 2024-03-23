@@ -9,10 +9,11 @@ import PixelatedFX from "./pixelatedShader";
 import { Events } from "../events/events";
 import gameManager from "../gameManager/gameManager";
 import { TreeType } from "./aerialTreeTiles";
+import Main from "../game";
 
 export default class PlantDisplay {
 
-    private _scene: Phaser.Scene;
+    private _scene: Main;
     private _plantManager: PlantManager;
 
     private plantTileMap: Phaser.Tilemaps.Tilemap;
@@ -28,7 +29,7 @@ export default class PlantDisplay {
 
     private plantTileData: number[][] =  [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
 
-    constructor(scene: Phaser.Scene, plantManager: PlantManager){
+    constructor(scene: Main, plantManager: PlantManager){
 
         this._scene = scene;
         this._plantManager = plantManager;
@@ -63,7 +64,7 @@ export default class PlantDisplay {
         this.updatePlantDisplay();
 
         
-        this.addAerialTree(this._plantManager.userPlant);
+        this.addAerialTree(this._plantManager.userPlant, true);
         let userTree = this.plantTrees.get(this._plantManager.userPlant);
         console.log(userTree.treeSettings);
         this._plantManager.aiPlants.forEach(aiplant => {
@@ -92,7 +93,7 @@ export default class PlantDisplay {
 
     }
 
-    private addAerialTree(plantData: PlantData){
+    private addAerialTree(plantData: PlantData, user: boolean = false){
 
         let treeSettings: TreeSettings = {
             abilityToBranch: 1,
@@ -108,6 +109,10 @@ export default class PlantDisplay {
             wobbliness: Phaser.Math.Between(30, 80),
             color: Phaser.Display.Color.RandomRGB(),
             treeType: Phaser.Math.Between(0, 2) as TreeType
+        }
+
+        if(user){
+            treeSettings.treeType = this._scene.playerData
         }
 
         let scale = Game_Config.MAP_SCALE;

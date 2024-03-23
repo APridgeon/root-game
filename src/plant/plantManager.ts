@@ -7,6 +7,7 @@ import { Events } from "../events/events";
 import { RootData } from "../player/userInput";
 import { LandTypes } from "../map/data/landGenerator";
 import { Direction } from "../general/direction";
+import Main from "../game";
 
 
 export default class PlantManager {
@@ -34,7 +35,7 @@ export default class PlantManager {
         return this._gameOver;
     }
 
-    constructor(scene: Phaser.Scene, mapManager: MapManager){
+    constructor(scene: Main, mapManager: MapManager){
 
         this._scene = scene;
         this._mapManager = mapManager;

@@ -36,7 +36,6 @@ export default class TurnHandler {
             plantManager.checkPlantWaterLevels(scene);
 
             plantManager.plantDisplay.updatePlantDisplay();
-            mapManager.mapDisplay.updateRuleTileMap();
 
 
             this._turnNo += 1;
@@ -55,12 +54,17 @@ export default class TurnHandler {
 
         if(worldTileIsAccessable){
             while(plant.strength > 0){
+                // attack tile and update that tile and surrounding tile displays
                 let destroyed = this._mapManager.AttackTile(plant.newRootLocation, plant);
                 if(destroyed){
+                    // add root to plant data class
                     this._plantManager.createNewRoot(plant);
+                    // sets off destroyed tile animation
                     this._scene.events.emit(Events.RootGrowthSuccess, plant.newRootLocation);
                     let directionVector = DirectionVectors.vectors.get(plant.newRootDirection);
+                    //set new root location 
                     plant.newRootLocation = {x: plant.newRootLocation.x + directionVector.x, y: plant.newRootLocation.y + directionVector.y};
+                    //check if the new location is accessible if not stop this loop
                     let worldTileIsAccessable = this._mapManager.isLandTileAccessible(plant.newRootLocation);
                     if(!worldTileIsAccessable){
                         break;

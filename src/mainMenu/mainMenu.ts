@@ -58,12 +58,12 @@ export default class MainMenu extends Phaser.Scene {
 
         let title = new TitleText(this);
         this.title = title;
-        new PlayerChoices(this);
+        let pc = new PlayerChoices(this);
 
         this.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
             title.clickEvent.removeAllListeners();
 
-            this.scene.start('main');
+            this.scene.start('main', {treeChoice: pc.treeChoice});
             this.scene.start('UI');
             this.scene.stop();
         })

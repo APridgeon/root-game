@@ -24,6 +24,7 @@ export default class MapManager {
             deadRootPos.forEach(pos => {
                     this.mapData._landGenerator.landData[pos.y][pos.x].landType = LandTypes.DeadRoot;
                     this.mapData._landGenerator.landData[pos.y][pos.x].landStrength = 2;
+                    this.mapDisplay.updateTile(pos);
             })
         })
 
@@ -78,6 +79,7 @@ export default class MapManager {
     public AttackTile(pos: Position, plant: PlantData){
         let destroyed = this.mapData._landGenerator.landData[pos.y][pos.x].attack(plant);
         if(destroyed){
+            this.mapDisplay.updateTile(pos);
             return pos;
         }
     }

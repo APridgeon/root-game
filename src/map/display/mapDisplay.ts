@@ -105,6 +105,37 @@ export default class RuleTileMapDisplay
 
     }
 
+    updateTile(pos: Position): void {
+        let N: Position = {x: pos.x, y: pos.y - 1};
+        let E: Position = {x: pos.x + 1, y: pos.y};
+        let S: Position = {x: pos.x, y: pos.y + 1};
+        let W: Position = {x: pos.x - 1, y: pos.y};
+
+        let tileArray = [N, E, S, W, pos];
+        let landData = this._mapData._landGenerator.landData
+        let waterData = this._mapData.waterData;
+
+        tileArray.forEach(tile => {
+            if(landData[tile.y][tile.x].isLand()){
+                let index = RuleTileSets.ConvertToTileIndex2(tile, landData, landData[tile.y][tile.x].landType);
+                this.landTileLayer.putTileAt(index, tile.x, tile.y);
+            }
+            else {
+                this.landTileLayer.putTileAt(RuleTileSets.landTileSet.get(RuleTile.empty), tile.x, tile.y);
+            }
+            
+            if(waterData[tile.y][tile.x]){
+                let index = RuleTileSets.ConvertToTileIndex(tile.x, tile.y, waterData, RuleTileSets.waterTileSet);
+                let alpha = this._mapData.waterAmount[tile.y][tile.x]/Game_Config.WATER_TILE_STARTING_AMOUNT;
+                this.waterTileLayer.putTileAt(index, tile.x, tile.y)
+                    .setAlpha(alpha)
+            } else {
+                this.waterTileLayer.putTileAt(RuleTileSets.waterTileSet.get(RuleTile.empty), tile.x, tile.y);
+            }
+        })
+
+    }
+
     private setUpBackgrounds(): void {
                 
         let cloneOfTileLayer = this._tilemap.createBlankLayer('landBeforeHoles', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)

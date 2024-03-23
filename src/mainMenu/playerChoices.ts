@@ -7,7 +7,9 @@ import { Position } from "../plant/plantData";
 import MainMenu from "./mainMenu";
 import * as Phaser from "phaser";
 
-
+export type PlayerChoice = {
+    treeChoice: TreeType;
+}
 
 export default class PlayerChoices {
 
@@ -19,6 +21,7 @@ export default class PlayerChoices {
     plantChoicesRects: Phaser.GameObjects.Rectangle[] = [];
 
     treeChoice: TreeType = TreeType.Normal;
+
 
     constructor(scene: MainMenu){
         this._scene = scene;

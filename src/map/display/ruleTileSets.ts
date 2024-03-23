@@ -383,6 +383,10 @@ export default class RuleTileSets {
             else if(!N  && W && !E && !S){
                 tileIndexValue = ruleTileSet.get(RuleTile.allButLeft);
             } 
+            //empty
+            else if(!N && !W && !E && !S){
+                tileIndexValue = RuleTileSets.landTileSet.get(RuleTile.empty);
+            }
         
 
         return tileIndexValue;
