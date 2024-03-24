@@ -23,7 +23,6 @@ export default class PlantDisplay {
     plantTrees: Map<PlantData, Tree> = new Map();
     graphicsObject: Phaser.GameObjects.Graphics;
 
-    graphicsIm: Phaser.GameObjects.Image;
 
     
 
@@ -40,10 +39,6 @@ export default class PlantDisplay {
             .setScale(Game_Config.MAP_SCALE)
             .setVisible(true);
 
-        this.graphicsIm = this.scene.add.image(0, 0, undefined)
-            .setOrigin(0, 0)
-            .setDepth(100000)
-            .setTint(0xff0000)
 
 
         let pixel = (this.scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.getPostPipeline('PixelatedFX') as PixelatedFX;
@@ -58,17 +53,6 @@ export default class PlantDisplay {
         post.setup(scale - 2, {NE: 0.1, SE: 0.1, SW: 0, NW: 0});
 
         this.scene.game.events.on(Events.screenSizeChange, () => {
-            this.graphicsObject.generateTexture('test1')
-            
-            this.graphicsIm.setTexture('test1');
-            this.graphicsIm.resetPostPipeline();
-            this.graphicsIm.setPostPipeline(pixel);
-            
-            let post2 = this.graphicsIm.postPipelines[0] as PixelatedFX;
-            post2.setup(scale - 2, {NE: 0.1, SE: 0.1, SW: 0, NW: 0});
-
-            
-
             this.graphicsObject.resetPostPipeline();
             this.graphicsObject.setPostPipeline(pixel);
             let post = this.graphicsObject.postPipelines[0] as PixelatedFX;

@@ -110,6 +110,10 @@ export default class RuleTileMapDisplay
         let waterData = this._mapData.waterData;
 
         tileArray.forEach(tile => {
+            if(landData[tile.y][tile.x] === undefined){
+                console.log("Tile is not found");
+                return
+            }
             if(landData[tile.y][tile.x].isLand()){
                 let index = RuleTileSets.ConvertToTileIndex2(tile, landData, landData[tile.y][tile.x].landType);
                 this.landTileLayer.putTileAt(index, tile.x, tile.y);

@@ -35,6 +35,7 @@ export class Tree {
         }
 
         this._scene.scene.get('UI').events.on(Events.TurnConfirm, () => {
+            console.log(this._scene.game.loop.actualFps);
             this.generateTree();
         })
 
@@ -74,7 +75,6 @@ export class Tree {
     
                 this._graphicsOb.lineTo(bud.pos.x, bud.pos.y);
                 this._graphicsOb.stroke();
-                this._graphicsOb.fillCircle(bud.pos.x, bud.pos.y, this.treeSettings.lineWidth * 0.5 * this.scale);
         
                 bud.life += 1;
     
