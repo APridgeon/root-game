@@ -34,7 +34,7 @@ export default class GameSizeManager {
         
         
         if(this.game.scale.isFullscreen) {
-            this.screenDim = {x: screen.width, y: screen.height};
+            this.screenDim = {x: window.innerWidth, y: window.innerHeight};
             console.log(`
                 screen avail: ${screen.availWidth}, ${screen.availHeight} \n
                 screen: ${screen.width}, ${screen.height} \n

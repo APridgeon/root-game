@@ -20,7 +20,7 @@ export default class TitleText {
         this._scene = scene;
 
         this.createTitle();
-        this.backgroundBox = new Box(this._scene.tileMap, UI_TileSets.boxStyle3, 0, Game_Config.UI_tilesToWorld(4), Game_Config.UI_worldToTiles(this._scene.game.scale.width), 10);
+        this.backgroundBox = new Box(this._scene, this._scene.tileMap, UI_TileSets.boxStyle3, 0, Game_Config.UI_tilesToWorld(4), Game_Config.UI_worldToTiles(this._scene.game.scale.width), 10);
 
         this.setCorrectSize({x: this._scene.scale.width, y: this._scene.scale.height});
 

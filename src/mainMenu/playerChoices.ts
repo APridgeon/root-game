@@ -33,7 +33,7 @@ export default class PlayerChoices {
             boxPos = {x: 2, y: 15}
         }
 
-        this.backgroundBox = new Box(this._scene.tileMap, UI_TileSets.boxStyle2, Game_Config.UI_tilesToWorld(boxPos.x), Game_Config.UI_tilesToWorld(boxPos.y), 12, 3);
+        this.backgroundBox = new Box(this._scene, this._scene.tileMap, UI_TileSets.boxStyle2, Game_Config.UI_tilesToWorld(boxPos.x), Game_Config.UI_tilesToWorld(boxPos.y), 12, 3);
 
         this._scene.time.addEvent({
             callback: () => {

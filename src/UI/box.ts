@@ -5,6 +5,10 @@ import { BoxTiles } from "./UI_TileSets";
 
 export default class Box {
 
+    _scene: Phaser.Scene;
+
+    rawPos: Position;
+
     layerName = Math.random().toString();
     tilemap: Phaser.Tilemaps.Tilemap;
     boxLayer: Phaser.Tilemaps.TilemapLayer;
@@ -13,8 +17,11 @@ export default class Box {
     width: number;
     height: number
 
-    constructor(tilemap: Phaser.Tilemaps.Tilemap, boxStyle: Map<BoxTiles, integer>, x: number, y: number, width: number, height: number){
-        this.pos = {x: x, y: y};
+    constructor(scene: Phaser.Scene, tilemap: Phaser.Tilemaps.Tilemap, boxStyle: Map<BoxTiles, integer>, x: number, y: number, width: number, height: number){
+        this._scene = scene;
+        this.rawPos= {x: x, y: y};
+        this.setCorrectPosition(x, y, this._scene.game.scale.width, this._scene.game.scale.height);
+
         this.tilemap = tilemap;
         this.boxLayer = this.tilemap.createBlankLayer(this.layerName,'UI_tiles', this.pos.x, this.pos.y);
         this.boxStyle = boxStyle;
@@ -33,6 +40,25 @@ export default class Box {
 
     }
 
+
+    setCorrectPosition(x, y, screenWidth: number, screenHeight: number): void {
+        let correctX;
+        let correctY;
+
+        if(x < 0){
+            correctX = screenWidth + x;
+        } else {
+            correctX = x;
+        }
+        if(y < 0){
+            correctY = screenHeight + y;
+        } else {
+            correctY = y;
+        }
+
+        this.pos = {x: correctX, y: correctY};
+    }
+
     public SetBoxSize(width: number, height: number){
         let boxData = [[this.boxStyle.get(BoxTiles.topLeft), Array(width - 2).fill(this.boxStyle.get(BoxTiles.top)), this.boxStyle.get(BoxTiles.topRight)].flat(1)];
         Array(height - 2).fill([this.boxStyle.get(BoxTiles.left),  Array(width - 2).fill(this.boxStyle.get(BoxTiles.surrounded)), this.boxStyle.get(BoxTiles.right)].flat(1)).forEach(row => boxData.push(row));
@@ -46,9 +72,10 @@ export default class Box {
             .setScale(Game_Config.UI_SCALE);
     }
 
-    public setPosition(pos: Position){
-        this.pos = pos;
-        this.boxLayer.setPosition(pos.x, pos.y);
+    public setPosition(pos: Position, width: number, height: number){
+        this.rawPos= {x: pos.x, y: pos.y};
+        this.setCorrectPosition(pos.x, pos.y, width, height);
+        this.boxLayer.setPosition(this.pos.x, this.pos.y);
     }
 
 
