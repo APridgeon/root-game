@@ -8,6 +8,7 @@ import Barometer from "./barometer";
 import Box from "./box";
 import * as Phaser from "phaser";
 import Button from "./button";
+import TurnBox from "./turnBox";
 
 export default class UI extends Phaser.Scene {
 
@@ -51,6 +52,8 @@ export default class UI extends Phaser.Scene {
         this.uiTiles = this.uiTileMap.addTilesetImage('UI_tiles', 'UI_tiles', Game_Config.UI_RES, Game_Config.UI_RES, 0, 0);
 
         this.box = new Box(this.uiTileMap, UI_TileSets.boxStyle3, 0, this.game.scale.height-Game_Config.UI_tilesToWorld(5), Game_Config.GAMEWIDTH/Game_Config.UI_tilesToWorld(1), 5);
+
+        let turnBox = new TurnBox(this, this.uiTileMap, UI_TileSets.boxStyle3, this.game.scale.width-Game_Config.UI_tilesToWorld(10), this.game.scale.height-Game_Config.UI_tilesToWorld(10), 8, 5)
         
         this.barometer = new Barometer(this, this.uiTileMap, Game_Config.UI_tilesToWorld(1), this.game.scale.height-Game_Config.UI_tilesToWorld(7), 10);
         this.waterText = this.add.bitmapText(Game_Config.UI_tilesToWorld(2), this.game.scale.height - Game_Config.UI_tilesToWorld(8), 'ant_party', 'Water: ' + Game_Config.PLANT_DATA_WATER_START_LEVEL)
@@ -103,7 +106,7 @@ export default class UI extends Phaser.Scene {
         this.scene.get('main').events.on(Events.UpdateUIText, () => {
             this.turnNo += 1;
             this.turnNoText.setText(`Turn no: ${this.turnNo}`);
-
+            turnBox.text.setText(`Turn no: ${this.turnNo}`)
         })
 
         this.scene.get('main').events.on(Events.GameOver, () => {
