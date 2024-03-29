@@ -1,8 +1,8 @@
-import { Events } from "../events/events";
-import Game_Config from "../game_config";
-import { Position } from "../plant/plantData";
+import { Events } from "../../events/events";
+import Game_Config from "../../game_config";
+import { Position } from "../../plant/plantData";
 import Box from "./box";
-import { BoxTiles } from "./UI_TileSets";
+import { BoxTiles } from "../UI_TileSets";
 
 
 export default class TextBox extends Box {

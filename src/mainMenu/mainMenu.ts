@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import Game_Config from '../game_config';
-import Box from '../UI/box';
+import Box from '../UI/boxes/box';
 import UI_TileSets from '../UI/UI_TileSets';
 import { Position } from '../plant/plantData';
 import { Events } from '../events/events';

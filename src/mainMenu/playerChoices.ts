@@ -1,5 +1,5 @@
 import UI_TileSets from "../UI/UI_TileSets";
-import Box from "../UI/box";
+import Box from "../UI/boxes/box";
 import { Events } from "../events/events";
 import Game_Config from "../game_config";
 import { TreeType } from "../plant/aerialTreeTiles";

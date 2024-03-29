@@ -5,10 +5,11 @@ import { Position } from "../plant/plantData";
 import { waterStats } from "../plant/waterHandling";
 import UI_TileSets from "./UI_TileSets";
 import Barometer from "./barometer";
-import Box from "./box";
+import Box from "./boxes/box";
 import * as Phaser from "phaser";
 import Button from "./button";
-import TextBox from "./textBox";
+import TextBox from "./boxes/textBox";
+import GuideManager from "./guideManager";
 
 export default class UI extends Phaser.Scene {
 
@@ -49,9 +50,10 @@ export default class UI extends Phaser.Scene {
         this.uiTileMap = this.make.tilemap({tileHeight: Game_Config.UI_RES, tileWidth: Game_Config.UI_RES, height: Game_Config.MAP_SIZE.y, width: Game_Config.MAP_SIZE.x});
         this.uiTiles = this.uiTileMap.addTilesetImage('UI_tiles', 'UI_tiles', Game_Config.UI_RES, Game_Config.UI_RES, 0, 0);
 
-        let welcomeBox = new TextBox("Welcome to Taproot!",this, this.uiTileMap, UI_TileSets.boxStyle3, 0, -Game_Config.UI_tilesToWorld(5), 20, 5)
-        
-        let turnBox = new TextBox('Turn no: 0', this, this.uiTileMap, UI_TileSets.boxStyle3, gameManager.mobile ? 0 : -Game_Config.UI_tilesToWorld(8), gameManager.mobile ? 0 :  -Game_Config.UI_tilesToWorld(5), 8, 5)
+        let welcomeBox = new TextBox("WELCOME TO TAPROOT!",this, this.uiTileMap, UI_TileSets.boxStyle3, 0, -Game_Config.UI_tilesToWorld(5), 20, 5)
+        let turnBox = new TextBox('Turn no: 0', this, this.uiTileMap, UI_TileSets.boxStyle3, gameManager.mobile ? 0 : -Game_Config.UI_tilesToWorld(8), gameManager.mobile ? 0 :  -Game_Config.UI_tilesToWorld(5), 8, 5);
+
+        new GuideManager(this);
         
         this.barometer = new Barometer(this, this.uiTileMap, Game_Config.UI_tilesToWorld(1), this.game.scale.height-Game_Config.UI_tilesToWorld(7), 10);
 

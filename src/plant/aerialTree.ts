@@ -35,7 +35,6 @@ export class Tree {
         }
 
         this._scene.scene.get('UI').events.on(Events.TurnConfirm, () => {
-            console.log(this._scene.game.loop.actualFps);
             this.generateTree();
         })
 

@@ -1,5 +1,5 @@
 import UI_TileSets from "../UI/UI_TileSets";
-import Box from "../UI/box";
+import Box from "../UI/boxes/box";
 import { Events } from "../events/events";
 import Game_Config from "../game_config";
 import { Position } from "../plant/plantData";
@@ -66,7 +66,7 @@ export default class TitleText {
 
         this.bitmapText.setPosition(pos.x, pos.y)
         this.bitmapText.setFontSize(fontSize)
-        this.backgroundBox.setPosition({x: pos.x - Game_Config.UI_tilesToWorld(2), y: pos.y - Game_Config.UI_tilesToWorld(2)});
+        this.backgroundBox.setPosition({x: pos.x - Game_Config.UI_tilesToWorld(2), y: pos.y - Game_Config.UI_tilesToWorld(2)}, this._scene.game.scale.width, this._scene.game.scale.height);
         this.backgroundBox.SetBoxSize(Game_Config.UI_worldToTiles(this.bitmapText.width) + 4, Game_Config.UI_worldToTiles(this.bitmapText.height) + 4);
         
         this.bitmapText.resetPostPipeline();
