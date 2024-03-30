@@ -13,7 +13,8 @@ export default class GuideManager {
     constructor(scene: UI){
         this._scene = scene;
 
-        new GuideBox('TUTORIAL', 'Welcome to TAPROOT\nClick to grow roots!', this._scene, UI_TileSets.boxStyle3, 30, 30);
+        new GuideBox('TUTORIAL', 'Welcome to TAPROOT\n(Click to close)!', this._scene, UI_TileSets.boxStyle3, 100, 100);
+
     }
 
 }

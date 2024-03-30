@@ -1,4 +1,6 @@
+import { Events } from "../../events/events";
 import Game_Config from "../../game_config";
+import { Position } from "../../plant/plantData";
 import UI from "../UI_scene";
 import { BoxTiles } from "../UI_TileSets";
 import Box from "./box";
@@ -9,6 +11,9 @@ export default class GuideBox extends Box {
     title: Phaser.GameObjects.BitmapText;
     text: Phaser.GameObjects.BitmapText;
 
+    titleRelPos: Position;
+    textRelPos: Position;
+
     zone: Phaser.GameObjects.Zone;
 
     constructor(title: string, text: string, scene: UI, boxstyle: Map<BoxTiles, number>, x: number, y: number){
@@ -17,6 +22,7 @@ export default class GuideBox extends Box {
 
         this.generateText(title, text);
         this.resizeWidthAndHeight();
+        this.resize();
 
         this.zone = this._scene.add.zone(this.pos.x, this.pos.y, Game_Config.UI_tilesToWorld(this.width), Game_Config.UI_tilesToWorld(this.height)).setOrigin(0,0);
         this.zone.setInteractive();
@@ -64,10 +70,21 @@ export default class GuideBox extends Box {
         let offW = (boxW - maxWidth) / 2;
         let boxHeight = Game_Config.UI_tilesToWorld(height + 4);
         let offH = (boxHeight - (titleHeight + textHeight)) / 3;
-        this.title.setPosition(this.pos.x + offW, this.pos.y + offH);
-        this.text.setPosition(this.pos.x + offW, this.pos.y + titleHeight + (offH * 2));
+        this.titleRelPos = {x: offW, y: offH};
+        this.textRelPos = {x: offW, y: titleHeight + (offH * 2)}
+        this.title.setPosition(this.pos.x + this.titleRelPos.x, this.pos.y + this.titleRelPos.y);
+        this.text.setPosition(this.pos.x + this.textRelPos.x, this.pos.y + this.textRelPos.y);
 
     }   
+
+    private resize(){
+        this._scene.game.events.on(Events.screenSizeChange, (screenDim: Position) => {
+            this.setPosition(this.rawPos, screenDim.x, screenDim.y);
+            this.title.setPosition(this.pos.x + this.titleRelPos.x, this.pos.y + this.titleRelPos.y);
+            this.text.setPosition(this.pos.x + this.textRelPos.x, this.pos.y + this.textRelPos.y);
+            this.zone.setPosition(this.pos.x, this.pos.y)
+        })
+    }
 
 
 }

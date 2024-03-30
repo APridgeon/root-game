@@ -286,6 +286,7 @@ export default class RuleTileSets {
         }
 
         let tileIndexValue;
+        let tileType: RuleTile;
 
         let N;
         let E;
@@ -314,85 +315,110 @@ export default class RuleTileSets {
         }
 
         if(N && W && E && S){
+            tileType = RuleTile.surrounded;
             tileIndexValue = ruleTileSet.get(RuleTile.surrounded);
                 }
             //stranded
             if(!N && !W && !E && !S){
+                tileType = RuleTile.stranded;
                 tileIndexValue = ruleTileSet.get(RuleTile.stranded);
             }
             //top
             else if(!N && W && E && S){
+                tileType = RuleTile.top;
                 tileIndexValue = ruleTileSet.get(RuleTile.top);
             }
 
             //bottom
             else if(N && W && E && !S){
+                tileType = RuleTile.bottom;
                 tileIndexValue = ruleTileSet.get(RuleTile.bottom);
             }
 
             //left
             else if(N && !W && E && S){
+                tileType = RuleTile.left;
                 tileIndexValue = ruleTileSet.get(RuleTile.left);
             }
 
             //right
             else if(N && W && !E && S){
+                tileType = RuleTile.right;
                 tileIndexValue = ruleTileSet.get(RuleTile.right);
             }
 
             //top right
             else if(!N && W && !E && S){
+                tileType = RuleTile.topRight;
                 tileIndexValue = ruleTileSet.get(RuleTile.topRight);
             }    
             
             //top left
             else if(!N && !W  && E && S){
+                tileType = RuleTile.topLeft;
                 tileIndexValue = ruleTileSet.get(RuleTile.topLeft);
             } 
 
             //bottom left
             else if(N && !W  && E && !S ){
+                tileType = RuleTile.bottomLeft;
                 tileIndexValue = ruleTileSet.get(RuleTile.bottomLeft);
             } 
 
             //bottom right
             else if(N && W && !E && !S){
+                tileType = RuleTile.bottomRight;
                 tileIndexValue = ruleTileSet.get(RuleTile.bottomRight);
             } 
             //left and right
             else if(N && !W && !E && S){
+                tileType = RuleTile.leftAndRight;
                 tileIndexValue = ruleTileSet.get(RuleTile.leftAndRight);
             } 
             //top and bottom
             else if(!N && W && E && !S){
+                tileType = RuleTile.topAndBottom;
                 tileIndexValue = ruleTileSet.get(RuleTile.topAndBottom);
             } 
             //all but top
             else if(N && !W && !E  && !S){
+                tileType = RuleTile.allButTop;
                 tileIndexValue = ruleTileSet.get(RuleTile.allButTop);
             } 
             //all but right
             else if(!N  && !W && E && !S){
+                tileType = RuleTile.allButRight;
                 tileIndexValue = ruleTileSet.get(RuleTile.allButRight);
             } 
             //all but bottom
             else if(!N && !W && !E && S){
+                tileType = RuleTile.allButBottom;
                 tileIndexValue = ruleTileSet.get(RuleTile.allButBottom);
             } 
             //all but left
             else if(!N  && W && !E && !S){
+                tileType = RuleTile.allButLeft;
                 tileIndexValue = ruleTileSet.get(RuleTile.allButLeft);
             } 
             //empty
             else if(!N && !W && !E && !S){
+                tileType = RuleTile.empty;
                 tileIndexValue = RuleTileSets.landTileSet.get(RuleTile.empty);
             }
         
-
-        return tileIndexValue;
+        let result: TileIndexResult = {
+            tileIndex: tileIndexValue,
+            tileType: tileType
+        }
+        return result;
 
     }
 
+}
+
+export type TileIndexResult = {
+    tileIndex: integer;
+    tileType: RuleTile;
 }
 
 

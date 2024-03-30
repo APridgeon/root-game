@@ -1,4 +1,5 @@
 import PlantData, { Position } from "../../plant/plantData";
+import { RuleTile } from "../display/ruleTileSets";
 import { LandTypes } from "./landGenerator";
 
 class LandData {
@@ -6,6 +7,8 @@ class LandData {
     landType: LandTypes;
     landStrength: number = 0;
     pos?: Position;
+    ruleTile?: RuleTile;
+    biome?: Phaser.GameObjects.Image;
 
     constructor(landType: LandTypes, pos?: Position){
         this.landType = landType;
@@ -51,6 +54,9 @@ class LandData {
     public destroy(){
         this.landType = LandTypes.Hole;
         this.landStrength = 0;
+        if(this.biome){
+            this.biome.destroy();
+        }
     }
 
 }

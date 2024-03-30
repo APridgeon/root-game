@@ -9,6 +9,7 @@ import { Events } from '../../events/events';
 import SkyManager from './skyManager';
 import { LandTypes } from '../data/landGenerator';
 import LandData from '../data/landData';
+import Biome from './biome';
 
 
 export default class RuleTileMapDisplay
@@ -53,6 +54,7 @@ export default class RuleTileMapDisplay
         this.setUpTileLayers();
         this.setUpBackgrounds();
         this.setUpAnimations();
+        new Biome(this._mapData, this._scene);
 
     }
 
@@ -79,7 +81,9 @@ export default class RuleTileMapDisplay
         for(let x = 0; x < mapData[0].length - 0; x++){
             for(let y = 0; y < mapData.length - 0; y++){
                 if(mapData[y][x].isLand()){
-                    this.landDataTextureIndex[y][x] = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, mapData[y][x].landType);
+                    let results = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, mapData[y][x].landType);
+                    this.landDataTextureIndex[y][x] = results.tileIndex;
+                    mapData[y][x].ruleTile = results.tileType;
                 }
             }
         }
@@ -115,8 +119,9 @@ export default class RuleTileMapDisplay
                 return
             }
             if(landData[tile.y][tile.x].isLand()){
-                let index = RuleTileSets.ConvertToTileIndex2(tile, landData, landData[tile.y][tile.x].landType);
-                this.landTileLayer.putTileAt(index, tile.x, tile.y);
+                let results = RuleTileSets.ConvertToTileIndex2(tile, landData, landData[tile.y][tile.x].landType);
+                this.landTileLayer.putTileAt(results.tileIndex, tile.x, tile.y);
+                landData[tile.y][tile.x].ruleTile = results.tileType;
             }
             else {
                 this.landTileLayer.putTileAt(RuleTileSets.landTileSet.get(RuleTile.empty), tile.x, tile.y);
