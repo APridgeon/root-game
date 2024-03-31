@@ -1,5 +1,6 @@
 import PlantData, { Position } from "../../plant/plantData";
 import { RuleTile } from "../display/ruleTileSets";
+import { BiomeType } from "./biome";
 import { LandTypes } from "./landGenerator";
 
 class LandData {
@@ -8,6 +9,7 @@ class LandData {
     landStrength: number = 0;
     pos?: Position;
     ruleTile?: RuleTile;
+    biomeType: BiomeType;
     biome?: Phaser.GameObjects.Image;
 
     constructor(landType: LandTypes, pos?: Position){
@@ -19,7 +21,7 @@ class LandData {
         }
     }
 
-    private initStrength() {
+    initStrength() {
         if(this.landType === LandTypes.Normal){
             this.landStrength = 1;
         } else if(this.landType === LandTypes.Sandy){

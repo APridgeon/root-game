@@ -9,7 +9,7 @@ import { Events } from '../../events/events';
 import SkyManager from './skyManager';
 import { LandTypes } from '../data/landGenerator';
 import LandData from '../data/landData';
-import Biome from './biome';
+import Biome from '../data/biome';
 
 
 export default class RuleTileMapDisplay
@@ -54,7 +54,7 @@ export default class RuleTileMapDisplay
         this.setUpTileLayers();
         this.setUpBackgrounds();
         this.setUpAnimations();
-        new Biome(this._mapData, this._scene);
+        this._mapData.biome.addImages()
 
     }
 
@@ -195,11 +195,11 @@ export default class RuleTileMapDisplay
                         this.mapAnimFX.push(worms);
 
                     } 
-                    else if(threshold < 0.08){
+                    // else if(threshold < 0.08){
 
-                        let mushrooms = new MapAnimFX({x: x, y: y}, AnimatedTile.Mushroom, scene, this.mapAnimFX, 100, false);
-                        this.mapAnimFX.push(mushrooms);
-                    }
+                    //     let mushrooms = new MapAnimFX({x: x, y: y}, AnimatedTile.Mushroom, scene, this.mapAnimFX, 100, false);
+                    //     this.mapAnimFX.push(mushrooms);
+                    // }
                 }
             }
         }

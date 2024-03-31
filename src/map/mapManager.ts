@@ -16,7 +16,7 @@ export default class MapManager {
 
         this.noise = noise;
 
-        this.mapData = new MapData(this.noise, this);
+        this.mapData = new MapData(this.noise, this, scene);
 
         this.mapDisplay = new RuleTileMapDisplay(scene, this.mapData, 'plantTiles');
 
