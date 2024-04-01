@@ -37,13 +37,14 @@ export default class PlantDisplay {
             .setOrigin(0,0)
             .setDepth(10)
             .setScale(Game_Config.MAP_SCALE)
-            .setVisible(true);
+            .setVisible(true)
+            // .setPipeline('Light2D');
 
 
 
         let pixel = (this.scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.getPostPipeline('PixelatedFX') as PixelatedFX;
         this.graphicsObject = this.scene.add.graphics({x:0, y:0});
-        this.graphicsObject.setPostPipeline(pixel);
+        this.graphicsObject.setPostPipeline(pixel)//.setPipeline('Light2D');
         let post = this.graphicsObject.postPipelines[0] as PixelatedFX;
 
         let scale = Game_Config.MAP_SCALE;

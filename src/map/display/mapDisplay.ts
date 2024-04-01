@@ -56,6 +56,28 @@ export default class RuleTileMapDisplay
         this.setUpAnimations();
         this._mapData.biome.addImages()
 
+        this.landTileLayer.forEachTile(tile => {
+            let landData = this._mapData.landGenerator.landData[tile.y][tile.x]
+            if(landData.phosphorous){
+                this._scene.add.image(Game_Config.MAP_tilesToWorld(tile.x), Game_Config.MAP_tilesToWorld(tile.y), 'plantTilesSpriteSheet', (5 * 25) + 9)
+                    .setOrigin(0)
+                    .setDepth(5)
+                    .setScale(Game_Config.MAP_SCALE);
+            }
+        })
+        // const light = this._scene.lights.addLight(0, 0, 3000, undefined, 3);
+        // this._scene.input.on('pointermove', function (pointer)
+        // {
+
+        //     light.x = this.cameras.main.scrollX + pointer.x;
+        //     light.y = this.cameras.main.scrollY + pointer.y;
+
+        // });
+        // this._scene.lights.enable().setAmbientColor(0x888888);
+
+        // this.landTileLayer.setPipeline('Light2D');
+        // this.waterTileLayer.setPipeline('Light2D');
+
     }
 
     private convertToRuleTileData(mapData: boolean[][], ruleTileSet: Map<RuleTile, integer>): number[][] {

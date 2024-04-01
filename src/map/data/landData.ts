@@ -2,23 +2,31 @@ import PlantData, { Position } from "../../plant/plantData";
 import { RuleTile } from "../display/ruleTileSets";
 import { BiomeType } from "./biome";
 import { LandTypes } from "./landGenerator";
+import MapData from "./mapData";
+import * as Phaser from 'phaser';
 
 class LandData {
 
+    pos: Position;
+
     landType: LandTypes;
+    ruleTile: RuleTile;
+
     landStrength: number = 0;
-    pos?: Position;
-    ruleTile?: RuleTile;
+    phosphorous: boolean;
+
     biomeType: BiomeType;
-    biome?: Phaser.GameObjects.Image;
+    biome: Phaser.GameObjects.Image;
 
-    constructor(landType: LandTypes, pos?: Position){
+    _mapData: MapData;
+
+    constructor(landType: LandTypes, pos: Position, mapData: MapData){
         this.landType = landType;
+        this.pos = pos;
+        this._mapData = mapData;
         this.initStrength();
+        this.initMinerals();
 
-        if(pos){
-            this.pos = pos;
-        }
     }
 
     initStrength() {
@@ -31,6 +39,10 @@ class LandData {
         } else {
             this.landStrength = 0;
         }
+    }
+
+    initMinerals() {
+        this.phosphorous = (this._mapData.noise.simplex2(this.pos.x * 0.1, this.pos.y * 0.1) > 0.5) && this.landType == LandTypes.Normal;
     }
 
     public attack(plant: PlantData): boolean {

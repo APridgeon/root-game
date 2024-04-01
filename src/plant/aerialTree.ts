@@ -135,20 +135,25 @@ export class Tree {
             .setScale(this.scale)
             .setTint(c1.color)
             // .setTint(0x413452)
-            .setDepth(5) 
+            .setDepth(5)
+            // .setPipeline('Light2D')
         )
         
         this.leafClumps.push( this._scene.add.image(Math.round(bud.pos.x/this.scale) * this.scale, Math.round(bud.pos.y/this.scale) * this.scale, 'trees', leafFrame.middle)
             .setScale(this.scale)
             .setTint(c2.color)
             // .setTint(0x3b6e7f)
-            .setDepth(5) )
+            .setDepth(5)
+            // .setPipeline('Light2D') 
+        )
         
         this.leafClumps.push( this._scene.add.image(Math.round(bud.pos.x/this.scale) * this.scale, Math.round(bud.pos.y/this.scale) * this.scale,  'trees', leafFrame.top)
             .setScale(this.scale)
             .setTint(c3.color)
             // .setTint(0x66ab8c)
-            .setDepth(5) )
+            .setDepth(5)
+            // .setPipeline('Light2D') 
+        )
         
     }
 

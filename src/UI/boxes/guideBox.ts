@@ -39,7 +39,7 @@ export default class GuideBox extends Box {
         this.title = this._scene.add.bitmapText(this.pos.x + Game_Config.UI_tilesToWorld(1) + (Game_Config.UI_SCALE * 1), this.pos.y + Game_Config.UI_tilesToWorld(1) + (Game_Config.UI_SCALE * 1) , 'ant_party', title)
             .setOrigin(0,0)
             .setTint(0x000000)
-            .setScale(Game_Config.FONT_SCALE)
+            .setScale(Game_Config.FONT_SCALE*2)
             .setDepth(10);
 
         this.text = this._scene.add.bitmapText(this.pos.x + Game_Config.UI_tilesToWorld(1) + (Game_Config.UI_SCALE * 1), this.pos.y + Game_Config.UI_tilesToWorld(3) , 'ant_party', text)

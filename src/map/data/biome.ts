@@ -106,15 +106,14 @@ export default class Biome {
     addGrass(land: LandData, x: integer, y: integer){
         if(y > 0){
             let aboveTile = this._mapData.landGenerator.landData[y - 1][x];
-            console.log(land.ruleTile)
             if((land.ruleTile == RuleTile.top || land.ruleTile == RuleTile.topLeft || land.ruleTile == RuleTile.topRight) && land.landType == LandTypes.Normal && aboveTile.landType == LandTypes.None){
-                console.log("hello!")
                 let indeces = BiomeTileSets.testSet.get(BiomeTiles.Grassland)
                 let index = indeces[Math.floor(Math.random()*indeces.length)]
                 land.biome = this._scene.add.image(Game_Config.MAP_tilesToWorld(land.pos.x), Game_Config.MAP_tilesToWorld(land.pos.y - 1), 'plantTilesSpriteSheet', index)
                     .setOrigin(0)
                     .setDepth(5)
-                    .setScale(Game_Config.MAP_SCALE);
+                    .setScale(Game_Config.MAP_SCALE)
+                    // .setPipeline('Light2D');
             }
         }
     }

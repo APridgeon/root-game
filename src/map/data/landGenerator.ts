@@ -54,7 +54,7 @@ class LandGenerator {
 
         for(let x = 0; x < this.size.x; x++){
             for(let y = 0; y < this.size.y; y++){
-                this.landData[y][x] = new LandData(LandTypes.None, {x: x, y: y});
+                this.landData[y][x] = new LandData(LandTypes.None, {x: x, y: y}, this._mapData);
             }
         }
 
@@ -64,7 +64,7 @@ class LandGenerator {
 
             for(let y = this.groundLevel + groundLevelAlt; y < this.size.y; y++){
                 this.landDataBeforeHoles[y][x] = true;
-                this.landData[y][x] = new LandData(LandTypes.Normal, {x: x, y: y});
+                this.landData[y][x] = new LandData(LandTypes.Normal, {x: x, y: y}, this._mapData);
             }
 
         }  
@@ -75,7 +75,7 @@ class LandGenerator {
         for(let x = 0; x < this.size.x; x++){
             for(let y = startFromY; y < this.size.y; y++){
                 if((this._noise.simplex2(x * noiseStretch.x, y * noiseStretch.y)) > noiseThreshold){
-                    this.landData[y][x] = new LandData(landType, {x: x, y: y});
+                    this.landData[y][x] = new LandData(landType, {x: x, y: y}, this._mapData);
                     this.landData[y][x].landStrength = landStrength;
                 }
                 
