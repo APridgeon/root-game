@@ -1,6 +1,6 @@
 import PlantData, { Position } from "../../plant/plantData";
 import { RuleTile } from "../display/ruleTileSets";
-import { BiomeType } from "./biome";
+import { BiomeType } from "./biomeManager";
 import { LandTypes } from "./landGenerator";
 import MapData from "./mapData";
 import * as Phaser from 'phaser';
@@ -25,7 +25,7 @@ class LandData {
         this.pos = pos;
         this._mapData = mapData;
         this.initStrength();
-        this.initMinerals();
+        // this.initMinerals();
 
     }
 
@@ -41,6 +41,7 @@ class LandData {
         }
     }
 
+    // TODO: this should really be the biome - fix this!
     initMinerals() {
         this.phosphorous = (this._mapData.noise.simplex2(this.pos.x * 0.1, this.pos.y * 0.1) > 0.5) && this.landType == LandTypes.Normal;
     }

@@ -9,7 +9,7 @@ import { Events } from '../../events/events';
 import SkyManager from './skyManager';
 import { LandTypes } from '../data/landGenerator';
 import LandData from '../data/landData';
-import Biome from '../data/biome';
+import Biome from '../data/biomeManager';
 
 
 export default class RuleTileMapDisplay
@@ -54,7 +54,7 @@ export default class RuleTileMapDisplay
         this.setUpTileLayers();
         this.setUpBackgrounds();
         this.setUpAnimations();
-        this._mapData.biome.addImages()
+        this._mapData.biomeManager.addImages()
 
         this.landTileLayer.forEachTile(tile => {
             let landData = this._mapData.landGenerator.landData[tile.y][tile.x]

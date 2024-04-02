@@ -4,6 +4,9 @@ import { LandTypes } from "./landGenerator";
 import MapData from "./mapData";
 import { RuleTile } from "../display/ruleTileSets";
 import * as Phaser from "phaser";
+import IBiome from "./biomes/biomeInterface";
+import GrasslandBiome from "./biomes/grasslandBiome";
+import SandlandBiome from "./biomes/sandBiome";
 
 const ROWLENGTH = 25;
 
@@ -31,10 +34,12 @@ export class BiomeTileSets {
 
 
 
-export default class Biome {
+export default class BiomeManager {
 
     _mapData: MapData;
     _scene: Phaser.Scene;
+
+    biomes: IBiome[] = [];
 
     constructor(mapData: MapData, scene: Phaser.Scene){
         this._mapData = mapData;
@@ -55,25 +60,15 @@ export default class Biome {
         for(let xChunk = 0; xChunk<Game_Config.MAP_SIZE.x; xChunk+=biomeSizes){
 
             let biome = biomeChoices[Math.floor(Math.random()*biomeChoices.length)];
-            let landType = (biome == BiomeType.Sandy) ? LandTypes.Sandy : LandTypes.Normal;
-
-            for(let y = 0; y < Game_Config.MAP_SIZE.y; y++){
-
-                let xWobble = this._mapData._mapManager.noise.simplex2(0.5, y * 0.05);
-                let xWobbleRounded = Phaser.Math.RoundTo(xWobble * 5, 0) - 5;
-
-                for(let x = xChunk + xWobbleRounded; x <xChunk + biomeSizes - xWobbleRounded; x++){
-
-                    if(this._mapData.landGenerator.landData[y][x]){
-                        let land = this._mapData.landGenerator.landData[y][x];
-                        if(land.isLand()){
-                            land.biomeType = biome;
-                            land.landType = landType;
-                            land.initStrength();
-                        }
-                    }
-                }
+            let b: IBiome;
+            if(biome == BiomeType.Grassland){
+                b = new GrasslandBiome(this._scene, this._mapData);
+            } else {
+                b = new SandlandBiome(this._scene, this._mapData);
             }
+            this.biomes.push(b);
+            b.createBiome(xChunk, biomeSizes);
+
         }
     }
 

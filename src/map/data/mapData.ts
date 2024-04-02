@@ -4,7 +4,7 @@ import LandGenerator, { LandTypes } from "./landGenerator";
 import WaterGenerator from "./waterGenerator";
 import { Position } from "../../plant/plantData";
 import MapManager from "../mapManager";
-import Biome from "./biome";
+import BiomeManager from "./biomeManager";
 
 
 export default class MapData {
@@ -26,7 +26,7 @@ export default class MapData {
         return this._waterGenerator.waterAmount;
     }
 
-    biome: Biome;
+    biomeManager: BiomeManager;
 
     deadRootPos: boolean[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(false));
     noise: Perlin;
@@ -39,7 +39,7 @@ export default class MapData {
         this.landGenerator = new LandGenerator(this, this.noise);
         this._waterGenerator = new WaterGenerator(this, this.noise);
 
-        this.biome = new Biome(this, scene);
+        this.biomeManager = new BiomeManager(this, scene);
 
 
 
