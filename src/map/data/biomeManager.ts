@@ -73,75 +73,15 @@ export default class BiomeManager {
     }
 
     addImages(){
-        this._mapData.landGenerator.landData.forEach((row, y) => {
-            row.forEach((land, x) => {
-                this.addVines(land, x, y);
-                this.addGrass(land, x, y);
-                this.addMushrooms(land, x, y);
-                this.addSandSurface(land, x, y);
-            })
+        this.biomes.forEach(biome => {
+            biome.addImages();
         })
     }
-
-
-    addVines(land: LandData, x: integer, y: integer){
-        if(y > 0){
-            let aboveTile = this._mapData.landGenerator.landData[y - 1][x];
-            if((land.ruleTile == RuleTile.top || land.ruleTile == RuleTile.topLeft || land.ruleTile == RuleTile.topRight) && land.landType == LandTypes.Normal && aboveTile.landType == LandTypes.Hole){
-                let indeces = BiomeTileSets.testSet.get(BiomeTiles.Vines)
-                let index = indeces[Math.floor(Math.random()*indeces.length)]
-                land.biome = this._scene.add.image(Game_Config.MAP_tilesToWorld(land.pos.x), Game_Config.MAP_tilesToWorld(land.pos.y), 'plantTilesSpriteSheet', index)
-                    .setOrigin(0)
-                    .setDepth(5)
-                    .setScale(Game_Config.MAP_SCALE);
-            }
-        }
+    addMinerals(){
+        this.biomes.forEach(biome => {
+            biome.addMinerals();
+        })
     }
-
-    addGrass(land: LandData, x: integer, y: integer){
-        if(y > 0){
-            let aboveTile = this._mapData.landGenerator.landData[y - 1][x];
-            if((land.ruleTile == RuleTile.top || land.ruleTile == RuleTile.topLeft || land.ruleTile == RuleTile.topRight) && land.landType == LandTypes.Normal && aboveTile.landType == LandTypes.None){
-                let indeces = BiomeTileSets.testSet.get(BiomeTiles.Grassland)
-                let index = indeces[Math.floor(Math.random()*indeces.length)]
-                land.biome = this._scene.add.image(Game_Config.MAP_tilesToWorld(land.pos.x), Game_Config.MAP_tilesToWorld(land.pos.y - 1), 'plantTilesSpriteSheet', index)
-                    .setOrigin(0)
-                    .setDepth(5)
-                    .setScale(Game_Config.MAP_SCALE)
-                    // .setPipeline('Light2D');
-            }
-        }
-    }
-
-    addMushrooms(land: LandData, x: integer, y: integer){
-        if(y > 0){
-            let rand = Math.random();
-            let aboveTile = this._mapData.landGenerator.landData[y - 1][x];
-            if((land.ruleTile == RuleTile.top || land.ruleTile == RuleTile.topLeft || land.ruleTile == RuleTile.topRight) && land.landType == LandTypes.Normal && aboveTile.landType == LandTypes.Hole && rand < 0.2){
-                let indeces = BiomeTileSets.testSet.get(BiomeTiles.Mushrooms)
-                let index = indeces[Math.floor(Math.random()*indeces.length)]
-                land.biome = this._scene.add.image(Game_Config.MAP_tilesToWorld(land.pos.x), Game_Config.MAP_tilesToWorld(land.pos.y - 1), 'plantTilesSpriteSheet', index)
-                    .setOrigin(0)
-                    .setDepth(5)
-                    .setScale(Game_Config.MAP_SCALE);
-            }
-        }
-    }
-
-    addSandSurface(land: LandData, x: integer, y: integer){
-        if(y > 0){
-            let aboveTile = this._mapData.landGenerator.landData[y - 1][x];
-            if((land.ruleTile == RuleTile.top || land.ruleTile == RuleTile.topLeft || land.ruleTile == RuleTile.topRight) && land.landType == LandTypes.Sandy && aboveTile.landType == LandTypes.None){
-                let indeces = BiomeTileSets.testSet.get(BiomeTiles.SandSurface)
-                let index = indeces[Math.floor(Math.random()*indeces.length)]
-                land.biome = this._scene.add.image(Game_Config.MAP_tilesToWorld(land.pos.x), Game_Config.MAP_tilesToWorld(land.pos.y - 1), 'plantTilesSpriteSheet', index)
-                    .setOrigin(0)
-                    .setDepth(5)
-                    .setScale(Game_Config.MAP_SCALE);
-            }
-        }
-    }
-
 
 
 }

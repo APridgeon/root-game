@@ -1,6 +1,7 @@
 import PlantData, { Position } from "../../plant/plantData";
 import { RuleTile } from "../display/ruleTileSets";
 import { BiomeType } from "./biomeManager";
+import IBiome, { BiomeBase } from "./biomes/biomeInterface";
 import { LandTypes } from "./landGenerator";
 import MapData from "./mapData";
 import * as Phaser from 'phaser';
@@ -9,14 +10,15 @@ class LandData {
 
     pos: Position;
 
-    landType: LandTypes;
+    landType: LandTypes = LandTypes.None;
     ruleTile: RuleTile;
 
     landStrength: number = 0;
-    phosphorous: boolean;
+    phosphorous: boolean = false;
 
+    biome: BiomeBase = undefined;
     biomeType: BiomeType;
-    biome: Phaser.GameObjects.Image;
+    biomeIndex: {index: number, pos: Position} = {index: -1, pos: {x: 0, y: 0}};
 
     _mapData: MapData;
 
@@ -43,7 +45,6 @@ class LandData {
 
     // TODO: this should really be the biome - fix this!
     initMinerals() {
-        this.phosphorous = (this._mapData.noise.simplex2(this.pos.x * 0.1, this.pos.y * 0.1) > 0.5) && this.landType == LandTypes.Normal;
     }
 
     public attack(plant: PlantData): boolean {
@@ -69,9 +70,16 @@ class LandData {
     public destroy(){
         this.landType = LandTypes.Hole;
         this.landStrength = 0;
-        if(this.biome){
-            this.biome.destroy();
-        }
+        this._mapData._mapManager.mapDisplay.decorationLayer.putTileAt(-1, this.pos.x + this.biomeIndex.pos.x, this.pos.y + this.biomeIndex.pos.y);
+        this.biomeIndex = {index: -1, pos: {x: 0, y: 0}}
+
+        this._mapData._mapManager.mapDisplay.mineralLayer.putTileAt(-1, this.pos.x, this.pos.y)
+        this.phosphorous = false;
+    }
+
+    removeFromBiome(){
+        let index = this.biome.landData.findIndex(land => land.pos.x == this.pos.x && land.pos.y == this.pos.y);
+        this.biome.landData.splice(index, 1);
     }
 
 }

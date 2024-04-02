@@ -39,9 +39,13 @@ export class BiomeBase {
 
                    if(this._mapData.landGenerator.landData[y][x]){
                        let land = this._mapData.landGenerator.landData[y][x];
+                       if(land.biome){
+                            land.removeFromBiome(); 
+                       }
+                       land.biome = this;
+                       land.biomeType = this.biomeType;
                        this.landData.push(land);
                        if(land.isLand()){
-                           land.biomeType = this.biomeType;
                            land.landType = this.landType;
                            land.initStrength();
                        }

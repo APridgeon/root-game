@@ -29,6 +29,8 @@ export default class RuleTileMapDisplay
 
     private landTileLayer: Phaser.Tilemaps.TilemapLayer;
     private waterTileLayer: Phaser.Tilemaps.TilemapLayer;
+    decorationLayer: Phaser.Tilemaps.TilemapLayer;
+    mineralLayer: Phaser.Tilemaps.TilemapLayer;
 
 
     mapAnimFX: MapAnimFX[] = [];
@@ -54,29 +56,9 @@ export default class RuleTileMapDisplay
         this.setUpTileLayers();
         this.setUpBackgrounds();
         this.setUpAnimations();
-        this._mapData.biomeManager.addImages()
+        this._mapData.biomeManager.addImages();
+        this._mapData.biomeManager.addMinerals();
 
-        this.landTileLayer.forEachTile(tile => {
-            let landData = this._mapData.landGenerator.landData[tile.y][tile.x]
-            if(landData.phosphorous){
-                this._scene.add.image(Game_Config.MAP_tilesToWorld(tile.x), Game_Config.MAP_tilesToWorld(tile.y), 'plantTilesSpriteSheet', (5 * 25) + 9)
-                    .setOrigin(0)
-                    .setDepth(5)
-                    .setScale(Game_Config.MAP_SCALE);
-            }
-        })
-        // const light = this._scene.lights.addLight(0, 0, 3000, undefined, 3);
-        // this._scene.input.on('pointermove', function (pointer)
-        // {
-
-        //     light.x = this.cameras.main.scrollX + pointer.x;
-        //     light.y = this.cameras.main.scrollY + pointer.y;
-
-        // });
-        // this._scene.lights.enable().setAmbientColor(0x888888);
-
-        // this.landTileLayer.setPipeline('Light2D');
-        // this.waterTileLayer.setPipeline('Light2D');
 
     }
 
@@ -118,6 +100,16 @@ export default class RuleTileMapDisplay
         this.landTileLayer.putTilesAt(this.landDataTextureIndex, 0, 0);
         this.waterTileLayer.putTilesAt(this.waterDataTextureIndex, 0, 0);
 
+        this._mapData.landGenerator.landData.forEach(row => {
+            row.forEach(land => {
+                this.decorationLayer.putTileAt(land.biomeIndex.index, land.pos.x + land.biomeIndex.pos.x, land.pos.y + land.biomeIndex.pos.y);
+                if(land.phosphorous){
+                    console.log("TRUE")
+                    this.mineralLayer.putTileAt((5 * 25) + 9, land.pos.x, land.pos.y);
+                }
+            })
+        })
+
         this.waterTileLayer.forEachTile((tile) => {
             let alpha = this._mapData.waterAmount[tile.y][tile.x]/Game_Config.WATER_TILE_STARTING_AMOUNT;
             tile.setAlpha(alpha);
@@ -140,6 +132,13 @@ export default class RuleTileMapDisplay
                 console.log("Tile is not found");
                 return
             }
+
+            if(landData[tile.y][tile.x].phosphorous){
+                console.log("TRUE")
+                this.mineralLayer.putTileAt((5 * 25) + 9, landData[tile.y][tile.x].pos.x, landData[tile.y][tile.x]  .pos.y);
+            }
+
+
             if(landData[tile.y][tile.x].isLand()){
                 let results = RuleTileSets.ConvertToTileIndex2(tile, landData, landData[tile.y][tile.x].landType);
                 this.landTileLayer.putTileAt(results.tileIndex, tile.x, tile.y);
@@ -164,10 +163,10 @@ export default class RuleTileMapDisplay
     private setUpBackgrounds(): void {
                 
         let cloneOfTileLayer = this.tilemap.createBlankLayer('landBeforeHoles', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
-        .setOrigin(0, 0)
-        .setAlpha(1)
-        .setScale(Game_Config.MAP_SCALE)
-        .putTilesAt(this.landBeforeHolesTextureIndex, 0, 0)
+            .setOrigin(0, 0)
+            .setAlpha(1)
+            .setScale(Game_Config.MAP_SCALE)
+            .putTilesAt(this.landBeforeHolesTextureIndex, 0, 0)
 
         this.soilBackgroundTileLayer = this.tilemap.createBlankLayer('soilBackground', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
             .setOrigin(0, 0)
@@ -194,6 +193,17 @@ export default class RuleTileMapDisplay
             .setScale(Game_Config.MAP_SCALE)
             .putTilesAt(this.waterDataTextureIndex, 0, 0)
             .setDepth(1);
+
+        this.decorationLayer = this.tilemap.createBlankLayer('decoration', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
+            .setOrigin(0,0)
+            .setScale(Game_Config.MAP_SCALE)
+            .setDepth(1);
+
+        this.mineralLayer = this.tilemap.createBlankLayer('mineral', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
+            .setOrigin(0,0)
+            .setScale(Game_Config.MAP_SCALE)
+            .setDepth(1);
+
     }
 
     private setUpAnimations(): void{
