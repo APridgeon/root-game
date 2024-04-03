@@ -45,7 +45,7 @@ export default class RuleTileMapDisplay
         this._texture = texture;
 
         this.convertToRuleTileData2(this._mapData.landGenerator.landData);
-        this.waterDataTextureIndex = this.convertToRuleTileData(this._mapData.waterData, RuleTileSets.waterTileSet);
+        this.waterDataTextureIndex = this.convertToRuleTileData_water(this._mapData.landGenerator.landData, RuleTileSets.waterTileSet);
         this.landBeforeHolesTextureIndex = this.convertToRuleTileData(this._mapData.landDataBeforeHoles, RuleTileSets.landTileSet);
 
 
@@ -77,6 +77,21 @@ export default class RuleTileMapDisplay
         return tileIndexData;
     }
 
+    private convertToRuleTileData_water(landData: LandData[][], ruleTileSet: Map<RuleTile, integer>): number[][] {
+
+        let tileIndexData = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
+
+        landData.forEach(row => {
+            row.forEach(land => {
+                if(land.isLand()){
+                    tileIndexData[land.pos.y][land.pos.x] =  RuleTileSets.ConvertToTileIndex_water(land.pos.x, land.pos.y, landData, ruleTileSet);
+                }
+            })
+        })
+
+        return tileIndexData;
+    }
+
     private convertToRuleTileData2(mapData: LandData[][]) {
 
         this.landDataTextureIndex = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
@@ -95,7 +110,7 @@ export default class RuleTileMapDisplay
 
     public updateRuleTileMap(){
         this.convertToRuleTileData2(this._mapData.landGenerator.landData);
-        this.waterDataTextureIndex = this.convertToRuleTileData(this._mapData.waterData, RuleTileSets.waterTileSet);
+        this.waterDataTextureIndex = this.convertToRuleTileData_water(this._mapData.landGenerator.landData, RuleTileSets.waterTileSet);
 
         this.landTileLayer.putTilesAt(this.landDataTextureIndex, 0, 0);
         this.waterTileLayer.putTilesAt(this.waterDataTextureIndex, 0, 0);
@@ -104,14 +119,13 @@ export default class RuleTileMapDisplay
             row.forEach(land => {
                 this.decorationLayer.putTileAt(land.biomeIndex.index, land.pos.x + land.biomeIndex.pos.x, land.pos.y + land.biomeIndex.pos.y);
                 if(land.phosphorous){
-                    console.log("TRUE")
                     this.mineralLayer.putTileAt((5 * 25) + 9, land.pos.x, land.pos.y);
                 }
             })
         })
 
         this.waterTileLayer.forEachTile((tile) => {
-            let alpha = this._mapData.waterAmount[tile.y][tile.x]/Game_Config.WATER_TILE_STARTING_AMOUNT;
+            let alpha = this._mapData.landGenerator.landData[tile.y][tile.x].water/Game_Config.WATER_TILE_STARTING_AMOUNT;
             tile.setAlpha(alpha);
         })
 
@@ -125,7 +139,6 @@ export default class RuleTileMapDisplay
 
         let tileArray = [N, E, S, W, pos];
         let landData = this._mapData.landGenerator.landData
-        let waterData = this._mapData.waterData;
 
         tileArray.forEach(tile => {
             if(landData[tile.y][tile.x] === undefined){
@@ -134,7 +147,6 @@ export default class RuleTileMapDisplay
             }
 
             if(landData[tile.y][tile.x].phosphorous){
-                console.log("TRUE")
                 this.mineralLayer.putTileAt((5 * 25) + 9, landData[tile.y][tile.x].pos.x, landData[tile.y][tile.x]  .pos.y);
             }
 
@@ -148,12 +160,13 @@ export default class RuleTileMapDisplay
                 this.landTileLayer.putTileAt(RuleTileSets.landTileSet.get(RuleTile.empty), tile.x, tile.y);
             }
             
-            if(waterData[tile.y][tile.x]){
-                let index = RuleTileSets.ConvertToTileIndex(tile.x, tile.y, waterData, RuleTileSets.waterTileSet);
-                let alpha = this._mapData.waterAmount[tile.y][tile.x]/Game_Config.WATER_TILE_STARTING_AMOUNT;
+            if(landData[tile.y][tile.x].water > 0){
+                let index = RuleTileSets.ConvertToTileIndex_water(tile.x, tile.y, landData, RuleTileSets.waterTileSet);
+                let alpha = landData[tile.y][tile.x].water/Game_Config.WATER_TILE_STARTING_AMOUNT;
                 this.waterTileLayer.putTileAt(index, tile.x, tile.y)
                     .setAlpha(alpha)
-            } else {
+            } 
+            else {
                 this.waterTileLayer.putTileAt(RuleTileSets.waterTileSet.get(RuleTile.empty), tile.x, tile.y);
             }
         })

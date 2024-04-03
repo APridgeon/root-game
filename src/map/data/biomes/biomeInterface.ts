@@ -8,6 +8,7 @@ import * as Phaser from "phaser";
 export default interface IBiome {
 
     createBiome(x0: number, biomeSize: number): void;
+    addWater();
     addImages(): void;
     addMinerals(): void;
 
@@ -32,26 +33,35 @@ export class BiomeBase {
     createBiome(x0: number, biomeSize: number): void {
         for(let y = 0; y < Game_Config.MAP_SIZE.y; y++){
 
-               let xWobble = this._mapData._mapManager.noise.simplex2(0.5, y * 0.05);
-               let xWobbleRounded = Phaser.Math.RoundTo(xWobble * 5, 0) - 5;
+            let xWobble = this._mapData._mapManager.noise.simplex2(0.5, y * 0.05);
+            let xWobbleRounded = Phaser.Math.RoundTo(xWobble * 5, 0) - 5;
 
-               for(let x = x0 + xWobbleRounded; x < x0 + biomeSize - xWobbleRounded; x++){
+            for(let x = x0 + xWobbleRounded; x < x0 + biomeSize - xWobbleRounded; x++){
 
-                   if(this._mapData.landGenerator.landData[y][x]){
-                       let land = this._mapData.landGenerator.landData[y][x];
-                       if(land.biome){
-                            land.removeFromBiome(); 
-                       }
-                       land.biome = this;
-                       land.biomeType = this.biomeType;
-                       this.landData.push(land);
-                       if(land.isLand()){
-                           land.landType = this.landType;
-                           land.initStrength();
-                       }
-                   }
-               }
-           }
+                if(this._mapData.landGenerator.landData[y][x]){
+                    let land = this._mapData.landGenerator.landData[y][x];
+                    if(land.biome){
+                        land.removeFromBiome(); 
+                    }
+                    land.biome = this;
+                    land.biomeType = this.biomeType;
+                    this.landData.push(land);
+                    if(land.isLand()){
+                        land.landType = this.landType;
+                        land.initStrength();
+                    }
+                }
+            }
+        }
+        this.addWater()
+   }
+
+   addWater() {
+        this.landData.forEach(land => {
+            let water = this._mapData.noise.simplex2(land.pos.x * 0.05, land.pos.y * 0.05)
+            land.water = (water > 0.3) && land.isLand() ? Game_Config.WATER_TILE_STARTING_AMOUNT : 0;
+            console.log(land.water);
+        })
    }
 
 }

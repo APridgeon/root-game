@@ -11,8 +11,10 @@ import * as Phaser from "phaser";
 
 export default class GrasslandBiome extends BiomeBase implements IBiome {
 
+
     biomeType: BiomeType = BiomeType.Grassland;
     landType: LandTypes = LandTypes.Normal;
+
 
     addImages(): void {
         this.landData.forEach(land => {

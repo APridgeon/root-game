@@ -168,6 +168,115 @@ export default class RuleTileSets {
         [RuleTile.allButLeft, (16*ROWLENGTH) + 6]
     ])
 
+
+
+    static ConvertToTileIndex_water(x: number, y:number, mapData: LandData[][], ruleTileSet: Map<RuleTile, integer>){
+
+        let tileIndexValue;
+
+        let N;
+        let E;
+        let S;
+        let W;
+
+        if(x === 0){
+            W = false;
+        } else {
+            W = mapData[y][x-1].water > 0;
+        }
+        if(x === Game_Config.MAP_SIZE.x - 1){
+            E = false;
+        } else {
+            E = mapData[y][x+1].water > 0;
+        }
+        if(y === 0){
+            N = false;
+        } else {
+            N = mapData[y-1][x].water > 0;
+        }
+        if(y === Game_Config.MAP_SIZE.y - 1){
+            S = false;
+        } else {
+            S = mapData[y+1][x].water > 0;
+        }
+
+        
+
+        if(N && W && E && S){
+            tileIndexValue = ruleTileSet.get(RuleTile.surrounded);
+                }
+            //stranded
+            if(!N && !W && !E && !S){
+                tileIndexValue = ruleTileSet.get(RuleTile.stranded);
+            }
+            //top
+            else if(!N && W && E && S){
+                tileIndexValue = ruleTileSet.get(RuleTile.top);
+            }
+
+            //bottom
+            else if(N && W && E && !S){
+                tileIndexValue = ruleTileSet.get(RuleTile.bottom);
+            }
+
+            //left
+            else if(N && !W && E && S){
+                tileIndexValue = ruleTileSet.get(RuleTile.left);
+            }
+
+            //right
+            else if(N && W && !E && S){
+                tileIndexValue = ruleTileSet.get(RuleTile.right);
+            }
+
+            //top right
+            else if(!N && W && !E && S){
+                tileIndexValue = ruleTileSet.get(RuleTile.topRight);
+            }    
+            
+            //top left
+            else if(!N && !W  && E && S){
+                tileIndexValue = ruleTileSet.get(RuleTile.topLeft);
+            } 
+
+            //bottom left
+            else if(N && !W  && E && !S ){
+                tileIndexValue = ruleTileSet.get(RuleTile.bottomLeft);
+            } 
+
+            //bottom right
+            else if(N && W && !E && !S){
+                tileIndexValue = ruleTileSet.get(RuleTile.bottomRight);
+            } 
+            //left and right
+            else if(N && !W && !E && S){
+                tileIndexValue = ruleTileSet.get(RuleTile.leftAndRight);
+            } 
+            //top and bottom
+            else if(!N && W && E && !S){
+                tileIndexValue = ruleTileSet.get(RuleTile.topAndBottom);
+            } 
+            //all but top
+            else if(N && !W && !E  && !S){
+                tileIndexValue = ruleTileSet.get(RuleTile.allButTop);
+            } 
+            //all but right
+            else if(!N  && !W && E && !S){
+                tileIndexValue = ruleTileSet.get(RuleTile.allButRight);
+            } 
+            //all but bottom
+            else if(!N && !W && !E && S){
+                tileIndexValue = ruleTileSet.get(RuleTile.allButBottom);
+            } 
+            //all but left
+            else if(!N  && W && !E && !S){
+                tileIndexValue = ruleTileSet.get(RuleTile.allButLeft);
+            } 
+        
+
+        return tileIndexValue;
+    }
+
     static ConvertToTileIndex(x: number, y:number, mapData: boolean[][], ruleTileSet: Map<RuleTile, integer>){
 
         let tileIndexValue;

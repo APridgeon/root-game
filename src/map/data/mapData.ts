@@ -18,9 +18,9 @@ export default class MapData {
 
     private _waterGenerator: WaterGenerator;
 
-    get waterData(){
-        return this._waterGenerator.waterData;
-    }
+    // get waterData(){
+    //     return this._waterGenerator.waterData;
+    // }
 
     get waterAmount(){
         return this._waterGenerator.waterAmount;
@@ -37,7 +37,7 @@ export default class MapData {
         this.noise = noise;
 
         this.landGenerator = new LandGenerator(this, this.noise);
-        this._waterGenerator = new WaterGenerator(this, this.noise);
+        // this._waterGenerator = new WaterGenerator(this, this.noise);
 
         this.biomeManager = new BiomeManager(this, scene);
 

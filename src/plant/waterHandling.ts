@@ -35,10 +35,9 @@ export default class WaterHandler {
 
     private removeSurroundingWater(): void {
         this.waterSources.forEach(pos => {
-            this._mapManager.mapData.waterAmount[pos.y][pos.x] -= 1;
-            if(this._mapManager.mapData.waterAmount[pos.y][pos.x] < 0){
-                this._mapManager.mapData.waterAmount[pos.y][pos.x] = 0;
-                this._mapManager.mapData.waterData[pos.y][pos.x] = false;
+            this._mapManager.mapData.landGenerator.landData[pos.y][pos.x].water -= 1;
+            if(this._mapManager.mapData.landGenerator.landData[pos.y][pos.x].water < 0){
+                this._mapManager.mapData.landGenerator.landData[pos.y][pos.x].water = 0;
             }
             this._mapManager.mapDisplay.updateTile(pos);
         })
@@ -77,10 +76,27 @@ export default class WaterHandler {
         this.rootsCloseToWater = [];
 
         plantData.__rootData.forEach( pos => {
-            let N = mapManager.mapData.waterData[pos.y - 1][pos.x];
-            let E = mapManager.mapData.waterData[pos.y][pos.x + 1];
-            let S = mapManager.mapData.waterData[pos.y + 1][pos.x];
-            let W = mapManager.mapData.waterData[pos.y][pos.x - 1];
+            let N = false;
+            let E = false;
+            let S = false;
+            let W = false
+            if(mapManager.mapData.landGenerator.landData[pos.y - 1][pos.x]){
+                N = mapManager.mapData.landGenerator.landData[pos.y - 1][pos.x].water > 0;
+            }
+            if(mapManager.mapData.landGenerator.landData[pos.y][pos.x + 1]){
+                E = mapManager.mapData.landGenerator.landData[pos.y][pos.x + 1].water > 0;
+            }
+            if(mapManager.mapData.landGenerator.landData[pos.y + 1][pos.x]){
+                S = mapManager.mapData.landGenerator.landData[pos.y + 1][pos.x].water > 0;
+            }
+            if(mapManager.mapData.landGenerator.landData[pos.y][pos.x - 1]){
+                W = mapManager.mapData.landGenerator.landData[pos.y][pos.x - 1].water > 0;
+            }
+
+            // let N = mapManager.mapData.landGenerator.landData[pos.y - 1][pos.x].water > 0;
+            // let E = mapManager.mapData.landGenerator.landData[pos.y][pos.x + 1].water > 0;
+            // let S = mapManager.mapData.landGenerator.landData[pos.y + 1][pos.x].water > 0;
+            // let W = mapManager.mapData.landGenerator.landData[pos.y][pos.x - 1].water > 0;
 
             if(N){
                 this.waterSources.push({x: pos.x, y: pos.y-1});

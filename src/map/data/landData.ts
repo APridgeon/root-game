@@ -15,6 +15,7 @@ class LandData {
 
     landStrength: number = 0;
     phosphorous: boolean = false;
+    water: number = 0;
 
     biome: BiomeBase = undefined;
     biomeType: BiomeType;

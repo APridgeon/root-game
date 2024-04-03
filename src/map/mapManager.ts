@@ -51,9 +51,9 @@ export default class MapManager {
                 result = true;
             }
         
-        if(this.mapData.waterData[pos.y][pos.x]){
-            result = false;
-        }
+        // if(this.mapData.waterData[pos.y][pos.x]){
+        //     result = false;
+        // }
 
         return result;
 

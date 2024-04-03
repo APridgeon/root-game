@@ -63,7 +63,7 @@ export default class BiomeManager {
             let b: IBiome;
             if(biome == BiomeType.Grassland){
                 b = new GrasslandBiome(this._scene, this._mapData);
-            } else {
+            } else {    
                 b = new SandlandBiome(this._scene, this._mapData);
             }
             this.biomes.push(b);
