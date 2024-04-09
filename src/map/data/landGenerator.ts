@@ -24,10 +24,10 @@ class LandGenerator {
 
     public landData: LandData[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x));
 
-    readonly size = Game_Config.MAP_SIZE;
-    readonly groundLevel = Game_Config.MAP_GROUND_LEVEL;
-    readonly underGroundHoleLevel = Game_Config.MAP_UGROUND_HOLE_LEVEL;
-    readonly sandLevel = Game_Config.MAP_UGROUND_HOLE_LEVEL + 10;
+    size = Game_Config.MAP_SIZE;
+    groundLevel = Game_Config.MAP_GROUND_LEVEL;
+    underGroundHoleLevel = Game_Config.MAP_UGROUND_HOLE_LEVEL;
+    sandLevel = Game_Config.MAP_UGROUND_HOLE_LEVEL + 10;
 
     private noiseStretch = 0.05;
     private noiseThreshold = 0.7;

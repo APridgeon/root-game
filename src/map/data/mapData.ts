@@ -8,17 +8,10 @@ import BiomeManager from "./biomeManager";
 
 export default class MapData {
 
-    landGenerator: LandGenerator;
     _mapManager: MapManager;
 
-    get landDataBeforeHoles(){
-        return this.landGenerator.landDataBeforeHoles;
-    }
-
-
+    landGenerator: LandGenerator;
     biomeManager: BiomeManager;
-
-    deadRootPos: boolean[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(false));
     noise: Perlin;
 
     constructor(noise: Perlin, mapManager: MapManager, scene: Phaser.Scene){
@@ -27,10 +20,7 @@ export default class MapData {
         this.noise = noise;
 
         this.landGenerator = new LandGenerator(this, this.noise);
-
         this.biomeManager = new BiomeManager(this, scene);
-
-
 
     }
 

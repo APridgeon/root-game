@@ -58,7 +58,7 @@ export class BiomeBase {
 
    addWater() {
         this.landData.forEach(land => {
-            let water = this._mapData.noise.simplex2(land.pos.x * 0.05, land.pos.y * 0.05)
+            let water = this._mapData.noise.simplex2((land.pos.x * 0.05) + 0.3, (land.pos.y * 0.05) + 0.3)
             land.water = (water > 0.3) && land.isLand() ? Game_Config.WATER_TILE_STARTING_AMOUNT : 0;
         })
    }
