@@ -8,13 +8,13 @@ const ROWLENGTH = 25;
 
 export enum RuleTile {
     surrounded = 0,
-    top = 1,
+    top = "top",
     right = 2,
     bottom = 3,
     left = 4,
     leftAndRight = 5,
     topLeft = 6,
-    topRight = 7,
+    topRight = "topRight",
     bottomLeft = 8,
     bottomRight = 9,
     stranded = 10,
@@ -167,6 +167,14 @@ export default class RuleTileSets {
         [RuleTile.allButBottom, (15*ROWLENGTH) + 8],
         [RuleTile.allButLeft, (16*ROWLENGTH) + 6]
     ])
+
+
+    static LandTypeToTileSet = new Map<LandTypes, Map<RuleTile, integer>>([
+        [LandTypes.Normal, this.landTileSet],
+        [LandTypes.Sandy, this.sandTileSetNoGaps],
+        [LandTypes.DeadRoot, this.deadRootTileSetNoGaps]
+    ])
+
 
 
 
@@ -394,6 +402,7 @@ export default class RuleTileSets {
             ruleTileSet = RuleTileSets.sandTileSetNoGaps;
         }
 
+
         let tileIndexValue;
         let tileType: RuleTile;
 
@@ -523,11 +532,191 @@ export default class RuleTileSets {
 
     }
 
+    static convertToIndexes(landData: LandData): RuleTileResult {
+
+        let ruleTileLand;
+        let landIndex;
+        let ruleTileWater;
+        let waterIndex;
+
+        if(landData.isLand()){
+            ruleTileLand = this.determineTileType(landData, TileResultOption.land);
+            let landTileSet = RuleTileSets.LandTypeToTileSet.get(landData.landType);
+            landIndex = landTileSet.get(ruleTileLand);
+    
+            ruleTileWater = this.determineTileType(landData, TileResultOption.water);
+            waterIndex = RuleTileSets.waterTileSet.get(ruleTileWater);
+        } else {
+            ruleTileLand = RuleTile.empty
+            landIndex = -1
+            ruleTileWater = RuleTile.empty
+            waterIndex = -1
+        }
+
+        let result: RuleTileResult = {
+            land: {tileIndex: landIndex, tileType: ruleTileLand},
+            water: {tileIndex: waterIndex, tileType: ruleTileWater}
+
+        }
+
+        console.log(result);
+
+        return result;
+    }
+
+    static determineTileType(landData: LandData, option: TileResultOption){
+
+        let N = false;
+        let E = false;
+        let S = false;
+        let W = false;
+
+        let mapData = landData._mapData.landGenerator.landData;
+        let landType = landData.landType;
+
+        switch (option) {
+            case TileResultOption.land:
+                if(landData.pos.x === 0){
+                    W = false;
+                } else {
+                    W = (mapData[landData.pos.y][landData.pos.x-1].landType === landType);
+                }
+                if(landData.pos.x === Game_Config.MAP_SIZE.x - 1){
+                    E = false;
+                } else {
+                    E = (mapData[landData.pos.y][landData.pos.x+1].landType === landType);
+                }
+                if(landData.pos.y === 0){
+                    N = false;
+                } else {
+                    N = (mapData[landData.pos.y-1][landData.pos.x].landType === landType);
+                }
+                if(landData.pos.y === Game_Config.MAP_SIZE.y - 1){
+                    S = false;
+                } else {
+                    S = (mapData[landData.pos.y+1][landData.pos.x].landType === landType);
+                }
+            case TileResultOption.water:
+                if(landData.pos.x === 0){
+                    W = false;
+                } else {
+                    W = (mapData[landData.pos.y][landData.pos.x-1].hasWater());
+                }
+                if(landData.pos.x === Game_Config.MAP_SIZE.x - 1){
+                    E = false;
+                } else {
+                    E = (mapData[landData.pos.y][landData.pos.x+1].hasWater());
+                }
+                if(landData.pos.y === 0){
+                    N = false;
+                } else {
+                    N = (mapData[landData.pos.y-1][landData.pos.x].hasWater());
+                }
+                if(landData.pos.y === Game_Config.MAP_SIZE.y - 1){
+                    S = false;
+                } else {
+                    S = (mapData[landData.pos.y+1][landData.pos.x].hasWater());
+                }
+        }
+
+        let tileType: RuleTile;
+
+        if(N && W && E && S){
+            tileType = RuleTile.surrounded;          
+                }
+            //stranded
+            if(!N && !W && !E && !S){
+                tileType = RuleTile.stranded;              
+            }
+            //top
+            else if(!N && W && E && S){
+                tileType = RuleTile.top;              
+            }
+
+            //bottom
+            else if(N && W && E && !S){
+                tileType = RuleTile.bottom;              
+            }
+
+            //left
+            else if(N && !W && E && S){
+                tileType = RuleTile.left;              
+            }
+
+            //right
+            else if(N && W && !E && S){
+                tileType = RuleTile.right;              
+            }
+
+            //top right
+            else if(!N && W && !E && S){
+                tileType = RuleTile.topRight;              
+            }    
+            
+            //top left
+            else if(!N && !W  && E && S){
+                tileType = RuleTile.topLeft;              
+            } 
+
+            //bottom left
+            else if(N && !W  && E && !S ){
+                tileType = RuleTile.bottomLeft;              
+            } 
+
+            //bottom right
+            else if(N && W && !E && !S){
+                tileType = RuleTile.bottomRight;              
+            } 
+            //left and right
+            else if(N && !W && !E && S){
+                tileType = RuleTile.leftAndRight;              
+            } 
+            //top and bottom
+            else if(!N && W && E && !S){
+                tileType = RuleTile.topAndBottom;              
+            } 
+            //all but top
+            else if(N && !W && !E  && !S){
+                tileType = RuleTile.allButTop;              
+            } 
+            //all but right
+            else if(!N  && !W && E && !S){
+                tileType = RuleTile.allButRight;              
+            } 
+            //all but bottom
+            else if(!N && !W && !E && S){
+                tileType = RuleTile.allButBottom;              
+            } 
+            //all but left
+            else if(!N  && W && !E && !S){
+                tileType = RuleTile.allButLeft;              
+            } 
+            //empty
+            else if(!N && !W && !E && !S){
+                tileType = RuleTile.empty;              
+            }
+
+        return tileType;
+    }
+
 }
+
+
+
 
 export type TileIndexResult = {
     tileIndex: integer;
     tileType: RuleTile;
+}
+
+export type RuleTileResult = {
+    land: TileIndexResult,
+    water: TileIndexResult
+}
+
+export enum TileResultOption {
+    land,
+    water
 }
 
 

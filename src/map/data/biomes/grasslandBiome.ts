@@ -16,6 +16,8 @@ export default class GrasslandBiome extends BiomeBase implements IBiome {
     landType: LandTypes = LandTypes.Normal;
 
 
+
+
     addImages(): void {
         this.landData.forEach(land => {
             this.addVines(land, land.pos.x, land.pos.y);

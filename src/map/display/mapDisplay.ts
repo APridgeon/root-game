@@ -140,6 +140,19 @@ export default class RuleTileMapDisplay
         let tileArray = [N, E, S, W, pos];
         let landData = this._mapData.landGenerator.landData
 
+        // tileArray.forEach(tile => {
+        //     if(landData[tile.y][tile.x] === undefined){
+        //         return
+        //     }
+        //     let results = RuleTileSets.convertToIndexes(landData[tile.y][tile.x]);
+        //     this.landTileLayer.putTileAt(results.land.tileIndex, tile.x, tile.y);
+        //     this.waterTileLayer.putTileAt(results.water.tileIndex, tile.x, tile.y)
+        //         .setAlpha(landData[tile.y][tile.x].water / Game_Config.WATER_TILE_STARTING_AMOUNT);
+        //     if(landData[tile.y][tile.x].phosphorous){
+        //         this.mineralLayer.putTileAt((5 * 25) + 9, landData[tile.y][tile.x].pos.x, landData[tile.y][tile.x]  .pos.y);
+        //     }
+        // })
+
         tileArray.forEach(tile => {
             if(landData[tile.y][tile.x] === undefined){
                 console.log("Tile is not found");

@@ -51,9 +51,9 @@ export default class MapManager {
                 result = true;
             }
         
-        // if(this.mapData.waterData[pos.y][pos.x]){
-        //     result = false;
-        // }
+        if(this.mapData.landGenerator.landData[pos.y][pos.x].hasWater()){
+            return false
+        }
 
         return result;
 

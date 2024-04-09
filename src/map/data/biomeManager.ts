@@ -54,7 +54,7 @@ export default class BiomeManager {
 // TODO: sort out the creation of different biomes
     setBiome(){
 
-        let biomeChoices = [BiomeType.Grassland, BiomeType.Grassland, BiomeType.Grassland, BiomeType.Sandy]
+        let biomeChoices = [BiomeType.Grassland, BiomeType.Sandy]
         let biomeSizes = 50;
 
         for(let xChunk = 0; xChunk<Game_Config.MAP_SIZE.x; xChunk+=biomeSizes){
@@ -66,8 +66,8 @@ export default class BiomeManager {
             } else {    
                 b = new SandlandBiome(this._scene, this._mapData);
             }
-            this.biomes.push(b);
             b.createBiome(xChunk, biomeSizes);
+            this.biomes.push(b);
 
         }
     }

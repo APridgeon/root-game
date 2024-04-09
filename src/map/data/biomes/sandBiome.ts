@@ -12,6 +12,8 @@ export default class SandlandBiome extends BiomeBase implements IBiome {
     biomeType: BiomeType = BiomeType.Sandy;
     landType: LandTypes = LandTypes.Sandy;
 
+
+
     addImages(): void {
         this.landData.forEach(land => {
             this.addSandSurface(land, land.pos.x, land.pos.y);

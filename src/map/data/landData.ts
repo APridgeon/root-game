@@ -28,8 +28,6 @@ class LandData {
         this.pos = pos;
         this._mapData = mapData;
         this.initStrength();
-        // this.initMinerals();
-
     }
 
     initStrength() {
@@ -44,9 +42,6 @@ class LandData {
         }
     }
 
-    // TODO: this should really be the biome - fix this!
-    initMinerals() {
-    }
 
     public attack(plant: PlantData): boolean {
         let effort = this.landStrength;
@@ -68,6 +63,10 @@ class LandData {
         }
     }
 
+    hasWater(){
+        return (this.water > 0);
+    }
+
     public destroy(){
         this.landType = LandTypes.Hole;
         this.landStrength = 0;
@@ -76,6 +75,7 @@ class LandData {
 
         this._mapData._mapManager.mapDisplay.mineralLayer.putTileAt(-1, this.pos.x, this.pos.y)
         this.phosphorous = false;
+        this.water = 0;
     }
 
     removeFromBiome(){

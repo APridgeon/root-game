@@ -1,7 +1,6 @@
 import Perlin from "phaser3-rex-plugins/plugins/perlin";
 import Game_Config from "../../game_config";
 import LandGenerator, { LandTypes } from "./landGenerator";
-import WaterGenerator from "./waterGenerator";
 import { Position } from "../../plant/plantData";
 import MapManager from "../mapManager";
 import BiomeManager from "./biomeManager";
@@ -16,15 +15,6 @@ export default class MapData {
         return this.landGenerator.landDataBeforeHoles;
     }
 
-    private _waterGenerator: WaterGenerator;
-
-    // get waterData(){
-    //     return this._waterGenerator.waterData;
-    // }
-
-    get waterAmount(){
-        return this._waterGenerator.waterAmount;
-    }
 
     biomeManager: BiomeManager;
 
@@ -37,7 +27,6 @@ export default class MapData {
         this.noise = noise;
 
         this.landGenerator = new LandGenerator(this, this.noise);
-        // this._waterGenerator = new WaterGenerator(this, this.noise);
 
         this.biomeManager = new BiomeManager(this, scene);
 

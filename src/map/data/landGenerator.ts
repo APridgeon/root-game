@@ -44,7 +44,6 @@ class LandGenerator {
 
         this.createLandSurface();
         this.addSimplexNoise(this.underGroundHoleLevel, {x: this.noiseStretch, y: this.noiseStretch}, this.noiseThreshold, LandTypes.Hole);
-        // this.addSimplexNoise(this.sandLevel, {x: this.noiseStretch * 0.5, y: this.noiseStretch * 0.5}, this.noiseThreshold - 0.3, LandTypes.Sandy, 0.5);
 
 
 
