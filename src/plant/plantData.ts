@@ -4,6 +4,7 @@ import aiController from "../ai/aiPlantController";
 import PlantGrowthTiles from "./plantGrowthTiles";
 import plantGrowthTiles from "./plantGrowthTiles";
 import { Direction } from "../general/direction";
+import Main from "../game";
 
 
 export type Position = {
@@ -31,7 +32,7 @@ export enum PlantGrowthStage {
 
 export default class PlantData {
 
-    private _scene: Phaser.Scene;
+    private _scene: Main;
 
     private _startPos: Position;
     get startPos(){
@@ -56,12 +57,13 @@ export default class PlantData {
     public strength: number = 1;
 
 
-    constructor(scene: Phaser.Scene, startPos: Position, ai: boolean){
+    constructor(scene: Main, startPos: Position, ai: boolean){
 
         this._scene = scene;
         this._startPos = startPos;
         this._ai = ai;
 
+        this._scene.mapManager.AttackTile({x: this.startPos.x, y: this.startPos.y}, this);
         this.__rootData.push({x: this.startPos.x, y: this.startPos.y});
 
         if(ai){

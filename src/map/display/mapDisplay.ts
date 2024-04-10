@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import Game_Config from '../../game_config';
 import MapData from '../data/mapData';
-import RuleTileSets, { RuleTile } from './ruleTileSets';
+import RuleTileSets, { RuleTile, TileResultOption } from './ruleTileSets';
 import { AnimatedTile } from './animatedTiles';
 import MapAnimFX from './mapAnimFX';
 import { Position } from '../../plant/plantData';
@@ -67,70 +67,18 @@ export default class RuleTileMapDisplay
                 }
 
                 if(land.isLand()){
-                    let results = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, mapData[y][x].landType);
-                    this.landDataTextureIndex[y][x] = results.tileIndex;
-                    this.waterDataTextureIndex[y][x] = RuleTileSets.ConvertToTileIndex_water(land.pos.x, land.pos.y, mapData, RuleTileSets.waterTileSet);
-
-                    mapData[y][x].ruleTile = results.tileType;
+                    let new1 = RuleTileSets.convertToIndexes(mapData[y][x]);
+                    mapData[y][x].ruleTile = new1.land.tileType;
+                    this.landDataTextureIndex[y][x] = new1.land.tileIndex;
+                    this.waterDataTextureIndex[y][x] = -1;
+                    if(land.hasWater()){
+                        this.waterDataTextureIndex[y][x] = new1.water.tileIndex;
+                    }
                 }
             }
         }
     }
 
-
-    private convertToRuleTileData_water(landData: LandData[][], ruleTileSet: Map<RuleTile, integer>): number[][] {
-
-        let tileIndexData = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
-
-        landData.forEach(row => {
-            row.forEach(land => {
-                if(land.isLand()){
-                    tileIndexData[land.pos.y][land.pos.x] =  RuleTileSets.ConvertToTileIndex_water(land.pos.x, land.pos.y, landData, ruleTileSet);
-                }
-            })
-        })
-
-        return tileIndexData;
-    }
-
-    private convertToRuleTileData2(mapData: LandData[][]) {
-
-        this.landDataTextureIndex = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
-        this.waterDataTextureIndex = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
-
-        for(let x = 0; x < mapData[0].length - 0; x++){
-            for(let y = 0; y < mapData.length - 0; y++){
-                if(mapData[y][x].isLand()){
-                    let results = RuleTileSets.ConvertToTileIndex2({x: x, y: y}, mapData, mapData[y][x].landType);
-                    this.landDataTextureIndex[y][x] = results.tileIndex;
-                    mapData[y][x].ruleTile = results.tileType;
-                }
-            }
-        }
-    }
-
-    public updateRuleTileMap(){
-        this.convertToRuleTileData2(this._mapData.landGenerator.landData);
-        this.waterDataTextureIndex = this.convertToRuleTileData_water(this._mapData.landGenerator.landData, RuleTileSets.waterTileSet);
-
-        this.landTileLayer.putTilesAt(this.landDataTextureIndex, 0, 0);
-        this.waterTileLayer.putTilesAt(this.waterDataTextureIndex, 0, 0);
-
-        this._mapData.landGenerator.landData.forEach(row => {
-            row.forEach(land => {
-                this.decorationLayer.putTileAt(land.biomeIndex.index, land.pos.x + land.biomeIndex.pos.x, land.pos.y + land.biomeIndex.pos.y);
-                if(land.phosphorous){
-                    this.mineralLayer.putTileAt((5 * 25) + 9, land.pos.x, land.pos.y);
-                }
-            })
-        })
-
-        this.waterTileLayer.forEachTile((tile) => {
-            let alpha = this._mapData.landGenerator.landData[tile.y][tile.x].water/Game_Config.WATER_TILE_STARTING_AMOUNT;
-            tile.setAlpha(alpha);
-        })
-
-    }
 
     updateTile(pos: Position): void {
         let N: Position = {x: pos.x, y: pos.y - 1};
@@ -154,22 +102,16 @@ export default class RuleTileMapDisplay
 
 
             if(landData[tile.y][tile.x].isLand()){
-                let results = RuleTileSets.ConvertToTileIndex2(tile, landData, landData[tile.y][tile.x].landType);
-                this.landTileLayer.putTileAt(results.tileIndex, tile.x, tile.y);
-                landData[tile.y][tile.x].ruleTile = results.tileType;
+                let newResults = RuleTileSets.convertToIndexes(landData[tile.y][tile.x]);
+                this.landTileLayer.putTileAt(newResults.land.tileIndex, tile.x, tile.y);
+                landData[tile.y][tile.x].ruleTile = newResults.land.tileType;
+
+                let alpha = landData[tile.y][tile.x].water/Game_Config.WATER_TILE_STARTING_AMOUNT;
+                this.waterTileLayer.putTileAt(newResults.water.tileIndex, tile.x, tile.y)
+                    .setAlpha(alpha);
             }
             else {
                 this.landTileLayer.putTileAt(RuleTileSets.landTileSet.get(RuleTile.empty), tile.x, tile.y);
-            }
-            
-            if(landData[tile.y][tile.x].water > 0){
-                let index = RuleTileSets.ConvertToTileIndex_water(tile.x, tile.y, landData, RuleTileSets.waterTileSet);
-                let alpha = landData[tile.y][tile.x].water/Game_Config.WATER_TILE_STARTING_AMOUNT;
-                this.waterTileLayer.putTileAt(index, tile.x, tile.y)
-                    .setAlpha(alpha)
-            } 
-            else {
-                this.waterTileLayer.putTileAt(RuleTileSets.waterTileSet.get(RuleTile.empty), tile.x, tile.y);
             }
         })
 

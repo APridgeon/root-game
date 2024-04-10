@@ -12,7 +12,7 @@ import Main from "../game";
 
 export default class PlantManager {
 
-    scene: Phaser.Scene;
+    scene: Main;
     mapManager: MapManager;
     plantDisplay: PlantDisplay;
 
@@ -36,6 +36,8 @@ export default class PlantManager {
         }
         this.userPlant = new PlantData(scene, {x: Game_Config.PLANT_STARTING_POSX, y: plantHeight }, false);
         this.mapManager.DestroyTile({x: Game_Config.PLANT_STARTING_POSX, y: plantHeight});
+        
+
 
         this.PlacePlants(scene);
         this.plantDisplay = new PlantDisplay(scene, this);
@@ -43,6 +45,7 @@ export default class PlantManager {
         new WaterHandler(scene, mapManager);
 
         this.setupEventResponses();
+
     }
 
     public checkIfPlantIsClose(plantData: PlantData, tile: Position): Direction{
@@ -111,7 +114,7 @@ export default class PlantManager {
         }
     }
 
-    private PlacePlants(scene: Phaser.Scene): void {
+    private PlacePlants(scene: Main): void {
         for(let x = 1; x < Game_Config.MAP_SIZE.x - 1; x+=6){
             if(!(x > this.userPlant.startPos.x - 3 && x < this.userPlant.startPos.x + 3) && Math.random() > 0.5){
                 

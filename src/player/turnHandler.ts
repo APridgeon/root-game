@@ -41,7 +41,7 @@ export default class TurnHandler {
 
     }
 
-    private playerRootCreation(): void{
+    playerRootCreation(): void{
 
         let plant = this._plantManager.userPlant;
         let worldTileIsAccessable = this._mapManager.isLandTileAccessible(plant.newRootLocation);
