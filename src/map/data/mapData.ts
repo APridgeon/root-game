@@ -22,6 +22,7 @@ export default class MapData {
         this.landGenerator = new LandGenerator(this, this.noise);
         this.biomeManager = new BiomeManager(this, scene);
 
+        scene.events.emit('map finished');
     }
 
 

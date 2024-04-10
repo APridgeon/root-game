@@ -52,6 +52,8 @@ export default class RuleTileMapDisplay
         this._mapData.biomeManager.addImages();
         this._mapData.biomeManager.addMinerals();
 
+        this.InitialiseTilemap();
+
 
     }
 
@@ -79,6 +81,17 @@ export default class RuleTileMapDisplay
         }
     }
 
+
+    public InitialiseTilemap(){
+        this._mapData.landGenerator.landData.forEach(row => {
+            row.forEach(land => {
+                this.decorationLayer.putTileAt(land.biomeIndex.index, land.pos.x + land.biomeIndex.pos.x, land.pos.y + land.biomeIndex.pos.y);
+                if(land.phosphorous){
+                    this.mineralLayer.putTileAt((5 * 25) + 9, land.pos.x, land.pos.y);
+                }
+            })
+        })
+    }
 
     updateTile(pos: Position): void {
         let N: Position = {x: pos.x, y: pos.y - 1};
