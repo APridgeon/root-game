@@ -6,7 +6,6 @@ import { Position } from "./plant/plantData";
 import PlantManager from "./plant/plantManager";
 import * as Phaser from "phaser";
 
-let darkTest: Phaser.GameObjects.Rectangle;
 
 export default class CameraManager {
 

@@ -1,8 +1,6 @@
 import * as Phaser from "phaser";
 import Game_Config from "../game_config"
 import aiController from "../ai/aiPlantController";
-import PlantGrowthTiles from "./plantGrowthTiles";
-import plantGrowthTiles from "./plantGrowthTiles";
 import { Direction } from "../general/direction";
 import Main from "../game";
 
@@ -34,34 +32,25 @@ export default class PlantData {
 
     private _scene: Main;
 
-    private _startPos: Position;
-    get startPos(){
-        return this._startPos;
-    }
+    startPos: Position;
+    ai: boolean;
 
-    private _ai: boolean;
-    get ai(){
-        return this._ai;
-    }
+    __rootData: Position[] = [];
 
-    public __rootData: Position[] = [];
+    alive: boolean = true;
+    water: integer = Game_Config.PLANT_DATA_WATER_START_LEVEL;
+    aiController: aiController | null;
+    newRootLocation: Position;
+    newRootDirection: Direction = Direction.None;
 
-    public alive: boolean = true;
-    public plantGrowthStage: PlantGrowthStage = PlantGrowthStage.Stage1;
-    public plantGrowthType: plantGrowthTiles[] = PlantGrowthTiles.randomPlantType();
-    public water: integer = Game_Config.PLANT_DATA_WATER_START_LEVEL;
-    public aiController: aiController | null;
-    public newRootLocation: Position;
-    public newRootDirection: Direction = Direction.None;
-
-    public strength: number = 1;
+    strength: number = 1;
 
 
     constructor(scene: Main, startPos: Position, ai: boolean){
 
         this._scene = scene;
-        this._startPos = startPos;
-        this._ai = ai;
+        this.startPos = startPos;
+        this.ai = ai;
 
         this._scene.mapManager.AttackTile({x: this.startPos.x, y: this.startPos.y}, this);
         this.__rootData.push({x: this.startPos.x, y: this.startPos.y});
@@ -70,12 +59,6 @@ export default class PlantData {
             this.aiController = new aiController(scene, this);
         }
 
-    }
-
-    public aerialGrowth(plantData: PlantData): void {
-        if(plantData.plantGrowthStage !== PlantGrowthStage.Stage8){
-            plantData.plantGrowthStage = (plantData.plantGrowthStage += 1 as PlantGrowthStage);
-        }
     }
 
 }

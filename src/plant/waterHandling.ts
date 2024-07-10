@@ -93,11 +93,6 @@ export default class WaterHandler {
                 W = mapManager.mapData.landGenerator.landData[pos.y][pos.x - 1].water > 0;
             }
 
-            // let N = mapManager.mapData.landGenerator.landData[pos.y - 1][pos.x].water > 0;
-            // let E = mapManager.mapData.landGenerator.landData[pos.y][pos.x + 1].water > 0;
-            // let S = mapManager.mapData.landGenerator.landData[pos.y + 1][pos.x].water > 0;
-            // let W = mapManager.mapData.landGenerator.landData[pos.y][pos.x - 1].water > 0;
-
             if(N){
                 this.waterSources.push({x: pos.x, y: pos.y-1});
             } 

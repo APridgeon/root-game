@@ -2,7 +2,6 @@
 export enum Events {
     RootGrowthRequest = 'rootGrowthRequest',
     RootGrowthSuccess = 'rootGrowthSuccess',
-    AerialGrowth = 'aerialGrowth',
     TurnConfirm = 'turnConfirm',
     AbsorbWater = 'absorbWater',
     RemoveWater = 'removeWater',

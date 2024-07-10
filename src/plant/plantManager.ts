@@ -128,8 +128,6 @@ export default class PlantManager {
                     }
                 }
 
-                // console.log(plantHeight);
-
                 
                 let aiPlant = new PlantData(scene, {x: x, y: plantHeight}, true);
                 this.mapManager.DestroyTile({x: x, y: plantHeight});
@@ -155,10 +153,6 @@ export default class PlantManager {
             }
 
         })
-
-        this.scene.events.on(Events.AerialGrowth, (plantData: PlantData) => {
-            plantData.aerialGrowth(plantData);
-        });
 
         this.scene.events.on(Events.GameOver, () => {
             this.gameOver = true;

@@ -80,7 +80,11 @@ class LandData {
 
     removeFromBiome(){
         let index = this.biome.landData.findIndex(land => land.pos.x == this.pos.x && land.pos.y == this.pos.y);
+        
         this.biome.landData.splice(index, 1);
+        this.biome = undefined;
+        this.biomeType = undefined;
+        this.water = 0;
     }
 
 }

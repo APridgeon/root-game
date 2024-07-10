@@ -3,7 +3,6 @@ import Game_Config from "../game_config";
 import PlantData, { Position } from "./plantData";
 import PlantTileSets, { PlantTile } from "./plantTileSets";
 import PlantManager from "./plantManager";
-import PlantGrowthTiles from "./plantGrowthTiles";
 import { Tree, TreeSettings } from "./aerialTree";
 import PixelatedFX from "./pixelatedShader";
 import { Events } from "../events/events";
@@ -24,50 +23,40 @@ export default class PlantDisplay {
     graphicsObject: Phaser.GameObjects.Graphics;
 
 
-    
-
     constructor(scene: Main, plantManager: PlantManager){
-
         this.scene = scene;
         this.plantManager = plantManager;
 
-        this.plantTileMap = scene.make.tilemap({width: Game_Config.MAP_SIZE.x, height: Game_Config.MAP_SIZE.y, tileWidth: Game_Config.MAP_RES, tileHeight: Game_Config.MAP_RES});
+        this.setupTileMapLayers();
+        this.setupGraphicsTree();
+        this.updatePlantDisplay();
+
+        this.addAerialTree(this.plantManager.userPlant, true);
+        this.plantManager.aiPlants.forEach(aiplant => {
+            this.addAerialTree(aiplant);
+        })
+    }
+
+    setupTileMapLayers(){
+        this.plantTileMap = this.scene.make.tilemap({width: Game_Config.MAP_SIZE.x, height: Game_Config.MAP_SIZE.y, tileWidth: Game_Config.MAP_RES, tileHeight: Game_Config.MAP_RES});
         this.plantTileSet = this.plantTileMap.addTilesetImage('plantTiles', null, Game_Config.MAP_RES, Game_Config.MAP_RES, 0, 0);
         this.plantTileLayer = this.plantTileMap.createBlankLayer('plant', this.plantTileSet, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0))
             .setOrigin(0,0)
             .setDepth(10)
             .setScale(Game_Config.MAP_SCALE)
-            .setVisible(true)
-            // .setPipeline('Light2D');
+            .setVisible(true);
+    }
 
-
-
+    setupGraphicsTree(){
         let pixel = (this.scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.getPostPipeline('PixelatedFX') as PixelatedFX;
         this.graphicsObject = this.scene.add.graphics({x:0, y:0});
         this.graphicsObject.setPostPipeline(pixel)//.setPipeline('Light2D');
         let post = this.graphicsObject.postPipelines[0] as PixelatedFX;
-
         let scale = Game_Config.MAP_SCALE;
         if(gameManager.mobile) scale *= 1.5;
         console.log(this.scene.cameras.main.zoom)
         
         post.setup(scale - 2, {NE: 0.1, SE: 0.1, SW: 0, NW: 0});
-
-        this.scene.game.events.on(Events.screenSizeChange, () => {
-            this.graphicsObject.resetPostPipeline();
-            this.graphicsObject.setPostPipeline(pixel);
-            let post = this.graphicsObject.postPipelines[0] as PixelatedFX;
-            post.setup(scale - 2, {NE: 0.1, SE: 0.1, SW: 0, NW: 0});
-        })
-
-        this.updatePlantDisplay();
-
-        
-        this.addAerialTree(this.plantManager.userPlant, true);
-
-        this.plantManager.aiPlants.forEach(aiplant => {
-            this.addAerialTree(aiplant);
-        })
     }
 
     private addToTileIndexData(plantData: PlantData, plantTileSet: Map<PlantTile, integer>): void {
