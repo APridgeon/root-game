@@ -22,6 +22,8 @@ export default class PlantDisplay {
     plantTrees: Map<PlantData, Tree> = new Map();
     graphicsObject: Phaser.GameObjects.Graphics;
 
+    pixel: PixelatedFX;
+
 
     constructor(scene: Main, plantManager: PlantManager){
         this.scene = scene;
@@ -34,6 +36,15 @@ export default class PlantDisplay {
         this.addAerialTree(this.plantManager.userPlant, true);
         this.plantManager.aiPlants.forEach(aiplant => {
             this.addAerialTree(aiplant);
+        })
+
+        this.scene.game.events.on(Events.screenSizeChange, () => {
+            this.graphicsObject.resetPostPipeline();
+            this.graphicsObject.setPostPipeline(this.pixel);
+            let post = this.graphicsObject.postPipelines[0] as PixelatedFX;
+            let scale = Game_Config.MAP_SCALE;
+            if(gameManager.mobile) scale *= 1.5;
+            post.setup(scale - 2, {NE: 0.1, SE: 0.1, SW: 0, NW: 0});
         })
     }
 
@@ -48,9 +59,9 @@ export default class PlantDisplay {
     }
 
     setupGraphicsTree(){
-        let pixel = (this.scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.getPostPipeline('PixelatedFX') as PixelatedFX;
+        this.pixel = (this.scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.getPostPipeline('PixelatedFX') as PixelatedFX;
         this.graphicsObject = this.scene.add.graphics({x:0, y:0});
-        this.graphicsObject.setPostPipeline(pixel)//.setPipeline('Light2D');
+        this.graphicsObject.setPostPipeline(this.pixel)//.setPipeline('Light2D');
         let post = this.graphicsObject.postPipelines[0] as PixelatedFX;
         let scale = Game_Config.MAP_SCALE;
         if(gameManager.mobile) scale *= 1.5;
