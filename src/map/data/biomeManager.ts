@@ -4,15 +4,15 @@ import { LandTypes } from "./landGenerator";
 import MapData from "./mapData";
 import { RuleTile } from "../display/ruleTileSets";
 import * as Phaser from "phaser";
-import IBiome from "./biomes/biomeInterface";
 import GrasslandBiome from "./biomes/grasslandBiome";
 import SandlandBiome from "./biomes/sandBiome";
+import { BiomeBase } from "./biomes/biomeInterface";
 
 const ROWLENGTH = 25;
 
 export enum BiomeType {
     Grassland,
-    Sandy
+    Sandy = "Sandy"
 }
 
 export enum BiomeTiles {
@@ -39,14 +39,13 @@ export default class BiomeManager {
     _mapData: MapData;
     _scene: Phaser.Scene;
 
-    biomes: IBiome[] = [];
+    biomes: BiomeBase[] = [];
 
     constructor(mapData: MapData, scene: Phaser.Scene){
         this._mapData = mapData;
         this._scene = scene;
 
         this.setBiome();
-
 
        
     }
@@ -60,7 +59,7 @@ export default class BiomeManager {
         for(let xChunk = 0; xChunk<Game_Config.MAP_SIZE.x; xChunk+=biomeSizes){
 
             let biome = biomeChoices[Math.floor(Math.random()*biomeChoices.length)];
-            let b: IBiome;
+            let b: BiomeBase;
             if(biome == BiomeType.Grassland){
                 b = new GrasslandBiome(this._scene, this._mapData);
             } else {    
@@ -70,17 +69,7 @@ export default class BiomeManager {
             this.biomes.push(b);
 
         }
-    }
-
-    addImages(){
-        this.biomes.forEach(biome => {
-            biome.addImages();
-        })
-    }
-    addMinerals(){
-        this.biomes.forEach(biome => {
-            biome.addMinerals();
-        })
+        
     }
 
 

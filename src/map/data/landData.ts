@@ -1,7 +1,7 @@
 import PlantData, { Position } from "../../plant/plantData";
 import { RuleTile } from "../display/ruleTileSets";
 import { BiomeType } from "./biomeManager";
-import IBiome, { BiomeBase } from "./biomes/biomeInterface";
+import { BiomeBase } from "./biomes/biomeInterface";
 import { LandTypes } from "./landGenerator";
 import MapData from "./mapData";
 import * as Phaser from 'phaser';
@@ -85,6 +85,9 @@ class LandData {
         this.biome = undefined;
         this.biomeType = undefined;
         this.water = 0;
+        this.phosphorous = false;
+        this.biomeIndex = {index: -1, pos: {x: 0, y: 0}};
+        this.landStrength = 0;
     }
 
 }

@@ -49,8 +49,6 @@ export default class RuleTileMapDisplay
         this.setUpAnimations();
 
         new SkyManager(scene);
-        this._mapData.biomeManager.addImages();
-        this._mapData.biomeManager.addMinerals();
 
         this.InitialiseTilemap();
 
@@ -155,21 +153,23 @@ export default class RuleTileMapDisplay
             .putTilesAt(this.landDataTextureIndex, 0, 0)
             .setDepth(1);
 
+        this.decorationLayer = this.tilemap.createBlankLayer('decoration', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
+            .setOrigin(0,0)
+            .setScale(Game_Config.MAP_SCALE)
+            .setDepth(1);
+        
+
+        this.mineralLayer = this.tilemap.createBlankLayer('mineral', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
+            .setOrigin(0,0)
+            .setScale(Game_Config.MAP_SCALE)
+            .setDepth(1);
+
         this.waterTileLayer = this.tilemap.createBlankLayer('water', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
             .setOrigin(0,0)
             .setScale(Game_Config.MAP_SCALE)
             .putTilesAt(this.waterDataTextureIndex, 0, 0)
             .setDepth(1);
 
-        this.decorationLayer = this.tilemap.createBlankLayer('decoration', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
-            .setOrigin(0,0)
-            .setScale(Game_Config.MAP_SCALE)
-            .setDepth(1);
-
-        this.mineralLayer = this.tilemap.createBlankLayer('mineral', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
-            .setOrigin(0,0)
-            .setScale(Game_Config.MAP_SCALE)
-            .setDepth(1);
 
     }
 

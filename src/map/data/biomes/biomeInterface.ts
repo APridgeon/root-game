@@ -1,18 +1,11 @@
 import Game_Config from "../../../game_config";
+import RuleTileSets from "../../display/ruleTileSets";
 import { BiomeType } from "../biomeManager";
 import LandData from "../landData";
 import { LandTypes } from "../landGenerator";
 import MapData from "../mapData";
 import * as Phaser from "phaser";
 
-export default interface IBiome {
-
-    createBiome(x0: number, biomeSize: number): void;
-    addWater(): void;
-    addImages(): void;
-    addMinerals(): void;
-
-}
 
 export class BiomeBase {
 
@@ -48,15 +41,25 @@ export class BiomeBase {
                     this.landData.push(land);
                     if(land.isLand()){
                         land.landType = this.landType;
+                        //TODO change rule tile setting - must be done after all biomes are made
+                        land.ruleTile =  RuleTileSets.convertToIndexes(land).land.tileType;
                         land.initStrength();
                     }
                 }
             }
         }
-        this.addWater()
+        this.addWater();
+        this.addMinerals();
+        this.addImages();
    }
 
    addWater() {
+   }
+
+   addImages() {    
+   }
+
+   addMinerals() {    
    }
 
 }

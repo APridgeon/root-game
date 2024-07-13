@@ -4,12 +4,12 @@ import { BiomeTiles, BiomeTileSets, BiomeType } from "../biomeManager";
 import LandData from "../landData";
 import { LandTypes } from "../landGenerator";
 import MapData from "../mapData";
-import IBiome, { BiomeBase } from "./biomeInterface";
+import { BiomeBase } from "./biomeInterface";
 import * as Phaser from "phaser";
 
 
 
-export default class GrasslandBiome extends BiomeBase implements IBiome {
+export default class GrasslandBiome extends BiomeBase  {
 
 
     biomeType: BiomeType = BiomeType.Grassland;
@@ -20,6 +20,7 @@ export default class GrasslandBiome extends BiomeBase implements IBiome {
             if(land.pos.y > Game_Config.MAP_GROUND_LEVEL + 10){
                 let water = this._mapData.noise.simplex2((land.pos.x * 0.05) + 0.3, (land.pos.y * 0.05) + 0.3)
                 land.water = (water > 0.3) && land.isLand() ? Game_Config.WATER_TILE_STARTING_AMOUNT : 0;
+                land.phosphorous = false;
             }
         })
     }
@@ -37,7 +38,7 @@ export default class GrasslandBiome extends BiomeBase implements IBiome {
 
         this.landData.forEach(land => {
             let r = this._mapData.noise.simplex2(land.pos.x * 0.05, land.pos.y * 0.05)
-            land.phosphorous = (r > 0.5) && land.isLand() ? true : false;
+            land.phosphorous = (r > 0.5) && land.isLand() ? true : false;       
         })
     }
 
@@ -46,6 +47,7 @@ export default class GrasslandBiome extends BiomeBase implements IBiome {
         if(y > 0){
             let aboveTile = this._mapData.landGenerator.landData[y - 1][x];
             if((land.ruleTile == RuleTile.top || land.ruleTile == RuleTile.topLeft || land.ruleTile == RuleTile.topRight) && land.landType == LandTypes.Normal && aboveTile.landType == LandTypes.Hole){
+
                 let indeces = BiomeTileSets.testSet.get(BiomeTiles.Vines)
                 let index = indeces[Math.floor(Math.random()*indeces.length)]
                 land.biomeIndex = {index: index, pos: {x: 0, y: 0}};
@@ -56,7 +58,7 @@ export default class GrasslandBiome extends BiomeBase implements IBiome {
     addGrass(land: LandData, x: integer, y: integer){
         if(y > 0){
             let aboveTile = this._mapData.landGenerator.landData[y - 1][x];
-            if((land.ruleTile == RuleTile.top || land.ruleTile == RuleTile.topLeft || land.ruleTile == RuleTile.topRight) && land.landType == LandTypes.Normal && aboveTile.landType == LandTypes.None){
+            if( land.landType == LandTypes.Normal && aboveTile.landType == LandTypes.None){
                 let indeces = BiomeTileSets.testSet.get(BiomeTiles.Grassland)
                 let index = indeces[Math.floor(Math.random()*indeces.length)]
                 land.biomeIndex = {index: index, pos: {x: 0, y: -1}};
@@ -68,7 +70,7 @@ export default class GrasslandBiome extends BiomeBase implements IBiome {
         if(y > 0){
             let rand = Math.random();
             let aboveTile = this._mapData.landGenerator.landData[y - 1][x];
-            if((land.ruleTile == RuleTile.top || land.ruleTile == RuleTile.topLeft || land.ruleTile == RuleTile.topRight) && land.landType == LandTypes.Normal && aboveTile.landType == LandTypes.Hole && rand < 0.2){
+            if(land.landType == LandTypes.Normal && aboveTile.landType == LandTypes.Hole && rand < 0.2){
                 let indeces = BiomeTileSets.testSet.get(BiomeTiles.Mushrooms)
                 let index = indeces[Math.floor(Math.random()*indeces.length)]
                 land.biomeIndex = {index: index, pos: {x: 0, y: -1}};
