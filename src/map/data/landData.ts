@@ -13,6 +13,23 @@ class LandData {
     landType: LandTypes = LandTypes.None;
     ruleTile: RuleTile;
 
+    // NEW ORGANISATION
+    ruletiles: {
+        land: RuleTile,
+        water: RuleTile
+    }
+
+    display_indexes = {
+        water: -1,
+        land: -1,
+        land_background: -1
+    }
+
+    biome_data: {
+        biome_type: BiomeType,
+    }
+    //
+
     landStrength: number = 0;
     phosphorous: boolean = false;
     water: number = 0;

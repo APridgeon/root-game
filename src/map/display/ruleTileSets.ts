@@ -303,6 +303,7 @@ export default class RuleTileSets {
             waterIndex = -1
         }
 
+
         let result: RuleTileResult = {
             land: {tileIndex: landIndex, tileType: ruleTileLand},
             water: {tileIndex: waterIndex, tileType: ruleTileWater}

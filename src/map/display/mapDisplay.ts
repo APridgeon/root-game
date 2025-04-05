@@ -17,10 +17,6 @@ export default class RuleTileMapDisplay
     private _scene: Phaser.Scene;
     private _mapData: MapData;
 
-    private landDataTextureIndex: number[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
-    private waterDataTextureIndex: number[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
-    private landBeforeHolesTextureIndex: number[][] =  [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x).fill(-1));
-    
     tilemap: Phaser.Tilemaps.Tilemap;
 
     private tiles: Phaser.Tilemaps.Tileset;
@@ -45,7 +41,7 @@ export default class RuleTileMapDisplay
         this.tiles = this.tilemap.addTilesetImage(texture, null, Game_Config.MAP_RES, Game_Config.MAP_RES, 0, 0);
 
         this.setupIndexes(this._mapData.landGenerator.landData);
-        this.setUpTileLayers();
+        this.setUpTileLayers(this._mapData.landGenerator.landData);
         this.setUpAnimations();
 
         new SkyManager(scene);
@@ -56,27 +52,13 @@ export default class RuleTileMapDisplay
     }
 
     setupIndexes(mapData: LandData[][]){
-
-        //populate index arrays
-        for(let x = 0; x < mapData[0].length - 0; x++){
-            for(let y = 0; y < mapData.length - 0; y++){
-                let land = mapData[y][x];
-
-                if(land.landType !== LandTypes.None){
-                    this.landBeforeHolesTextureIndex[y][x] = RuleTileSets.ConvertToTileIndex(x, y, this._mapData.landGenerator.landDataBeforeHoles, RuleTileSets.landTileSet);
-                }
-
-                if(land.isLand()){
-                    let new1 = RuleTileSets.convertToIndexes(mapData[y][x]);
-                    mapData[y][x].ruleTile = new1.land.tileType;
-                    this.landDataTextureIndex[y][x] = new1.land.tileIndex;
-                    this.waterDataTextureIndex[y][x] = -1;
-                    if(land.hasWater()){
-                        this.waterDataTextureIndex[y][x] = new1.water.tileIndex;
-                    }
-                }
-            }
-        }
+        mapData.forEach(row => row.forEach(tile => {
+            const {x, y} = tile.pos
+            const indexes = RuleTileSets.convertToIndexes(tile)
+            tile.display_indexes.land = indexes.land.tileIndex
+            tile.hasWater() ? tile.display_indexes.water = indexes.water.tileIndex : -1;
+            (tile.landType !== LandTypes.None) ? tile.display_indexes.land_background = RuleTileSets.ConvertToTileIndex(x, y, this._mapData.landGenerator.landDataBeforeHoles, RuleTileSets.landTileSet) : -1
+        }))
     }
 
 
@@ -129,28 +111,24 @@ export default class RuleTileMapDisplay
     }
 
 
-    private setUpTileLayers(): void {
+    private setUpTileLayers(mapData: LandData[][]): void {
         let cloneOfTileLayer = this.tilemap.createBlankLayer('landBeforeHoles', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
-        .setOrigin(0, 0)
-        .setAlpha(1)
-        .setScale(Game_Config.MAP_SCALE)
-        .putTilesAt(this.landBeforeHolesTextureIndex, 0, 0)
+            .setOrigin(0, 0)
+            .setAlpha(1)
+            .setScale(Game_Config.MAP_SCALE)
+            .putTilesAt(mapData.map(row => row.map(tile => tile.display_indexes.land_background)), 0, 0)
 
         this.soilBackgroundTileLayer = this.tilemap.createBlankLayer('soilBackground', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
             .setOrigin(0, 0)
             .setAlpha(0.4)
             .setScale(Game_Config.MAP_SCALE)
-            .putTilesAt(this.landBeforeHolesTextureIndex, 0, 0)
-            .forEachTile(tile => {
-                if(tile.index != -1){
-                    tile.index = (25*7) + 4;
-                }
-            })
+            .putTilesAt(mapData.map(row => row.map(tile => tile.display_indexes.land_background)), 0, 0)
+            .forEachTile(tile => tile.index != -1 ? tile.index = (25*7) + 4 : -1)
 
         this.landTileLayer = this.tilemap.createBlankLayer('land', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
             .setOrigin(0, 0)
             .setScale(Game_Config.MAP_SCALE)
-            .putTilesAt(this.landDataTextureIndex, 0, 0)
+            .putTilesAt(mapData.map(row => row.map(tile => tile.display_indexes.land)), 0, 0)
             .setDepth(1);
 
         this.decorationLayer = this.tilemap.createBlankLayer('decoration', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
@@ -167,7 +145,7 @@ export default class RuleTileMapDisplay
         this.waterTileLayer = this.tilemap.createBlankLayer('water', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
             .setOrigin(0,0)
             .setScale(Game_Config.MAP_SCALE)
-            .putTilesAt(this.waterDataTextureIndex, 0, 0)
+            .putTilesAt(mapData.map(row => row.map(tile => tile.display_indexes.water)), 0, 0)
             .setDepth(1);
 
 
