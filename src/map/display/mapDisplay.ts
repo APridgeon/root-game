@@ -41,7 +41,7 @@ export default class RuleTileMapDisplay
         this.tiles = this.tilemap.addTilesetImage(texture, null, Game_Config.MAP_RES, Game_Config.MAP_RES, 0, 0);
 
         this.setupIndexes(this._mapData.landGenerator.landData);
-        this.setUpTileLayers(this._mapData.landGenerator.landData);
+        this.create_tilemap_layers(this._mapData.landGenerator.landData);
         this.setUpAnimations();
 
         new SkyManager(scene);
@@ -51,6 +51,7 @@ export default class RuleTileMapDisplay
 
     }
 
+    //combine set up indexes and set up tile layers - landdata doesnt need to hold indexes only tilemap layers
     setupIndexes(mapData: LandData[][]){
         mapData.forEach(row => row.forEach(tile => {
             const {x, y} = tile.pos
@@ -110,79 +111,55 @@ export default class RuleTileMapDisplay
 
     }
 
+    private create_tilemap_layers(mapData: LandData[][]): void {
 
-    private setUpTileLayers(mapData: LandData[][]): void {
-        let cloneOfTileLayer = this.tilemap.createBlankLayer('landBeforeHoles', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
-            .setOrigin(0, 0)
-            .setAlpha(1)
-            .setScale(Game_Config.MAP_SCALE)
-            .putTilesAt(mapData.map(row => row.map(tile => tile.display_indexes.land_background)), 0, 0)
+        const tilemap_layers = new Map<string, Phaser.Tilemaps.TilemapLayer>();
+        ['landBeforeHoles', 'soilBackground', 'land', 'decoration', 'water', 'mineral'].forEach(layer => {
+            const layer_object = this.tilemap.createBlankLayer(layer, this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0))
+                .setOrigin(0,0)
+                .setScale(Game_Config.MAP_SCALE)
+                .setDepth(1)
+            tilemap_layers.set(layer, layer_object)
+        })
 
-        this.soilBackgroundTileLayer = this.tilemap.createBlankLayer('soilBackground', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
-            .setOrigin(0, 0)
+        tilemap_layers.get('landBeforeHoles').putTilesAt(mapData.map(row => row.map(tile => tile.display_indexes.land_background)), 0, 0)
+        tilemap_layers.get('land').putTilesAt(mapData.map(row => row.map(tile => tile.display_indexes.land)), 0, 0)
+        tilemap_layers.get('water').putTilesAt(mapData.map(row => row.map(tile => tile.display_indexes.water)), 0, 0)
+        tilemap_layers.get('soilBackground')
             .setAlpha(0.4)
-            .setScale(Game_Config.MAP_SCALE)
             .putTilesAt(mapData.map(row => row.map(tile => tile.display_indexes.land_background)), 0, 0)
             .forEachTile(tile => tile.index != -1 ? tile.index = (25*7) + 4 : -1)
 
-        this.landTileLayer = this.tilemap.createBlankLayer('land', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
-            .setOrigin(0, 0)
-            .setScale(Game_Config.MAP_SCALE)
-            .putTilesAt(mapData.map(row => row.map(tile => tile.display_indexes.land)), 0, 0)
-            .setDepth(1);
 
-        this.decorationLayer = this.tilemap.createBlankLayer('decoration', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
-            .setOrigin(0,0)
-            .setScale(Game_Config.MAP_SCALE)
-            .setDepth(1);
-        
-
-        this.mineralLayer = this.tilemap.createBlankLayer('mineral', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
-            .setOrigin(0,0)
-            .setScale(Game_Config.MAP_SCALE)
-            .setDepth(1);
-
-        this.waterTileLayer = this.tilemap.createBlankLayer('water', this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_SIZE.x, Game_Config.MAP_SIZE.y, Game_Config.MAP_RES, Game_Config.MAP_RES)
-            .setOrigin(0,0)
-            .setScale(Game_Config.MAP_SCALE)
-            .putTilesAt(mapData.map(row => row.map(tile => tile.display_indexes.water)), 0, 0)
-            .setDepth(1);
-
+        this.soilBackgroundTileLayer = tilemap_layers.get('soilBackground')
+        this.landTileLayer = tilemap_layers.get('land')
+        this.waterTileLayer = tilemap_layers.get('water')
+        this.decorationLayer = tilemap_layers.get('decoration')
+        this.mineralLayer = tilemap_layers.get('mineral')
 
     }
 
+
     private setUpAnimations(): void{
         this.placeWorms(this._scene);
-
         this._scene.events.on(Events.RootGrowthSuccess, (pos: Position) => {
             this.addAnimFX(pos, AnimatedTile.TileDestroy, this._scene);
         })
     }
 
     private placeWorms(scene: Phaser.Scene): void {
-
-        for(let x = 0; x < Game_Config.MAP_SIZE.x; x++){
-            for(let y = Game_Config.MAP_UGROUND_HOLE_LEVEL; y < Game_Config.MAP_SIZE.y; y++){
-
-                if(this._mapData.landGenerator.landData[y][x].landType === LandTypes.Hole){
-                    let threshold = Math.random();
-                    if(threshold < 0.05){
-
-                        let worms = new MapAnimFX({x: x, y: y}, AnimatedTile.Worm, scene, this.mapAnimFX, 1000, false);
-                        this.mapAnimFX.push(worms);
-
-                    } 
-                }
+        this._mapData.landGenerator.landData.forEach(row => row.forEach(tile => {
+            if(tile.landType === LandTypes.Hole && Math.random() < 0.05){
+                const {x, y} = tile.pos
+                const worm = new MapAnimFX({x: x, y: y}, AnimatedTile.Worm, scene, this.mapAnimFX, 1000, false);
+                this.mapAnimFX.push(worm)
             }
-        }
+        }))
     }
 
     public addAnimFX(pos: Position, anim: AnimatedTile, scene: Phaser.Scene){
-
         let newFX = new MapAnimFX(pos, anim, scene, this.mapAnimFX, 100);
-
         this.mapAnimFX.push(newFX);
-
     }
 
 

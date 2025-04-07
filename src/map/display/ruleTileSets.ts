@@ -26,6 +26,33 @@ export enum RuleTile {
     empty = 'empty'
 };
 
+export type Direction = {
+    N: boolean,
+    E: boolean,
+    S: boolean,
+    W: boolean
+}
+
+export const Direction_to_Ruletile = new Map<string, RuleTile>([
+    [JSON.stringify({N: true,   E: true,   S: true,   W: true}),    RuleTile.surrounded],
+    [JSON.stringify({N: false,  E: false,  S: false,  W: false}),   RuleTile.stranded],
+    [JSON.stringify({N: false,  E: true,   S: true,   W: true}),    RuleTile.top],
+    [JSON.stringify({N: true,   E: false,  S: true,   W: true}),    RuleTile.right],
+    [JSON.stringify({N: true,   E: true,   S: false,  W: true}),    RuleTile.bottom],
+    [JSON.stringify({N: true,   E: true,   S: true,   W: false}),   RuleTile.left],
+    [JSON.stringify({N: false,  E: false,  S: true,   W: true}),    RuleTile.topRight],
+    [JSON.stringify({N: false,  E: true,   S: false,  W: true}),    RuleTile.topAndBottom],
+    [JSON.stringify({N: true,   E: false,  S: true,   W: false}),   RuleTile.leftAndRight],
+    [JSON.stringify({N: false,  E: true,   S: true,   W: false}),   RuleTile.topLeft],
+    [JSON.stringify({N: true,   E: false,  S: false,  W: true}),    RuleTile.bottomRight],
+    [JSON.stringify({N: true,   E: true,   S: false,  W: false}),   RuleTile.bottomLeft],
+    [JSON.stringify({N: true,   E: false,  S: false,  W: false}),   RuleTile.allButTop],
+    [JSON.stringify({N: false,  E: true,   S: false,  W: false}),   RuleTile.allButRight],
+    [JSON.stringify({N: false,  E: false,  S: true,   W: false}),   RuleTile.allButBottom],
+    [JSON.stringify({N: false,  E: false,  S: false,  W: true}),    RuleTile.allButLeft],
+])
+
+
 export default class RuleTileSets {
 
     static landTileSet = new Map<RuleTile, integer>([
@@ -370,83 +397,7 @@ export default class RuleTileSets {
             }
         }
 
-        let tileType: RuleTile;
-
-        if(N && W && E && S){
-            tileType = RuleTile.surrounded;          
-                }
-            //stranded
-            if(!N && !W && !E && !S){
-                tileType = RuleTile.stranded;              
-            }
-            //top
-            else if(!N && W && E && S){
-                tileType = RuleTile.top;              
-            }
-
-            //bottom
-            else if(N && W && E && !S){
-                tileType = RuleTile.bottom;              
-            }
-
-            //left
-            else if(N && !W && E && S){
-                tileType = RuleTile.left;              
-            }
-
-            //right
-            else if(N && W && !E && S){
-                tileType = RuleTile.right;              
-            }
-
-            //top right
-            else if(!N && W && !E && S){
-                tileType = RuleTile.topRight;              
-            }    
-            
-            //top left
-            else if(!N && !W  && E && S){
-                tileType = RuleTile.topLeft;              
-            } 
-
-            //bottom left
-            else if(N && !W  && E && !S ){
-                tileType = RuleTile.bottomLeft;              
-            } 
-
-            //bottom right
-            else if(N && W && !E && !S){
-                tileType = RuleTile.bottomRight;              
-            } 
-            //left and right
-            else if(N && !W && !E && S){
-                tileType = RuleTile.leftAndRight;              
-            } 
-            //top and bottom
-            else if(!N && W && E && !S){
-                tileType = RuleTile.topAndBottom;              
-            } 
-            //all but top
-            else if(N && !W && !E  && !S){
-                tileType = RuleTile.allButTop;              
-            } 
-            //all but right
-            else if(!N  && !W && E && !S){
-                tileType = RuleTile.allButRight;              
-            } 
-            //all but bottom
-            else if(!N && !W && !E && S){
-                tileType = RuleTile.allButBottom;              
-            } 
-            //all but left
-            else if(!N  && W && !E && !S){
-                tileType = RuleTile.allButLeft;              
-            } 
-            //empty
-            else if(!N && !W && !E && !S){
-                tileType = RuleTile.empty;              
-            }
-
+        const tileType = Direction_to_Ruletile.get(JSON.stringify({N: N, E: E, S: S, W: W}))
         return tileType;
     }
 

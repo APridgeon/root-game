@@ -34,7 +34,8 @@ export default class MapAnimFX {
 
         this.image = scene.add.image( Game_Config.MAP_tilesToWorld(pos.x), Game_Config.MAP_tilesToWorld(pos.y), 'plantTilesSpriteSheet', this.animTiles[this.activeTileNo])
             .setOrigin(0)
-            .setScale(Game_Config.MAP_SCALE);
+            .setScale(Game_Config.MAP_SCALE)
+            .setDepth(5);
 
         this.timedEvent = scene.time.addEvent({
             delay: updateTime,
