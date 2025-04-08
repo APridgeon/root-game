@@ -46,7 +46,7 @@ export default class GrasslandBiome extends BiomeBase  {
     addVines(land: LandData, x: integer, y: integer){
         if(y > 0){
             let aboveTile = this._mapData.landGenerator.landData[y - 1][x];
-            if((land.ruleTile == RuleTile.top || land.ruleTile == RuleTile.topLeft || land.ruleTile == RuleTile.topRight) && land.landType == LandTypes.Normal && aboveTile.landType == LandTypes.Hole){
+            if(land.landType == LandTypes.Normal && aboveTile.landType == LandTypes.Hole){
 
                 let indeces = BiomeTileSets.testSet.get(BiomeTiles.Vines)
                 let index = indeces[Math.floor(Math.random()*indeces.length)]

@@ -200,20 +200,6 @@ export default class RuleTileSets {
         [LandTypes.DeadRoot, this.deadRootTileSetNoGaps]
     ])
 
-    static ConvertToTileIndex(x: number, y:number, mapData: boolean[][], ruleTileSet: Map<RuleTile, integer>){
-
-        const N = (y === 0) ? false : mapData[y-1][x];
-        const E = (x === Game_Config.MAP_SIZE.x - 1) ? false : mapData[y][x+1];
-        const W = (x === 0) ? false : mapData[y][x-1];
-        const S = (y === Game_Config.MAP_SIZE.y -1) ? false : mapData[y+1][x];
-        
-        const tileType = Direction_to_Ruletile.get(JSON.stringify({N: N, E: E, S: S, W: W}))
-        const tileIndex = ruleTileSet.get(tileType)
-
-        return tileIndex
-    }
-
-
     static convertToIndexes(landData: LandData) {
         const land_tile_type = this.determineTileType(landData, TileResultOption.land);
         const landTileSet = RuleTileSets.LandTypeToTileSet.get(landData.landType);
@@ -222,7 +208,10 @@ export default class RuleTileSets {
         const water_tile_type = this.determineTileType(landData, TileResultOption.water);
         const water_index = landData.hasWater() ? RuleTileSets.waterTileSet.get(water_tile_type) : -1;
 
-        return({land: land_index, water: water_index})
+        const background_type = this.determineTileType(landData, TileResultOption.background);
+        const background_index = (landData.landType !== LandTypes.None) ? RuleTileSets.landTileSetNoGaps.get(background_type) : -1
+
+        return({land: land_index, water: water_index, background: background_index})
     }
 
     static determineTileType(landData: LandData, option: TileResultOption){
@@ -250,13 +239,24 @@ export default class RuleTileSets {
             const tileType = Direction_to_Ruletile.get(JSON.stringify({N: N, E: E, S: S, W: W}))
             return tileType;
         }
+
+        else if(option === TileResultOption.background){
+            const N = (y === 0) ? false : mapData[y-1][x].landType !== LandTypes.None
+            const E = (x === Game_Config.MAP_SIZE.x - 1) ? false : mapData[y][x+1].landType !== LandTypes.None
+            const S = (y === Game_Config.MAP_SIZE.y - 1) ? false : mapData[y+1][x].landType !== LandTypes.None
+            const W = (x === 0) ? false : mapData[y][x-1].landType !== LandTypes.None
+
+            const tileType = Direction_to_Ruletile.get(JSON.stringify({N: N, E: E, S: S, W: W}))
+            return tileType;
+        }
     }
 
 }
 
 export enum TileResultOption {
     land,
-    water
+    water,
+    background
 }
 
 

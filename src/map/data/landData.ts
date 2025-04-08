@@ -11,16 +11,6 @@ class LandData {
     pos: Position;
 
     landType: LandTypes = LandTypes.None;
-    ruleTile: RuleTile;
-
-    // NEW ORGANISATION
-
-    display_indexes = {
-        water: -1,
-        land: -1,
-        land_background: -1
-    }
-
     biome_data: {
         biome_type: BiomeType,
     }
@@ -83,10 +73,10 @@ class LandData {
     public destroy(){
         this.landType = LandTypes.Hole;
         this.landStrength = 0;
-        this._mapData._mapManager.mapDisplay.decorationLayer.putTileAt(-1, this.pos.x + this.biomeIndex.pos.x, this.pos.y + this.biomeIndex.pos.y);
+        this._mapData._mapManager.mapDisplay.tilemap_layers.get('decoration').putTileAt(-1, this.pos.x + this.biomeIndex.pos.x, this.pos.y + this.biomeIndex.pos.y);
         this.biomeIndex = {index: -1, pos: {x: 0, y: 0}}
 
-        this._mapData._mapManager.mapDisplay.mineralLayer.putTileAt(-1, this.pos.x, this.pos.y)
+        this._mapData._mapManager.mapDisplay.tilemap_layers.get('mineral').putTileAt(-1, this.pos.x, this.pos.y)
         this.phosphorous = false;
         this.water = 0;
     }

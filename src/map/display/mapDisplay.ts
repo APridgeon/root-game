@@ -18,18 +18,11 @@ export default class RuleTileMapDisplay
     private _mapData: MapData;
 
     tilemap: Phaser.Tilemaps.Tilemap;
-
-    private tiles: Phaser.Tilemaps.Tileset;
-
-    private landTileLayer: Phaser.Tilemaps.TilemapLayer;
-    private waterTileLayer: Phaser.Tilemaps.TilemapLayer;
-    decorationLayer: Phaser.Tilemaps.TilemapLayer;
-    mineralLayer: Phaser.Tilemaps.TilemapLayer;
-
+    tiles: Phaser.Tilemaps.Tileset;
+    tilemap_layers: Map<string, Phaser.Tilemaps.TilemapLayer>;
 
     mapAnimFX: MapAnimFX[] = [];
 
-    private soilBackgroundTileLayer: Phaser.Tilemaps.TilemapLayer;
 
 
     constructor(scene: Phaser.Scene, mapData: MapData, texture: string){
@@ -40,7 +33,6 @@ export default class RuleTileMapDisplay
         this.tilemap = scene.make.tilemap({tileWidth: Game_Config.MAP_RES, tileHeight: Game_Config.MAP_RES, width: Game_Config.MAP_SIZE.x, height: Game_Config.MAP_SIZE.y});
         this.tiles = this.tilemap.addTilesetImage(texture, null, Game_Config.MAP_RES, Game_Config.MAP_RES, 0, 0);
 
-        this.setupIndexes(this._mapData.landGenerator.landData);
         this.create_tilemap_layers(this._mapData.landGenerator.landData);
         this.setUpAnimations();
 
@@ -51,24 +43,13 @@ export default class RuleTileMapDisplay
 
     }
 
-    //combine set up indexes and set up tile layers - landdata doesnt need to hold indexes only tilemap layers
-    setupIndexes(mapData: LandData[][]){
-        mapData.forEach(row => row.forEach(tile => {
-            const {x, y} = tile.pos
-            const indexes = RuleTileSets.convertToIndexes(tile)
-            tile.display_indexes.land = indexes.land;
-            tile.display_indexes.water = indexes.water;
-            tile.display_indexes.land_background = (tile.landType !== LandTypes.None) ? RuleTileSets.ConvertToTileIndex(x, y, this._mapData.landGenerator.landDataBeforeHoles, RuleTileSets.landTileSet) : -1
-        }))
-    }
-
 
     public InitialiseTilemap(){
         this._mapData.landGenerator.landData.forEach(row => {
             row.forEach(land => {
-                this.decorationLayer.putTileAt(land.biomeIndex.index, land.pos.x + land.biomeIndex.pos.x, land.pos.y + land.biomeIndex.pos.y);
+                this.tilemap_layers.get('decoration').putTileAt(land.biomeIndex.index, land.pos.x + land.biomeIndex.pos.x, land.pos.y + land.biomeIndex.pos.y);
                 if(land.phosphorous){
-                    this.mineralLayer.putTileAt((5 * 25) + 9, land.pos.x, land.pos.y);
+                    this.tilemap_layers.get('mineral').putTileAt((5 * 25) + 9, land.pos.x, land.pos.y);
                 }
             })
         })
@@ -87,45 +68,35 @@ export default class RuleTileMapDisplay
             const land_tile = landData[tile.y][tile.x]
             if(land_tile === undefined) return;
 
-            if(land_tile.isLand()){
-                const indeces = RuleTileSets.convertToIndexes(land_tile);
-                this.landTileLayer.putTileAt(indeces.land, tile.x, tile.y);
-                const alpha = land_tile.water/Game_Config.WATER_TILE_STARTING_AMOUNT;
-                this.waterTileLayer.putTileAt(indeces.water, tile.x, tile.y).setAlpha(alpha)
-            } else {
-                this.landTileLayer.putTileAt(RuleTileSets.landTileSet.get(RuleTile.empty), tile.x, tile.y)
-            }
+            const indeces = RuleTileSets.convertToIndexes(land_tile);
 
-            if(land_tile.phosphorous) this.mineralLayer.putTileAt((5 * 25) + 9, land_tile.pos.x, land_tile.pos.y);
+            this.tilemap_layers.get('land').putTileAt(indeces.land, tile.x, tile.y);
+            const alpha = land_tile.water/Game_Config.WATER_TILE_STARTING_AMOUNT;
+            this.tilemap_layers.get('water').putTileAt(indeces.water, tile.x, tile.y).setAlpha(alpha)
+
+            if(land_tile.phosphorous) this.tilemap_layers.get('mineral').putTileAt((5 * 25) + 9, land_tile.pos.x, land_tile.pos.y);
         })
     }
 
     private create_tilemap_layers(mapData: LandData[][]): void {
 
-        const tilemap_layers = new Map<string, Phaser.Tilemaps.TilemapLayer>();
+        this.tilemap_layers = new Map<string, Phaser.Tilemaps.TilemapLayer>();
         ['landBeforeHoles', 'soilBackground', 'land', 'decoration', 'water', 'mineral'].forEach(layer => {
             const layer_object = this.tilemap.createBlankLayer(layer, this.tiles, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0))
                 .setOrigin(0,0)
                 .setScale(Game_Config.MAP_SCALE)
                 .setDepth(1)
-            tilemap_layers.set(layer, layer_object)
+            this.tilemap_layers.set(layer, layer_object)
         })
 
-        tilemap_layers.get('landBeforeHoles').putTilesAt(mapData.map(row => row.map(tile => tile.display_indexes.land_background)), 0, 0)
-        tilemap_layers.get('land').putTilesAt(mapData.map(row => row.map(tile => tile.display_indexes.land)), 0, 0)
-        tilemap_layers.get('water').putTilesAt(mapData.map(row => row.map(tile => tile.display_indexes.water)), 0, 0)
-        tilemap_layers.get('soilBackground')
+        const indeces = mapData.map(row => row.map(tile => RuleTileSets.convertToIndexes(tile)))
+        this.tilemap_layers.get('landBeforeHoles').putTilesAt(indeces.map(row => row.map(tile => tile.background)), 0, 0)
+        this.tilemap_layers.get('land').putTilesAt(indeces.map(row => row.map(tile => tile.land)), 0, 0)
+        this.tilemap_layers.get('water').putTilesAt(indeces.map(row => row.map(tile => tile.water)), 0, 0)
+        this.tilemap_layers.get('soilBackground')
             .setAlpha(0.4)
-            .putTilesAt(mapData.map(row => row.map(tile => tile.display_indexes.land_background)), 0, 0)
+            .putTilesAt(indeces.map(row => row.map(tile => tile.background)), 0, 0)
             .forEachTile(tile => tile.index = (tile.index != -1) ?  (25*7) + 4 : -1)
-
-
-        this.soilBackgroundTileLayer = tilemap_layers.get('soilBackground')
-        this.landTileLayer = tilemap_layers.get('land')
-        this.waterTileLayer = tilemap_layers.get('water')
-        this.decorationLayer = tilemap_layers.get('decoration')
-        this.mineralLayer = tilemap_layers.get('mineral')
-
     }
 
 
