@@ -1,6 +1,4 @@
-import { Game } from "phaser";
 import Game_Config from "../../game_config";
-import { Position } from "../../plant/plantData";
 import { LandTypes } from "../data/landGenerator";
 import LandData from "../data/landData";
 
@@ -204,108 +202,15 @@ export default class RuleTileSets {
 
     static ConvertToTileIndex(x: number, y:number, mapData: boolean[][], ruleTileSet: Map<RuleTile, integer>){
 
-        let tileIndexValue;
-
-        let N;
-        let E;
-        let S;
-        let W;
-
-        if(x === 0){
-            W = false;
-        } else {
-            W = mapData[y][x-1];
-        }
-        if(x === Game_Config.MAP_SIZE.x - 1){
-            E = false;
-        } else {
-            E = mapData[y][x+1];
-        }
-        if(y === 0){
-            N = false;
-        } else {
-            N = mapData[y-1][x];
-        }
-        if(y === Game_Config.MAP_SIZE.y - 1){
-            S = false;
-        } else {
-            S = mapData[y+1][x];
-        }
+        const N = (y === 0) ? false : mapData[y-1][x];
+        const E = (x === Game_Config.MAP_SIZE.x - 1) ? false : mapData[y][x+1];
+        const W = (x === 0) ? false : mapData[y][x-1];
+        const S = (y === Game_Config.MAP_SIZE.y -1) ? false : mapData[y+1][x];
         
+        const tileType = Direction_to_Ruletile.get(JSON.stringify({N: N, E: E, S: S, W: W}))
+        const tileIndex = ruleTileSet.get(tileType)
 
-        if(N && W && E && S){
-            tileIndexValue = ruleTileSet.get(RuleTile.surrounded);
-                }
-            //stranded
-            if(!N && !W && !E && !S){
-                tileIndexValue = ruleTileSet.get(RuleTile.stranded);
-            }
-            //top
-            else if(!N && W && E && S){
-                tileIndexValue = ruleTileSet.get(RuleTile.top);
-            }
-
-            //bottom
-            else if(N && W && E && !S){
-                tileIndexValue = ruleTileSet.get(RuleTile.bottom);
-            }
-
-            //left
-            else if(N && !W && E && S){
-                tileIndexValue = ruleTileSet.get(RuleTile.left);
-            }
-
-            //right
-            else if(N && W && !E && S){
-                tileIndexValue = ruleTileSet.get(RuleTile.right);
-            }
-
-            //top right
-            else if(!N && W && !E && S){
-                tileIndexValue = ruleTileSet.get(RuleTile.topRight);
-            }    
-            
-            //top left
-            else if(!N && !W  && E && S){
-                tileIndexValue = ruleTileSet.get(RuleTile.topLeft);
-            } 
-
-            //bottom left
-            else if(N && !W  && E && !S ){
-                tileIndexValue = ruleTileSet.get(RuleTile.bottomLeft);
-            } 
-
-            //bottom right
-            else if(N && W && !E && !S){
-                tileIndexValue = ruleTileSet.get(RuleTile.bottomRight);
-            } 
-            //left and right
-            else if(N && !W && !E && S){
-                tileIndexValue = ruleTileSet.get(RuleTile.leftAndRight);
-            } 
-            //top and bottom
-            else if(!N && W && E && !S){
-                tileIndexValue = ruleTileSet.get(RuleTile.topAndBottom);
-            } 
-            //all but top
-            else if(N && !W && !E  && !S){
-                tileIndexValue = ruleTileSet.get(RuleTile.allButTop);
-            } 
-            //all but right
-            else if(!N  && !W && E && !S){
-                tileIndexValue = ruleTileSet.get(RuleTile.allButRight);
-            } 
-            //all but bottom
-            else if(!N && !W && !E && S){
-                tileIndexValue = ruleTileSet.get(RuleTile.allButBottom);
-            } 
-            //all but left
-            else if(!N  && W && !E && !S){
-                tileIndexValue = ruleTileSet.get(RuleTile.allButLeft);
-            } 
-        
-
-        return tileIndexValue;
+        return tileIndex
     }
 
 
@@ -342,63 +247,29 @@ export default class RuleTileSets {
 
     static determineTileType(landData: LandData, option: TileResultOption){
 
-        let N = false;
-        let E = false;
-        let S = false;
-        let W = false;
-
-        let mapData = landData._mapData.landGenerator.landData;
-        let landType = landData.landType;
+        const {x, y} = landData.pos;
+        const mapData = landData._mapData.landGenerator.landData;
+        const landType = landData.landType;
 
         if(option === TileResultOption.land){
-            if(landData.pos.x === 0){
-                W = false;
-            } else {
-                W = (mapData[landData.pos.y][landData.pos.x-1].landType === landType);
-            }
-            if(landData.pos.x === Game_Config.MAP_SIZE.x - 1){
-                E = false;
-            } else {
-                E = (mapData[landData.pos.y][landData.pos.x+1].landType === landType);
-            }
-            if(landData.pos.y === 0){
-                N = false;
-            } else {
-                N = (mapData[landData.pos.y-1][landData.pos.x].landType === landType);
-            }
-            if(landData.pos.y === Game_Config.MAP_SIZE.y - 1){
-                S = false;
-            } else {
-                S = (mapData[landData.pos.y+1][landData.pos.x].landType === landType);
-            }
+            const N = (y === 0) ? false : mapData[y-1][x].landType === landType;
+            const E = (x === Game_Config.MAP_SIZE.x - 1) ? false : mapData[y][x+1].landType === landType
+            const S = (y === Game_Config.MAP_SIZE.y - 1) ? false : mapData[y+1][x].landType === landType
+            const W = (x === 0) ? false : mapData[y][x-1].landType === landType
 
-            // console.log(`new: N: ${N}, E: ${E}, S: ${S}, W: ${W}`);
-        } 
-        else if(option === TileResultOption.water){
-            if(landData.pos.x === 0){
-                W = false;
-            } else {
-                W = (mapData[landData.pos.y][landData.pos.x-1].hasWater());
-            }
-            if(landData.pos.x === Game_Config.MAP_SIZE.x - 1){
-                E = false;
-            } else {
-                E = (mapData[landData.pos.y][landData.pos.x+1].hasWater());
-            }
-            if(landData.pos.y === 0){
-                N = false;
-            } else {
-                N = (mapData[landData.pos.y-1][landData.pos.x].hasWater());
-            }
-            if(landData.pos.y === Game_Config.MAP_SIZE.y - 1){
-                S = false;
-            } else {
-                S = (mapData[landData.pos.y+1][landData.pos.x].hasWater());
-            }
+            const tileType = Direction_to_Ruletile.get(JSON.stringify({N: N, E: E, S: S, W: W}))
+            return tileType;
         }
 
-        const tileType = Direction_to_Ruletile.get(JSON.stringify({N: N, E: E, S: S, W: W}))
-        return tileType;
+        else if(option === TileResultOption.water){
+            const N = (y === 0) ? false : mapData[y-1][x].hasWater();
+            const E = (x === Game_Config.MAP_SIZE.x - 1) ? false : mapData[y][x+1].hasWater()
+            const S = (y === Game_Config.MAP_SIZE.y - 1) ? false : mapData[y+1][x].hasWater()
+            const W = (x === 0) ? false : mapData[y][x-1].hasWater()
+
+            const tileType = Direction_to_Ruletile.get(JSON.stringify({N: N, E: E, S: S, W: W}))
+            return tileType;
+        }
     }
 
 }
