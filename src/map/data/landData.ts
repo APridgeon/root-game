@@ -14,10 +14,6 @@ class LandData {
     ruleTile: RuleTile;
 
     // NEW ORGANISATION
-    ruletiles: {
-        land: RuleTile,
-        water: RuleTile
-    }
 
     display_indexes = {
         water: -1,

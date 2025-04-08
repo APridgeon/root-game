@@ -56,9 +56,9 @@ export default class RuleTileMapDisplay
         mapData.forEach(row => row.forEach(tile => {
             const {x, y} = tile.pos
             const indexes = RuleTileSets.convertToIndexes(tile)
-            tile.display_indexes.land = indexes.land.tileIndex
-            tile.hasWater() ? tile.display_indexes.water = indexes.water.tileIndex : -1;
-            (tile.landType !== LandTypes.None) ? tile.display_indexes.land_background = RuleTileSets.ConvertToTileIndex(x, y, this._mapData.landGenerator.landDataBeforeHoles, RuleTileSets.landTileSet) : -1
+            tile.display_indexes.land = indexes.land;
+            tile.display_indexes.water = indexes.water;
+            tile.display_indexes.land_background = (tile.landType !== LandTypes.None) ? RuleTileSets.ConvertToTileIndex(x, y, this._mapData.landGenerator.landDataBeforeHoles, RuleTileSets.landTileSet) : -1
         }))
     }
 
@@ -75,40 +75,29 @@ export default class RuleTileMapDisplay
     }
 
     updateTile(pos: Position): void {
-        let N: Position = {x: pos.x, y: pos.y - 1};
-        let E: Position = {x: pos.x + 1, y: pos.y};
-        let S: Position = {x: pos.x, y: pos.y + 1};
-        let W: Position = {x: pos.x - 1, y: pos.y};
+        const N: Position = {x: pos.x, y: pos.y - 1};
+        const E: Position = {x: pos.x + 1, y: pos.y};
+        const S: Position = {x: pos.x, y: pos.y + 1};
+        const W: Position = {x: pos.x - 1, y: pos.y};
 
-        let tileArray = [N, E, S, W, pos];
-        let landData = this._mapData.landGenerator.landData
-
+        const tileArray = [N, E, S, W, pos];
+        const landData = this._mapData.landGenerator.landData
 
         tileArray.forEach(tile => {
-            if(landData[tile.y][tile.x] === undefined){
-                console.log("Tile is not found");
-                return
+            const land_tile = landData[tile.y][tile.x]
+            if(land_tile === undefined) return;
+
+            if(land_tile.isLand()){
+                const indeces = RuleTileSets.convertToIndexes(land_tile);
+                this.landTileLayer.putTileAt(indeces.land, tile.x, tile.y);
+                const alpha = land_tile.water/Game_Config.WATER_TILE_STARTING_AMOUNT;
+                this.waterTileLayer.putTileAt(indeces.water, tile.x, tile.y).setAlpha(alpha)
+            } else {
+                this.landTileLayer.putTileAt(RuleTileSets.landTileSet.get(RuleTile.empty), tile.x, tile.y)
             }
 
-            if(landData[tile.y][tile.x].phosphorous){
-                this.mineralLayer.putTileAt((5 * 25) + 9, landData[tile.y][tile.x].pos.x, landData[tile.y][tile.x]  .pos.y);
-            }
-
-
-            if(landData[tile.y][tile.x].isLand()){
-                let newResults = RuleTileSets.convertToIndexes(landData[tile.y][tile.x]);
-                this.landTileLayer.putTileAt(newResults.land.tileIndex, tile.x, tile.y);
-                landData[tile.y][tile.x].ruleTile = newResults.land.tileType;
-
-                let alpha = landData[tile.y][tile.x].water/Game_Config.WATER_TILE_STARTING_AMOUNT;
-                this.waterTileLayer.putTileAt(newResults.water.tileIndex, tile.x, tile.y)
-                    .setAlpha(alpha);
-            }
-            else {
-                this.landTileLayer.putTileAt(RuleTileSets.landTileSet.get(RuleTile.empty), tile.x, tile.y);
-            }
+            if(land_tile.phosphorous) this.mineralLayer.putTileAt((5 * 25) + 9, land_tile.pos.x, land_tile.pos.y);
         })
-
     }
 
     private create_tilemap_layers(mapData: LandData[][]): void {
@@ -128,7 +117,7 @@ export default class RuleTileMapDisplay
         tilemap_layers.get('soilBackground')
             .setAlpha(0.4)
             .putTilesAt(mapData.map(row => row.map(tile => tile.display_indexes.land_background)), 0, 0)
-            .forEachTile(tile => tile.index != -1 ? tile.index = (25*7) + 4 : -1)
+            .forEachTile(tile => tile.index = (tile.index != -1) ?  (25*7) + 4 : -1)
 
 
         this.soilBackgroundTileLayer = tilemap_layers.get('soilBackground')

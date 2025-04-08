@@ -214,35 +214,15 @@ export default class RuleTileSets {
     }
 
 
-    static convertToIndexes(landData: LandData): RuleTileResult {
+    static convertToIndexes(landData: LandData) {
+        const land_tile_type = this.determineTileType(landData, TileResultOption.land);
+        const landTileSet = RuleTileSets.LandTypeToTileSet.get(landData.landType);
+        const land_index = landData.isLand() ? landTileSet.get(land_tile_type) : -1;
 
-        let ruleTileLand;
-        let landIndex;
-        let ruleTileWater;
-        let waterIndex;
+        const water_tile_type = this.determineTileType(landData, TileResultOption.water);
+        const water_index = landData.hasWater() ? RuleTileSets.waterTileSet.get(water_tile_type) : -1;
 
-        if(landData.isLand()){
-            ruleTileLand = this.determineTileType(landData, TileResultOption.land);
-            let landTileSet = RuleTileSets.LandTypeToTileSet.get(landData.landType);
-            landIndex = landTileSet.get(ruleTileLand);
-    
-            ruleTileWater = this.determineTileType(landData, TileResultOption.water);
-            waterIndex = RuleTileSets.waterTileSet.get(ruleTileWater);
-        } else {
-            ruleTileLand = RuleTile.empty
-            landIndex = -1
-            ruleTileWater = RuleTile.empty
-            waterIndex = -1
-        }
-
-
-        let result: RuleTileResult = {
-            land: {tileIndex: landIndex, tileType: ruleTileLand},
-            water: {tileIndex: waterIndex, tileType: ruleTileWater}
-
-        }
-
-        return result;
+        return({land: land_index, water: water_index})
     }
 
     static determineTileType(landData: LandData, option: TileResultOption){
@@ -272,19 +252,6 @@ export default class RuleTileSets {
         }
     }
 
-}
-
-
-
-
-export type TileIndexResult = {
-    tileIndex: integer;
-    tileType: RuleTile;
-}
-
-export type RuleTileResult = {
-    land: TileIndexResult,
-    water: TileIndexResult
 }
 
 export enum TileResultOption {
