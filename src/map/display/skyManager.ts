@@ -84,7 +84,7 @@ class SkyManager {
         let fade = this._scene.time.addEvent({
             delay: this.transitionDuration/20,
             callback: () => {
-                this._newTileLayer.forEachTile( tile => tile.setAlpha(tile.alpha + 0.05))
+                this._newTileLayer.forEachTile(tile => tile.setAlpha(tile.alpha + 0.05))
             }, 
             repeat: 19
         })

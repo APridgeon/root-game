@@ -1,8 +1,5 @@
 import Game_Config from "../../game_config";
-import LandData from "./landData";
-import { LandTypes } from "./landGenerator";
 import MapData from "./mapData";
-import { RuleTile } from "../display/ruleTileSets";
 import * as Phaser from "phaser";
 import GrasslandBiome from "./biomes/grasslandBiome";
 import SandlandBiome from "./biomes/sandBiome";
@@ -52,25 +49,14 @@ export default class BiomeManager {
 
 // TODO: sort out the creation of different biomes
     setBiome(){
-
-        let biomeChoices = [BiomeType.Grassland, BiomeType.Sandy]
-        let biomeSizes = 50;
-
+        const biomeChoices = [BiomeType.Grassland, BiomeType.Sandy]
+        const biomeSizes = 50;
         for(let xChunk = 0; xChunk<Game_Config.MAP_SIZE.x; xChunk+=biomeSizes){
-
-            let biome = biomeChoices[Math.floor(Math.random()*biomeChoices.length)];
-            let b: BiomeBase;
-            if(biome == BiomeType.Grassland){
-                b = new GrasslandBiome(this._scene, this._mapData);
-            } else {    
-                b = new SandlandBiome(this._scene, this._mapData);
-            }
+            const biome = biomeChoices[Math.floor(Math.random()*biomeChoices.length)];
+            const b = (biome == BiomeType.Grassland) ? 
+                new GrasslandBiome(this._scene, this._mapData) : new SandlandBiome(this._scene, this._mapData);
             b.createBiome(xChunk, biomeSizes);
             this.biomes.push(b);
-
-        }
-        
+        } 
     }
-
-
 }

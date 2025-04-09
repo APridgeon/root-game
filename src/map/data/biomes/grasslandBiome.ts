@@ -17,11 +17,11 @@ export default class GrasslandBiome extends BiomeBase  {
 
     addWater(): void {
         this.landData.forEach(land => {
-            // if(land.pos.y > Game_Config.MAP_GROUND_LEVEL){
-                let water = this._mapData.noise.simplex2((land.pos.x * 0.05) + 0.3, (land.pos.y * 0.05) + 0.3)
+            if(land.pos.y > Game_Config.MAP_GROUND_LEVEL){
+                const water = this._mapData.noise.simplex2((land.pos.x * 0.05) + 0.3, (land.pos.y * 0.05) + 0.3)
                 land.water = (water > 0.3) && land.isLand() ? Game_Config.WATER_TILE_STARTING_AMOUNT : 0;
-                // land.phosphorous = false;
-            // }
+                land.phosphorous = false;
+            }
         })
     }
 

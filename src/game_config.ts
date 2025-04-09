@@ -25,7 +25,7 @@ export default class Game_Config {
     static WATER_TILE_STARTING_AMOUNT: integer = 10;
 
     static MAP_GROUND_LEVEL: integer = 18;
-    static MAP_RESOURCE_LEVEL: integer = 23;
+    static MAP_RESOURCE_LEVEL: integer = 24;
     static MAP_UGROUND_HOLE_LEVEL: integer = 24;
 
     static FONT_RES: integer = 7;

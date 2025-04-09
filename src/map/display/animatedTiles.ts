@@ -35,7 +35,7 @@ export default class AnimatedTiles {
             AnimatedTile.Mushroom, 
             [
                 (22*ROWLENGTH + 4),
-                // (22*ROWLENGTH + 5) 
+                (22*ROWLENGTH + 5) 
             ]
         ]
     ])

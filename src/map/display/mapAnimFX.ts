@@ -43,12 +43,8 @@ export default class MapAnimFX {
             callback: () => {
                 this.activeTileNo += 1;
                 if(this.activeTileNo > this.animTiles.length -1){
-                    if(this.once){
-                        this.destroy();
-                        return
-                    } else {
-                        this.activeTileNo = 0;
-                    }
+                    if(this.once) this.destroy();
+                    else this.activeTileNo = 0;
                 }
                 this.image.setFrame(this.animTiles[this.activeTileNo]);
             }

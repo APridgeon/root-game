@@ -10,19 +10,18 @@ class LandData {
 
     pos: Position;
 
-    landType: LandTypes = LandTypes.None;
+    landType = LandTypes.None;
     biome_data: {
         biome_type: BiomeType,
     }
-    //
 
-    landStrength: number = 0;
-    phosphorous: boolean = false;
-    water: number = 0;
+    landStrength = 0;
+    phosphorous = false;
+    water = 0;
 
     biome: BiomeBase = undefined;
     biomeType: BiomeType;
-    biomeIndex: {index: number, pos: Position} = {index: -1, pos: {x: 0, y: 0}};
+    biomeIndex = {index: -1, pos: {x: 0, y: 0}};
 
     _mapData: MapData;
 
@@ -59,11 +58,7 @@ class LandData {
     }
 
     public isLand(){
-        if(this.landType !== LandTypes.Hole && this.landType !== LandTypes.None){
-            return true;
-        } else {
-            return false;
-        }
+        return (this.landType !== LandTypes.Hole && this.landType !== LandTypes.None)
     }
 
     hasWater(){

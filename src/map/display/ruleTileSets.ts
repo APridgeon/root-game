@@ -211,7 +211,9 @@ export default class RuleTileSets {
         const background_type = this.determineTileType(landData, TileResultOption.background);
         const background_index = (landData.landType !== LandTypes.None) ? RuleTileSets.landTileSetNoGaps.get(background_type) : -1
 
-        return({land: land_index, water: water_index, background: background_index})
+        const mineral_index = (landData.phosphorous) ? (5 * 25) + 9 : -1;
+
+        return({land: land_index, water: water_index, background: background_index, mineral: mineral_index})
     }
 
     static determineTileType(landData: LandData, option: TileResultOption){

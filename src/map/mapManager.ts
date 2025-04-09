@@ -27,36 +27,13 @@ export default class MapManager {
                     this.mapDisplay.updateTile(pos);
             })
         })
-
-
-
-
     }
 
 
     public isLandTileAccessible(pos: Position): boolean {
-
-        let result = false;
-
-        if(!pos){
-            return false;
-        }
-
-        if(!this.mapData.landGenerator.landData[pos.y][pos.x]){
-            console.log(JSON.stringify(pos) + " is not accessible")
-            return false;
-        }
-
-        if(this.mapData.landGenerator.landData[pos.y][pos.x].isLand()){
-                result = true;
-            }
-        
-        if(this.mapData.landGenerator.landData[pos.y][pos.x].hasWater()){
-            return false
-        }
-
-        return result;
-
+        if(!pos) return false;
+        const tile = this.mapData.landGenerator.landData[pos.y][pos.x];
+        return (tile.isLand() && !tile.hasWater()) 
     }
 
     public FindAccessableRoute(startPos: Position, endPos: Position): Position[] {
@@ -66,18 +43,12 @@ export default class MapManager {
         return []
     }
 
- 
-    /**
-     * 
-     * @param pos Position of tile to be destroyed
-     * @returns If tile is destroyed position is returned
-     */
     public DestroyTile(pos: Position): Position|void {
         this.mapData.landGenerator.landData[pos.y][pos.x].destroy();
     }
 
     public AttackTile(pos: Position, plant: PlantData){
-        let destroyed = this.mapData.landGenerator.landData[pos.y][pos.x].attack(plant);
+        const destroyed = this.mapData.landGenerator.landData[pos.y][pos.x].attack(plant);
         if(destroyed){
             this.mapDisplay.updateTile(pos);
             return pos;

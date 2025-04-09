@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import Game_Config from '../../game_config';
 import MapData from '../data/mapData';
-import RuleTileSets, { RuleTile, TileResultOption } from './ruleTileSets';
+import RuleTileSets from './ruleTileSets';
 import { AnimatedTile } from './animatedTiles';
 import MapAnimFX from './mapAnimFX';
 import { Position } from '../../plant/plantData';
@@ -9,7 +9,6 @@ import { Events } from '../../events/events';
 import SkyManager from './skyManager';
 import { LandTypes } from '../data/landGenerator';
 import LandData from '../data/landData';
-import Biome from '../data/biomeManager';
 
 
 export default class RuleTileMapDisplay
@@ -23,8 +22,6 @@ export default class RuleTileMapDisplay
 
     mapAnimFX: MapAnimFX[] = [];
 
-
-
     constructor(scene: Phaser.Scene, mapData: MapData, texture: string){
 
         this._scene = scene;
@@ -37,23 +34,8 @@ export default class RuleTileMapDisplay
         this.setUpAnimations();
 
         new SkyManager(scene);
-
-        this.InitialiseTilemap();
-
-
     }
 
-
-    public InitialiseTilemap(){
-        this._mapData.landGenerator.landData.forEach(row => {
-            row.forEach(land => {
-                this.tilemap_layers.get('decoration').putTileAt(land.biomeIndex.index, land.pos.x + land.biomeIndex.pos.x, land.pos.y + land.biomeIndex.pos.y);
-                if(land.phosphorous){
-                    this.tilemap_layers.get('mineral').putTileAt((5 * 25) + 9, land.pos.x, land.pos.y);
-                }
-            })
-        })
-    }
 
     updateTile(pos: Position): void {
         const N: Position = {x: pos.x, y: pos.y - 1};
@@ -68,13 +50,15 @@ export default class RuleTileMapDisplay
             const land_tile = landData[tile.y][tile.x]
             if(land_tile === undefined) return;
 
-            const indeces = RuleTileSets.convertToIndexes(land_tile);
+            const indeces = RuleTileSets.convertToIndexes(land_tile);        
+            const {x: off_x, y:off_y} = land_tile.biomeIndex.pos;
+            const alpha = land_tile.water/Game_Config.WATER_TILE_STARTING_AMOUNT;
 
             this.tilemap_layers.get('land').putTileAt(indeces.land, tile.x, tile.y);
-            const alpha = land_tile.water/Game_Config.WATER_TILE_STARTING_AMOUNT;
             this.tilemap_layers.get('water').putTileAt(indeces.water, tile.x, tile.y).setAlpha(alpha)
+            this.tilemap_layers.get('mineral').putTileAt(indeces.mineral, tile.x, tile.y)
+            this.tilemap_layers.get('decoration').putTileAt(land_tile.biomeIndex.index, tile.x+off_x, tile.y+off_y)
 
-            if(land_tile.phosphorous) this.tilemap_layers.get('mineral').putTileAt((5 * 25) + 9, land_tile.pos.x, land_tile.pos.y);
         })
     }
 
@@ -91,12 +75,17 @@ export default class RuleTileMapDisplay
 
         const indeces = mapData.map(row => row.map(tile => RuleTileSets.convertToIndexes(tile)))
         this.tilemap_layers.get('landBeforeHoles').putTilesAt(indeces.map(row => row.map(tile => tile.background)), 0, 0)
+        this.tilemap_layers.get('soilBackground').putTilesAt(indeces.map(row => row.map(tile => (tile.background != -1) ? (25*7) + 4 : -1)), 0, 0)
+            .setAlpha(0.4)
         this.tilemap_layers.get('land').putTilesAt(indeces.map(row => row.map(tile => tile.land)), 0, 0)
         this.tilemap_layers.get('water').putTilesAt(indeces.map(row => row.map(tile => tile.water)), 0, 0)
-        this.tilemap_layers.get('soilBackground')
-            .setAlpha(0.4)
-            .putTilesAt(indeces.map(row => row.map(tile => tile.background)), 0, 0)
-            .forEachTile(tile => tile.index = (tile.index != -1) ?  (25*7) + 4 : -1)
+        this.tilemap_layers.get('mineral').putTilesAt(indeces.map(row => row.map(tile => tile.mineral)), 0, 0)
+
+        mapData.forEach(row => row.forEach(tile => {
+            const {x, y} = tile.pos;
+            const {x: off_x, y:off_y} = tile.biomeIndex.pos;
+            this.tilemap_layers.get('decoration').putTileAt(tile.biomeIndex.index, x+off_x, y+off_y)
+        }))
     }
 
 

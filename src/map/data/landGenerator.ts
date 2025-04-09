@@ -44,9 +44,6 @@ class LandGenerator {
 
         this.createLandSurface();
         this.addSimplexNoise(this.underGroundHoleLevel, {x: this.noiseStretch, y: this.noiseStretch}, this.noiseThreshold, LandTypes.Hole);
-
-
-
     }
 
     private createLandSurface(){
@@ -58,8 +55,8 @@ class LandGenerator {
         }
 
         for(let x = 0; x < this.size.x; x++){
-            let noiseValue = this._noise.simplex2(x * this.landWobbleFrequency, 0.5 * this.landWobbleFrequency)
-            let groundLevelAlt = Phaser.Math.RoundTo(noiseValue*this.landWobbleAmplitude, 0);
+            const noiseValue = this._noise.simplex2(x * this.landWobbleFrequency, 0.5 * this.landWobbleFrequency)
+            const groundLevelAlt = Phaser.Math.RoundTo(noiseValue*this.landWobbleAmplitude, 0);
 
             for(let y = this.groundLevel + groundLevelAlt; y < this.size.y; y++){
                 this.landDataBeforeHoles[y][x] = true;

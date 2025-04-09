@@ -26,28 +26,24 @@ export class BiomeBase {
     createBiome(x0: number, biomeSize: number): void {
         for(let y = 0; y < Game_Config.MAP_SIZE.y; y++){
 
-            let xWobble = this._mapData._mapManager.noise.simplex2(0.5, y * 0.05);
-            let xWobbleRounded = Phaser.Math.RoundTo(xWobble * 5, 0) - 5;
+            const xWobble = this._mapData._mapManager.noise.simplex2(0.5, y * 0.05);
+            const xWobbleRounded = Phaser.Math.RoundTo(xWobble * 5, 0) - 5;
 
             for(let x = x0 + xWobbleRounded; x < x0 + biomeSize - xWobbleRounded; x++){
-
-                if(this._mapData.landGenerator.landData[y][x]){
-                    let land = this._mapData.landGenerator.landData[y][x];
-                    if(land.biome){
-                        land.removeFromBiome(); 
-                    }
-                    land.biome = this;
-                    land.biomeType = this.biomeType;
-                    this.landData.push(land);
-                    if(land.isLand()){
-                        land.landType = this.landType;
-                        //TODO change rule tile setting - must be done after all biomes are made
-                        land.ruleTile =  RuleTileSets.convertToIndexes(land).land.tileType;
-                        land.initStrength();
+                const tile = this._mapData.landGenerator.landData[y][x]
+                if(tile){
+                    if(tile.biome) tile.removeFromBiome(); 
+                    tile.biome = this;
+                    tile.biomeType = this.biomeType;
+                    this.landData.push(tile);
+                    if(tile.isLand()){
+                        tile.landType = this.landType;
+                        tile.initStrength();
                     }
                 }
             }
         }
+        
         this.addWater();
         this.addMinerals();
         this.addImages();
