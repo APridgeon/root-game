@@ -22,6 +22,24 @@ export enum PlantTile {
     Surrounded = 15
 }
 
+export const Direction_to_PlantTile = new Map<string, PlantTile>([
+    [JSON.stringify({N: true, E: false, S: false, W: false}), PlantTile.TipBottom],
+    [JSON.stringify({N: false, E: false, S: true, W: false}), PlantTile.TipTop],
+    [JSON.stringify({N: false, E: true, S: false, W: false}), PlantTile.TipRight],
+    [JSON.stringify({N: false, E: false, S: false, W: true}), PlantTile.TipLeft],
+    [JSON.stringify({N: true, E: false, S: true, W: false}), PlantTile.TopAndBottom],
+    [JSON.stringify({N: false, E: true, S: false, W: true}), PlantTile.LeftAndRight],
+    [JSON.stringify({N: true, E: false, S: false, W: true}), PlantTile.TopAndLeft],
+    [JSON.stringify({N: true, E: true, S: false, W: false}), PlantTile.TopAndRight],
+    [JSON.stringify({N: false, E: false, S: true, W: true}), PlantTile.BottomAndLeft],
+    [JSON.stringify({N: false, E: true, S: true, W: false}), PlantTile.BottomAndRight],
+    [JSON.stringify({N: false, E: true, S: true, W: true}), PlantTile.AllButTop],
+    [JSON.stringify({N: true, E: true, S: true, W: false}), PlantTile.AllButRight],
+    [JSON.stringify({N: true, E: true, S: false, W: true}), PlantTile.AllButBottom],
+    [JSON.stringify({N: true, E: false, S: true, W: true}), PlantTile.AllButLeft],
+    [JSON.stringify({N: true, E: true, S: true, W: true}), PlantTile.Surrounded],
+])
+
 export default class PlantTileSets {
 
     static rootSet1 = new Map<PlantTile, integer>([
@@ -37,9 +55,9 @@ export default class PlantTileSets {
         [PlantTile.BottomAndRight, (19*ROWLENGTH) + 2],
         [PlantTile.BottomAndLeft, (19*ROWLENGTH) + 3],
         [PlantTile.AllButTop, (21*ROWLENGTH) + 1],
-        [PlantTile.AllButRight, (20*ROWLENGTH) + 1],
+        [PlantTile.AllButLeft, (20*ROWLENGTH) + 1],
         [PlantTile.AllButBottom, (21*ROWLENGTH) + 0],
-        [PlantTile.AllButLeft, (20*ROWLENGTH) + 0],
+        [PlantTile.AllButRight, (20*ROWLENGTH) + 0],
         [PlantTile.Surrounded, (21*ROWLENGTH) + 2]
 
     ]);
@@ -47,94 +65,19 @@ export default class PlantTileSets {
 
     static ConvertToTileIndex(x: number, y:number, plantDataSet: PlantData, plantTileSet: Map<PlantTile, integer>){
 
-        let Npos = {x: x, y: y - 1};
-        let Epos = {x: x + 1, y: y};
-        let Spos = {x: x, y: y + 1};
-        let Wpos = {x: x - 1, y: y};
+        const Npos = {x: x, y: y - 1};
+        const Epos = {x: x + 1, y: y};
+        const Spos = {x: x, y: y + 1};
+        const Wpos = {x: x - 1, y: y};
 
-        let N = plantDataSet.__rootData.some(val => {
-            return ((val.x === Npos.x) && ((val.y) === (Npos.y))) ? true : false;
-        });    
-        let E = plantDataSet.__rootData.some(val => {
-            return ((val.x === Epos.x) && ((val.y) === (Epos.y))) ? true : false;
-        }); 
-        let S = plantDataSet.__rootData.some(val => {
-            return ((val.x === Spos.x) && ((val.y) === (Spos.y))) ? true : false;
-        }); 
-        let W = plantDataSet.__rootData.some(val => {
-            return ((val.x === Wpos.x) && ((val.y) === (Wpos.y))) ? true : false;
-        });
+        const N = (plantDataSet.startPos.x === x && plantDataSet.startPos.y === y ) ? 
+            true : plantDataSet.__rootData.some(val => {return val.x === Npos.x && val.y === Npos.y});    
+        const E = plantDataSet.__rootData.some(val => {return val.x === Epos.x && val.y === Epos.y}); 
+        const S = plantDataSet.__rootData.some(val => {return val.x === Spos.x && val.y === Spos.y}); 
+        const W = plantDataSet.__rootData.some(val => {return val.x === Wpos.x && val.y === Wpos.y});
 
-        let tileIndexValue;
-
-        // starting tile
-        if(plantDataSet.startPos.x === x && plantDataSet.startPos.y === y ){
-            N = true;
-        }
-
-         //tip bottom 
-        if(N && !W && !E && !S){
-            tileIndexValue = plantTileSet.get(PlantTile.TipBottom);
-        }
-        //tip top
-        else if(!N && !W && !E && S){
-            tileIndexValue = plantTileSet.get(PlantTile.TipTop);
-        }
-        //tip left
-        else if(!N && W && !E && !S){
-            tileIndexValue = plantTileSet.get(PlantTile.TipLeft);
-        }
-        //tip right
-        else if(!N && !W && E && !S){
-            tileIndexValue = plantTileSet.get(PlantTile.TipRight);
-        }
-        //top and bottom
-        else if(N && !W && !E && S){
-            tileIndexValue = plantTileSet.get(PlantTile.TopAndBottom);
-        }
-        //left and right
-        else if(!N && W && E && !S){
-            tileIndexValue = plantTileSet.get(PlantTile.LeftAndRight);
-        }
-        //top and right
-        else if(N && !W && E && !S){
-            tileIndexValue = plantTileSet.get(PlantTile.TopAndRight);
-        }
-        //top and left
-        else if(N && W && !E && !S){
-            tileIndexValue = plantTileSet.get(PlantTile.TopAndLeft);
-        }
-        //bottom and left
-        else if(!N && W && !E && S){
-            tileIndexValue = plantTileSet.get(PlantTile.BottomAndLeft);
-        }
-        //bottom and right
-        else if(!N && !W && E && S){
-            tileIndexValue = plantTileSet.get(PlantTile.BottomAndRight);
-        }
-        //all but top
-        else if(!N && W && E && S){
-            tileIndexValue = plantTileSet.get(PlantTile.AllButTop);
-        }
-        //all but right
-        else if(N && W && !E && S){
-            tileIndexValue = plantTileSet.get(PlantTile.AllButRight);
-        }
-        //all but bottom
-        else if(N && W && E && !S){
-            tileIndexValue = plantTileSet.get(PlantTile.AllButBottom);
-        }
-        //all but left
-        else if(N && !W && E && S){
-            tileIndexValue = plantTileSet.get(PlantTile.AllButLeft);
-        }
-        //surrounded
-        else if(N && W && E && S){
-            tileIndexValue = plantTileSet.get(PlantTile.Surrounded);
-        }
-
-        // console.log(N, E, S, W);
-        // console.log(`Tile index: ${tileIndexValue}`);
+        const plantTile = Direction_to_PlantTile.get(JSON.stringify({N, E, S, W}))
+        const tileIndexValue = plantTileSet.get(plantTile)
 
         return tileIndexValue;
     }

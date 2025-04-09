@@ -8,6 +8,7 @@ import { RootData } from "../player/userInput";
 import { LandTypes } from "../map/data/landGenerator";
 import { Direction } from "../general/direction";
 import Main from "../game";
+import { use } from "matter";
 
 
 export default class PlantManager {
@@ -26,19 +27,14 @@ export default class PlantManager {
         this.scene = scene;
         this.mapManager = mapManager;
 
-        let plantHeight: number;
+        const plantHeight = (() => {for(let y = 0; y < Game_Config.MAP_SIZE.y; y++){
+            const tile = this.mapManager.mapData.landGenerator.landData[y][Game_Config.PLANT_STARTING_POSX];
+            if(tile.landType !== LandTypes.None) return y
+        }})()
 
-        for(let y = 0; y < Game_Config.MAP_SIZE.y; y++){
-            if(this.mapManager.mapData.landGenerator.landData[y][Game_Config.PLANT_STARTING_POSX].landType !== LandTypes.None){
-                plantHeight = y;
-                break;
-            }
-        }
-        this.userPlant = new PlantData(scene, {x: Game_Config.PLANT_STARTING_POSX, y: plantHeight }, false);
+        this.userPlant = new PlantData(scene, {x: Game_Config.PLANT_STARTING_POSX, y: plantHeight}, false);
         this.mapManager.DestroyTile({x: Game_Config.PLANT_STARTING_POSX, y: plantHeight});
         
-
-
         this.PlacePlants(scene);
         this.plantDisplay = new PlantDisplay(scene, this);
 
@@ -49,38 +45,26 @@ export default class PlantManager {
     }
 
     public checkIfPlantIsClose(plantData: PlantData, tile: Position): Direction{
+        const {x, y} = tile;
 
-        let direction: Direction;
-
-        let N = plantData.__rootData.some(val => {
-            return ((val.x == tile.x) && ((val.y - 1) === (tile.y))) ? true : false;
+        const N = plantData.__rootData.some(val => {
+            return ((val.x == x) && ((val.y - 1) === (y))) ? true : false;
         });
-
-        let E = plantData.__rootData.some(val => {
-            return ((val.x + 1 === tile.x) && ((val.y) === (tile.y))) ? true : false;
+        const E = plantData.__rootData.some(val => {
+            return ((val.x + 1 === x) && ((val.y) === (y))) ? true : false;
         });
-
-        let S = plantData.__rootData.some(val => {
-            return ((val.x === tile.x) && ((val.y + 1) === (tile.y))) ? true : false;
+        const S = plantData.__rootData.some(val => {
+            return ((val.x === x) && ((val.y + 1) === (y))) ? true : false;
         });
-
-        let W = plantData.__rootData.some(val => {
-            return ((val.x - 1 === tile.x) && ((val.y) === (tile.y))) ? true : false;
+        const W = plantData.__rootData.some(val => {
+            return ((val.x - 1 === x) && ((val.y) === (y))) ? true : false;
         });
-
-        if(N){
-            direction = Direction.North;
-        } else if (E){
-            direction = Direction.East;
-        } else if (S){
-            direction = Direction.South;
-        } else if (W){
-            direction = Direction.West;
-        } else {
-            direction = Direction.None;
-        }
-
-        return direction;
+        
+        if(N) return Direction.North;
+        else if (E) return Direction.East;
+        else if (S) return Direction.South;
+        else if (W) return Direction.West;
+        else return Direction.None
     }
 
     public createNewRoot(plantData: PlantData){
@@ -88,19 +72,13 @@ export default class PlantManager {
     }
 
     public checkPlantWaterLevels(scene: Phaser.Scene){
-        if(this.userPlant.water < 0){
-            this.destroyPlant(this.userPlant, scene);
-
-        };
+        if(this.userPlant.water < 0) this.destroyPlant(this.userPlant, scene);
         this.aiPlants.forEach(plant => {
-            if(plant.water < 0){
-                this.destroyPlant(plant, scene);
-            }
+            if(plant.water < 0) this.destroyPlant(plant, scene);
         })
     }
 
     public destroyPlant(plantData: PlantData, scene: Phaser.Scene){
-        
         plantData.alive = false;
         this.plantDisplay.destroyAerialTree(plantData);
 
@@ -108,28 +86,19 @@ export default class PlantManager {
         this.plantDisplay.updatePlantDisplay();
         plantData.__rootData = [];
 
-        if(plantData === this.userPlant){
-            scene.events.emit(Events.GameOver);
-
-        }
+        if(plantData === this.userPlant) scene.events.emit(Events.GameOver);
     }
 
     private PlacePlants(scene: Main): void {
         for(let x = 1; x < Game_Config.MAP_SIZE.x - 1; x+=6){
-            if(!(x > this.userPlant.startPos.x - 3 && x < this.userPlant.startPos.x + 3) && Math.random() > 0.5){
+            const user_x = this.userPlant.startPos.x;
+            if(!(x > user_x - 3 && x < user_x + 3) && Math.random() > 0.5){
                 
-
-                let plantHeight: number;
-
-                for(let y = 0; y < Game_Config.MAP_SIZE.y; y++){
-                    if(this.mapManager.isLandTileAccessible({x: x, y: y})){
-                        plantHeight = y;
-                        break;
-                    }
-                }
-
+                const plantHeight = (() => {for(let y = 0; y < Game_Config.MAP_SIZE.y; y++){
+                    if(this.mapManager.isLandTileAccessible({x: x, y: y})) return y
+                }})()
                 
-                let aiPlant = new PlantData(scene, {x: x, y: plantHeight}, true);
+                const aiPlant = new PlantData(scene, {x: x, y: plantHeight}, true);
                 this.mapManager.DestroyTile({x: x, y: plantHeight});
                 this.aiPlants.push(aiPlant);
             }
@@ -137,12 +106,9 @@ export default class PlantManager {
     }
 
     private setupEventResponses(): void{
-
-
-
         this.scene.events.on(Events.RootGrowthRequest, (rootData: RootData) => {
 
-            let directionTowardsPlant = this.checkIfPlantIsClose(rootData.plant, rootData.coords);
+            const directionTowardsPlant = this.checkIfPlantIsClose(rootData.plant, rootData.coords);
             
             if(directionTowardsPlant !== Direction.None){
                 rootData.plant.newRootLocation = rootData.coords;
@@ -151,15 +117,9 @@ export default class PlantManager {
                 rootData.plant.newRootLocation = null;
                 rootData.plant.newRootDirection = Direction.None;
             }
-
         })
 
-        this.scene.events.on(Events.GameOver, () => {
-            this.gameOver = true;
-        })
-
+        this.scene.events.on(Events.GameOver, () => this.gameOver = true);
     }
-
-
 }
 

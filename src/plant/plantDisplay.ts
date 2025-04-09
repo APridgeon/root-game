@@ -73,7 +73,7 @@ export default class PlantDisplay {
     private addToTileIndexData(plantData: PlantData, plantTileSet: Map<PlantTile, integer>): void {
         if(plantData.alive){
             plantData.__rootData.forEach(pos => {
-                let index = PlantTileSets.ConvertToTileIndex(pos.x, pos.y, plantData, plantTileSet);
+                const index = PlantTileSets.ConvertToTileIndex(pos.x, pos.y, plantData, plantTileSet);
                 this.plantTileLayer.putTileAt(index, pos.x, pos.y)
             })
         } else {
@@ -119,7 +119,7 @@ export default class PlantDisplay {
             scale *= 2;
         }
 
-        let tree = new Tree({x: Game_Config.MAP_tilesToWorld(plantData.startPos.x) + (Game_Config.MAP_RES), y: Game_Config.MAP_tilesToWorld(plantData.startPos.y)}, treeSettings, this.graphicsObject, this.scene);
+        const tree = new Tree({x: Game_Config.MAP_tilesToWorld(plantData.startPos.x) + (Game_Config.MAP_RES), y: Game_Config.MAP_tilesToWorld(plantData.startPos.y)}, treeSettings, this.graphicsObject, this.scene);
         this.plantTrees.set(plantData, tree);
 
         this.scene.input.keyboard.on('keydown-A', () => {
@@ -133,8 +133,7 @@ export default class PlantDisplay {
     }
 
     public destroyAerialTree(plantData: PlantData){
-        let tree = this.plantTrees.get(plantData);
-        // console.log(tree);
+        const tree = this.plantTrees.get(plantData);
         tree.clear();
     }
 }

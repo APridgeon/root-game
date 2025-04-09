@@ -55,9 +55,7 @@ export default class PlantData {
         this._scene.mapManager.AttackTile({x: this.startPos.x, y: this.startPos.y}, this);
         this.__rootData.push({x: this.startPos.x, y: this.startPos.y});
 
-        if(ai){
-            this.aiController = new aiController(scene, this);
-        }
+        if(ai) this.aiController = new aiController(scene, this);
 
     }
 
