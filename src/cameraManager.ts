@@ -91,7 +91,7 @@ export default class CameraManager {
         this.maskTexture.draw(land.tilemapLayer,  0, 0);
 
         //draw circlemask for each root segment
-        plantManager.userPlant.__rootData.forEach(pos => {
+        plantManager.userPlant.rootData.forEach(pos => {
             let tile = plantManager.plantDisplay.plantTileLayer.getTileAt(pos.x, pos.y, true);
             let circ = scene.add.image(tile.getCenterX(), tile.getCenterY(), 'circleMask')
                 .setVisible(false)

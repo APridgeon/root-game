@@ -22,9 +22,9 @@ export default class WaterHandler {
         this._mapManager = mapManager;
         
         scene.events.on(Events.AbsorbWater, (plantData: PlantData) => {
-            let waterStats: waterStats = {totalWater: 0, waterAdded: 0, waterRemoved: 0};
             this.checkIfCloseToWater(plantData, mapManager);
             this.removeSurroundingWater();
+            const waterStats: waterStats = {totalWater: 0, waterAdded: 0, waterRemoved: 0};
             waterStats.waterRemoved = this.calculateWaterToRemoveFromPlant(plantData);
             waterStats.waterAdded = this.calculateWaterToAddToPlant(plantData);
             this.updatePlantWaterData(scene, plantData, waterStats);
@@ -52,7 +52,7 @@ export default class WaterHandler {
     }
 
     private calculateWaterToRemoveFromPlant(plantData: PlantData): number {
-        const biomass = plantData.__rootData.length;
+        const biomass = plantData.rootData.length;
         const waterToRemove = (biomass * Game_Config.WATER_SUBTRACT_AMOUNT);
         plantData.water -= waterToRemove;
         return waterToRemove;
@@ -63,7 +63,7 @@ export default class WaterHandler {
         this.rootsCloseToWater = [];
         const landData = mapManager.mapData.landGenerator.landData;
 
-        plantData.__rootData.forEach( pos => {
+        plantData.rootData.forEach( pos => {
             const {x, y} = pos;
 
             const N = (landData[y-1][x] && landData[y-1][x].water > 0)

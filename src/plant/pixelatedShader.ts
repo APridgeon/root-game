@@ -33,8 +33,8 @@ const fragShader = `
 export default class PixelatedFX extends Phaser.Renderer.WebGL.Pipelines.PostFXPipeline
 {
 
-    amount: number = 4;
-    shadows: {NE: number, SE: number, SW: number, NW: number} = {NE: 0.2, SE: 0, SW: 0, NW: 0};
+    amount= 4;
+    shadows = {NE: 0.2, SE: 0, SW: 0, NW: 0};
 
     constructor (game)
     {

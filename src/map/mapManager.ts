@@ -33,6 +33,7 @@ export default class MapManager {
     public isLandTileAccessible(pos: Position): boolean {
         if(!pos) return false;
         const tile = this.mapData.landGenerator.landData[pos.y][pos.x];
+        console.log(tile, pos.x, pos.y)
         return (tile.isLand() && !tile.hasWater()) 
     }
 

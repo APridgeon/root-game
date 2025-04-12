@@ -14,10 +14,6 @@ export default class TurnHandler {
     private _mapManager: MapManager;
 
     private _turnNo: integer = 0;
-    get turnNo(){
-        return this._turnNo;
-    }
-
     constructor(scene: Phaser.Scene, plantManager: PlantManager, mapManager: MapManager){
 
         this._scene = scene;
@@ -89,7 +85,6 @@ export default class TurnHandler {
                             this._scene.events.emit(Events.RootGrowthSuccess, plant.newRootLocation);
                             let directionVector = DirectionVectors.vectors.get(plant.newRootDirection);
                             plant.newRootLocation = {x: plant.newRootLocation.x + directionVector.x, y: plant.newRootLocation.y + directionVector.y};
-                            
                             let worldTileIsAccessable = this._mapManager.isLandTileAccessible(plant.newRootLocation);
                             if(!worldTileIsAccessable){
                                 break;

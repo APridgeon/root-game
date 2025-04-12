@@ -1,6 +1,17 @@
+import Game_Config from "../game_config";
+import { Direction } from "../general/direction";
 import PlantData, { Position } from "../plant/plantData";
 import { RootData } from "../player/userInput";
-import 'phaser';
+import * as Phaser from "phaser";
+
+
+export const direction_to_pos = new Map<Direction, Position>([
+    [Direction.North,   {x: 0, y: -1}],
+    [Direction.East,    {x: 1, y: 0}],
+    [Direction.South,   {x: 0, y: 1}],
+    [Direction.West,    {x: -1, y: 0}],
+    [Direction.None,    {x: 0, y: 0}]
+])
 
 export default class aiController {
 
@@ -8,56 +19,21 @@ export default class aiController {
     plant: PlantData;
 
     constructor(scene: Phaser.Scene, plant: PlantData){
-
         this.plant = plant;
         this.scene = scene;
-
-
     }
 
     public aiRootChoice(){
-        let chosenPos: Position;
-        let finalPos: Position;
 
-        this.plant.__rootData.forEach(pos => {
+        const root_length = this.plant.rootData.length - 1;
+        const chosen_root = this.plant.rootData[Phaser.Math.RND.integerInRange((root_length-5) > 0 ? (root_length-5) : 0, root_length)];
+        const chosen_direction = [Direction.East, Direction.South, Direction.South, Direction.South, Direction.West][Phaser.Math.RND.integerInRange(0, 4)];
+        const direction_vector = direction_to_pos.get(chosen_direction);
+        const new_position = {x: chosen_root.x + direction_vector.x, y: chosen_root.y + direction_vector.y};
+        if(new_position.x < 0 || new_position.x > Game_Config.MAP_SIZE.x) new_position.x = chosen_root.x;
 
-            let N = {x: pos.x, y: pos.y - 1};
-            let E = {x: pos.x + 1, y: pos.y};
-            let S = {x: pos.x, y: pos.y + 1};
-            let W = {x: pos.x - 1, y: pos.y};
-
-            let rand = Math.random();
-            if(rand < 0.1){
-                chosenPos = N;
-            }
-            else if(rand < 0.2){
-                chosenPos = E;
-            }
-            else if(rand < 0.9){
-                chosenPos = S;
-            }
-            else if(rand <= 1){
-                chosenPos = W;
-            }
-
-            rand = Math.random()
-            let threshold = (1/(this.plant.__rootData.length)) * (0.5 * this.plant.__rootData.length);
-            if(rand > threshold){
-                finalPos = chosenPos;
-            }
-        })
-
-        if(!finalPos){
-            finalPos = chosenPos;
-        }
-
-        let rootData: RootData = {
-            coords: chosenPos,
-            plant: this.plant
-        }
-
-        this.scene.events.emit('rootGrowthRequest', rootData);
-
+        const new_root_data = {coords: new_position, plant: this.plant};
+        this.scene.events.emit('rootGrowthRequest', new_root_data);
     }
 
 

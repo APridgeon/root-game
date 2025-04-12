@@ -41,34 +41,23 @@ export default class PlantManager {
         new WaterHandler(scene, mapManager);
 
         this.setupEventResponses();
-
     }
 
     public checkIfPlantIsClose(plantData: PlantData, tile: Position): Direction{
         const {x, y} = tile;
 
-        const N = plantData.__rootData.some(val => {
-            return ((val.x == x) && ((val.y - 1) === (y))) ? true : false;
-        });
-        const E = plantData.__rootData.some(val => {
-            return ((val.x + 1 === x) && ((val.y) === (y))) ? true : false;
-        });
-        const S = plantData.__rootData.some(val => {
-            return ((val.x === x) && ((val.y + 1) === (y))) ? true : false;
-        });
-        const W = plantData.__rootData.some(val => {
-            return ((val.x - 1 === x) && ((val.y) === (y))) ? true : false;
-        });
-        
-        if(N) return Direction.North;
-        else if (E) return Direction.East;
-        else if (S) return Direction.South;
-        else if (W) return Direction.West;
-        else return Direction.None
+        const direction = (() => {for(const pos of plantData.rootData){
+            if(pos.x === x && pos.y-1 === y) return Direction.North;
+            if(pos.x+1 === x && pos.y === y) return Direction.East;
+            if(pos.x === x && pos.y+1 === y) return Direction.South;
+            if(pos.x-1 === x && pos.y === y) return Direction.West;
+        }})()
+
+        return (direction) ? direction : Direction.None;
     }
 
     public createNewRoot(plantData: PlantData){
-        plantData.__rootData.push(plantData.newRootLocation);
+        plantData.rootData.push(plantData.newRootLocation);
     }
 
     public checkPlantWaterLevels(scene: Phaser.Scene){
@@ -82,9 +71,9 @@ export default class PlantManager {
         plantData.alive = false;
         this.plantDisplay.destroyAerialTree(plantData);
 
-        scene.events.emit(Events.DeadRootToLand, plantData.__rootData);
+        scene.events.emit(Events.DeadRootToLand, plantData.rootData);
         this.plantDisplay.updatePlantDisplay();
-        plantData.__rootData = [];
+        plantData.rootData = [];
 
         if(plantData === this.userPlant) scene.events.emit(Events.GameOver);
     }

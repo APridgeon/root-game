@@ -1,7 +1,7 @@
 const ROWLENGTH = 25;
 
 
-import PlantData, { PlantSize } from "./plantData";
+import PlantData from "./plantData";
 
 export enum PlantTile {
     AboveGround = 0,
@@ -71,10 +71,10 @@ export default class PlantTileSets {
         const Wpos = {x: x - 1, y: y};
 
         const N = (plantDataSet.startPos.x === x && plantDataSet.startPos.y === y ) ? 
-            true : plantDataSet.__rootData.some(val => {return val.x === Npos.x && val.y === Npos.y});    
-        const E = plantDataSet.__rootData.some(val => {return val.x === Epos.x && val.y === Epos.y}); 
-        const S = plantDataSet.__rootData.some(val => {return val.x === Spos.x && val.y === Spos.y}); 
-        const W = plantDataSet.__rootData.some(val => {return val.x === Wpos.x && val.y === Wpos.y});
+            true : plantDataSet.rootData.some(val => {return val.x === Npos.x && val.y === Npos.y});    
+        const E = plantDataSet.rootData.some(val => {return val.x === Epos.x && val.y === Epos.y}); 
+        const S = plantDataSet.rootData.some(val => {return val.x === Spos.x && val.y === Spos.y}); 
+        const W = plantDataSet.rootData.some(val => {return val.x === Wpos.x && val.y === Wpos.y});
 
         const plantTile = Direction_to_PlantTile.get(JSON.stringify({N, E, S, W}))
         const tileIndexValue = plantTileSet.get(plantTile)

@@ -45,10 +45,13 @@ export class Tree {
         this.buds.forEach((bud, i) => {
 
             if(bud.growing){
-                let choice = Phaser.Math.RND.between(0,1);
-                let branchColours = [0x816976, 0x4a3838];
-    
-                this._graphicsOb.setDefaultStyles({lineStyle: {width: (this.treeSettings.lineWidth * this.scale), color: branchColours[choice]}, fillStyle: {color: branchColours[choice]}});
+                
+                const branch_colour = [0x816976, 0x4a3838][Phaser.Math.RND.between(0,1)];
+                const branch_width = this.treeSettings.lineWidth * this.scale;
+                this._graphicsOb.setDefaultStyles({
+                    lineStyle: {width: branch_width, color: branch_colour},
+                    fillStyle: {color: branch_colour}
+                })
     
                 this._graphicsOb.beginPath();
                 this._graphicsOb.moveTo(bud.pos.x, bud.pos.y);

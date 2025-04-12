@@ -72,15 +72,15 @@ export default class PlantDisplay {
 
     private addToTileIndexData(plantData: PlantData, plantTileSet: Map<PlantTile, integer>): void {
         if(plantData.alive){
-            plantData.__rootData.forEach(pos => {
+            plantData.rootData.forEach(pos => {
                 const index = PlantTileSets.ConvertToTileIndex(pos.x, pos.y, plantData, plantTileSet);
                 this.plantTileLayer.putTileAt(index, pos.x, pos.y)
             })
         } else {
-            plantData.__rootData.forEach(pos => {
+            plantData.rootData.forEach(pos => {
                 this.plantTileLayer.putTileAt(-1, pos.x, pos.y)
             })
-            plantData.__rootData = [];
+            plantData.rootData = [];
         }
         
     }
