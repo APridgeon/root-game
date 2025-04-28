@@ -8,7 +8,7 @@ import { BiomeBase } from "./biomes/biomeInterface";
 const ROWLENGTH = 25;
 
 export enum BiomeType {
-    Grassland,
+    Grassland = "Grassland",
     Sandy = "Sandy"
 }
 

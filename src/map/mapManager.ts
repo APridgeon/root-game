@@ -33,7 +33,6 @@ export default class MapManager {
     public isLandTileAccessible(pos: Position): boolean {
         if(!pos) return false;
         const tile = this.mapData.landGenerator.landData[pos.y][pos.x];
-        console.log(tile, pos.x, pos.y)
         return (tile.isLand() && !tile.hasWater()) 
     }
 
@@ -49,11 +48,9 @@ export default class MapManager {
     }
 
     public AttackTile(pos: Position, plant: PlantData){
-        const destroyed = this.mapData.landGenerator.landData[pos.y][pos.x].attack(plant);
-        if(destroyed){
-            this.mapDisplay.updateTile(pos);
-            return pos;
-        }
+        const is_destroyed = this.mapData.landGenerator.landData[pos.y][pos.x].attack(plant);
+        if(is_destroyed) this.mapDisplay.updateTile(pos);
+        return is_destroyed
     }
 
 }

@@ -39,26 +39,19 @@ export default class TurnHandler {
 
     playerRootCreation(): void{
 
-        let plant = this._plantManager.userPlant;
-        let worldTileIsAccessable = this._mapManager.isLandTileAccessible(plant.newRootLocation);
+        const plant = this._plantManager.userPlant;
+        const is_accessable = this._mapManager.isLandTileAccessible(plant.newRootLocation);
 
-        if(worldTileIsAccessable){
+        if(is_accessable){
             while(plant.strength > 0){
-                // attack tile and update that tile and surrounding tile displays
-                let destroyed = this._mapManager.AttackTile(plant.newRootLocation, plant);
-                if(destroyed){
-                    // add root to plant data class
+                const is_destroyed = this._mapManager.AttackTile(plant.newRootLocation, plant);
+                if(is_destroyed){
                     this._plantManager.createNewRoot(plant);
-                    // sets off destroyed tile animation
                     this._scene.events.emit(Events.RootGrowthSuccess, plant.newRootLocation);
-                    let directionVector = DirectionVectors.vectors.get(plant.newRootDirection);
-                    //set new root location 
+                    const directionVector = DirectionVectors.vectors.get(plant.newRootDirection);
                     plant.newRootLocation = {x: plant.newRootLocation.x + directionVector.x, y: plant.newRootLocation.y + directionVector.y};
-                    //check if the new location is accessible if not stop this loop
-                    let worldTileIsAccessable = this._mapManager.isLandTileAccessible(plant.newRootLocation);
-                    if(!worldTileIsAccessable){
-                        break;
-                    }
+                    const is_new_accessible = this._mapManager.isLandTileAccessible(plant.newRootLocation);
+                    if(!is_new_accessible) break
                 }
             }
         }

@@ -34,12 +34,12 @@ export default class InputHandler {
     private setupClickEvent(): void {
         this._scene.input.on('pointerup', (p: Phaser.Input.Pointer) => {
             
-            let timeDown = p.upTime - p.downTime;
+            const timeDown = p.upTime - p.downTime;
 
             if(timeDown < 200){
-                let tileCoords = this._mapManager.mapDisplay.tilemap.worldToTileXY(p.worldX, p.worldY);
+                const tileCoords = this._mapManager.mapDisplay.tilemap.worldToTileXY(p.worldX, p.worldY);
 
-                let rootData: RootData = {
+                const rootData: RootData = {
                     plant: this._plantManager.userPlant,
                     coords: tileCoords
                 }
