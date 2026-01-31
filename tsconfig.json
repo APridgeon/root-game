@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
         "target": "ES2019",
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "skipLibCheck": true
     },
     "include": [
         "./src/**/*"
