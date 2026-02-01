@@ -52,11 +52,20 @@ export default class BiomeManager {
         const biomeChoices = [BiomeType.Grassland, BiomeType.Sandy]
         const biomeSizes = 50;
         for(let xChunk = 0; xChunk<Game_Config.MAP_SIZE.x; xChunk+=biomeSizes){
-            const biome = biomeChoices[Math.floor(Math.random()*biomeChoices.length)];
-            const b = (biome == BiomeType.Grassland) ? 
-                new GrasslandBiome(this._scene, this._mapData) : new SandlandBiome(this._scene, this._mapData);
-            b.createBiome(xChunk, biomeSizes);
-            this.biomes.push(b);
+            const biome_type = biomeChoices[Math.floor(Math.random()*biomeChoices.length)];
+            let biome: BiomeBase;
+            switch (biome_type) {
+                case BiomeType.Grassland:
+                    biome = new GrasslandBiome(this._scene, this._mapData);
+                    break
+                case BiomeType.Sandy:
+                    biome = new SandlandBiome(this._scene, this._mapData);
+                    break
+                default:
+                    break;
+            }
+            biome.createBiome(xChunk, biomeSizes);
+            this.biomes.push(biome);
         } 
     }
 }

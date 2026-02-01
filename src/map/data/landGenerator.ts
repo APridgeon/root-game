@@ -6,6 +6,8 @@ import * as Phaser from "phaser";
 import { Position } from "../../plant/plantData";
 import LandData from "./landData";
 
+import { Math as PhaserMath } from "phaser";
+
 export enum LandTypes {
     None = 'none',
     Normal = 'normal',
@@ -20,57 +22,67 @@ class LandGenerator {
     private _mapData: MapData;
     private _noise: Perlin;
 
-    public landData: LandData[][] = [...Array(Game_Config.MAP_SIZE.y)].map(e => Array(Game_Config.MAP_SIZE.x));
+    public landData: LandData[][];
 
     size = Game_Config.MAP_SIZE;
     groundLevel = Game_Config.MAP_GROUND_LEVEL;
     underGroundHoleLevel = Game_Config.MAP_UGROUND_HOLE_LEVEL;
     sandLevel = Game_Config.MAP_UGROUND_HOLE_LEVEL + 10;
 
-    private noiseStretch = 0.05;
-    private noiseThreshold = 0.7;
+    test_land_data: LandData[][];
 
-    private landWobbleAmplitude = 6;
-    private landWobbleFrequency = 0.03;
-
-
+    private readonly NOISE_STRETCH = 0.05;
+    private readonly NOISE_THRESHOLD = 0.7;
+    private readonly WOBBLE_AMP = 6;
+    private readonly WOBBLE_FREQ = 0.03;
 
     constructor(mapData: MapData, noise: Perlin){
 
         this._mapData = mapData;
         this._noise = noise;
 
-        this.createLandSurface();
-        this.addSimplexNoise(this.underGroundHoleLevel, {x: this.noiseStretch, y: this.noiseStretch}, this.noiseThreshold, LandTypes.Hole);
+        this.landData = this.initializeGrid()
+        this.generateBaseTerrain();
+        this.applyNoiseOverlay({
+            startY: this.underGroundHoleLevel,
+            stretch: { x: this.NOISE_STRETCH, y: this.NOISE_STRETCH },
+            threshold: this.NOISE_THRESHOLD
+        })
     }
 
-    private createLandSurface(){
+    private initializeGrid(): LandData[][] {
+        return Array.from({ length: this.size.y }, () => new Array(this.size.x));
+    }
 
-        for(let x = 0; x < this.size.x; x++){
-            for(let y = 0; y < this.size.y; y++){
-                this.landData[y][x] = new LandData(LandTypes.None, {x: x, y: y}, this._mapData);
+    private generateBaseTerrain(): void {
+        for (let x = 0; x < this.size.x; x++) {
+            // Calculate ground height once per column
+            const noiseValue = this._noise.simplex2(x * this.WOBBLE_FREQ, 0.5);
+            const groundOffset = PhaserMath.RoundTo(noiseValue * this.WOBBLE_AMP, 0);
+            const currentGroundY = this.groundLevel + groundOffset;
+
+            for (let y = 0; y < this.size.y; y++) {
+                const type = y >= currentGroundY ? LandTypes.Normal : LandTypes.None;
+                this.landData[y][x] = new LandData(type, { x, y }, this._mapData);
             }
         }
-
-        for(let x = 0; x < this.size.x; x++){
-            const noiseValue = this._noise.simplex2(x * this.landWobbleFrequency, 0.5 * this.landWobbleFrequency)
-            const groundLevelAlt = Phaser.Math.RoundTo(noiseValue*this.landWobbleAmplitude, 0);
-
-            for(let y = this.groundLevel + groundLevelAlt; y < this.size.y; y++){
-                this.landData[y][x] = new LandData(LandTypes.Normal, {x: x, y: y}, this._mapData);
-            }
-        }  
     }
 
-    private addSimplexNoise(startFromY: number, noiseStretch: Position, noiseThreshold: number, landType: LandTypes, landStrength = 0){
+    private applyNoiseOverlay(config: {
+        startY: number, 
+        stretch: Position, 
+        threshold: number 
+    }): void {
+        const { startY, stretch, threshold } = config;
 
-        for(let x = 0; x < this.size.x; x++){
-            for(let y = startFromY; y < this.size.y; y++){
-                if((this._noise.simplex2(x * noiseStretch.x, y * noiseStretch.y)) > noiseThreshold){
-                    this.landData[y][x] = new LandData(landType, {x: x, y: y}, this._mapData);
-                    this.landData[y][x].landStrength = landStrength;
-                }
+        for (let x = 0; x < this.size.x; x++) {
+            for (let y = startY; y < this.size.y; y++) {
+                const noiseVal = this._noise.simplex2(x * stretch.x, y * stretch.y);
                 
+                if (noiseVal > threshold) {
+                    const land = this.landData[y][x];
+                    land.destroy_data_only()
+                }
             }
         }
     }

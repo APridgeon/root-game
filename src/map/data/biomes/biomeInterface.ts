@@ -32,7 +32,9 @@ export class BiomeBase {
             for(let x = x0 + xWobbleRounded; x < x0 + biomeSize - xWobbleRounded; x++){
                 const tile = this._mapData.landGenerator.landData[y][x]
                 if(tile){
+                    //remove from previously set biome
                     if(tile.biome) tile.removeFromBiome(); 
+                    //set biome type
                     tile.biome = this;
                     tile.biomeType = this.biomeType;
                     this.landData.push(tile);
@@ -43,7 +45,7 @@ export class BiomeBase {
                 }
             }
         }
-        
+        console.info(this.biomeType)
         this.addWater();
         this.addMinerals();
         this.addImages();

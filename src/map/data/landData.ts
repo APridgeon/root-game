@@ -33,20 +33,25 @@ class LandData {
     }
 
     initStrength() {
-        if(this.landType === LandTypes.Normal){
-            this.landStrength = 1;
-        } else if(this.landType === LandTypes.Sandy){
-            this.landStrength = 0.5;
-        } else if(this.landType === LandTypes.DeadRoot){
-            this.landStrength = 2;
-        } else {
-            this.landStrength = 0;
+        switch(this.landType){
+            case LandTypes.Normal:
+                this.landStrength = 1;
+                break;
+            case LandTypes.Sandy:
+                this.landStrength = 0.5;
+                break;
+            case LandTypes.DeadRoot:
+                this.landStrength = 2;
+                break;
+            default:
+                this.landStrength = 0;
+                break;
         }
     }
 
 
     public attack(plant: PlantData): boolean {
-        let effort = this.landStrength;
+        const effort = this.landStrength;
         this.landStrength -= plant.strength;
         plant.strength -= effort;
         if(this.landStrength <= 0){
@@ -86,6 +91,14 @@ class LandData {
         this.phosphorous = false;
         this.biomeIndex = {index: -1, pos: {x: 0, y: 0}};
         this.landStrength = 0;
+    }
+
+    public destroy_data_only(){
+        this.landType = LandTypes.Hole;
+        this.landStrength = 0;
+        this.biomeIndex = {index: -1, pos: {x: 0, y: 0}}
+        this.phosphorous = false;
+        this.water = 0;
     }
 
 }
