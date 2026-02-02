@@ -219,7 +219,7 @@ export default class RuleTileSets {
     static determineTileType(landData: LandData, option: TileResultOption){
 
         const {x, y} = landData.pos;
-        const mapData = landData._mapData.landGenerator.landData;
+        const mapData = landData.mapData.landGenerator.landData;
         const landType = landData.landType;
 
         if(option === TileResultOption.land){
