@@ -2,7 +2,7 @@ import { Events } from "../events/events";
 import gameManager from "../gameManager/gameManager";
 import Game_Config from "../game_config";
 import { Position } from "../plant/plantData";
-import { waterStats } from "../plant/waterHandling";
+import { WaterStats } from "../plant/waterHandling";
 import UI_TileSets from "./UI_TileSets";
 import Barometer from "./barometer";
 import Box from "./boxes/box";
@@ -76,7 +76,7 @@ export default class UI extends Phaser.Scene {
             .setDepth(10);
 
 
-        this.scene.get('main').events.on(Events.WaterText, (waterStats: waterStats) =>{
+        this.scene.get('main').events.on(Events.WaterText, (waterStats: WaterStats) =>{
             this.waterText.setText('Water: ' + waterStats.totalWater.toString());
             this.waterRemovedText.setText('Water removed: ' + waterStats.waterRemoved);
             this.waterAddedText.setText('Water added: ' + waterStats.waterAdded);

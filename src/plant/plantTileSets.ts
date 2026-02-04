@@ -1,7 +1,14 @@
+import PlantData from "./plantData";
+
 const ROWLENGTH = 25;
 
-
-import PlantData from "./plantData";
+// Assign bit values to directions
+enum Direction {
+    N = 1, // 0001
+    E = 2, // 0010
+    S = 4, // 0100
+    W = 8  // 1000
+}
 
 export enum PlantTile {
     AboveGround = 0,
@@ -22,65 +29,69 @@ export enum PlantTile {
     Surrounded = 15
 }
 
-export const Direction_to_PlantTile = new Map<string, PlantTile>([
-    [JSON.stringify({N: true, E: false, S: false, W: false}), PlantTile.TipBottom],
-    [JSON.stringify({N: false, E: false, S: true, W: false}), PlantTile.TipTop],
-    [JSON.stringify({N: false, E: true, S: false, W: false}), PlantTile.TipRight],
-    [JSON.stringify({N: false, E: false, S: false, W: true}), PlantTile.TipLeft],
-    [JSON.stringify({N: true, E: false, S: true, W: false}), PlantTile.TopAndBottom],
-    [JSON.stringify({N: false, E: true, S: false, W: true}), PlantTile.LeftAndRight],
-    [JSON.stringify({N: true, E: false, S: false, W: true}), PlantTile.TopAndLeft],
-    [JSON.stringify({N: true, E: true, S: false, W: false}), PlantTile.TopAndRight],
-    [JSON.stringify({N: false, E: false, S: true, W: true}), PlantTile.BottomAndLeft],
-    [JSON.stringify({N: false, E: true, S: true, W: false}), PlantTile.BottomAndRight],
-    [JSON.stringify({N: false, E: true, S: true, W: true}), PlantTile.AllButTop],
-    [JSON.stringify({N: true, E: true, S: true, W: false}), PlantTile.AllButRight],
-    [JSON.stringify({N: true, E: true, S: false, W: true}), PlantTile.AllButBottom],
-    [JSON.stringify({N: true, E: false, S: true, W: true}), PlantTile.AllButLeft],
-    [JSON.stringify({N: true, E: true, S: true, W: true}), PlantTile.Surrounded],
-])
+/**
+ * Array index corresponds to the bitmask sum.
+ * Example: N (1) + S (4) = 5. Index 5 returns TopAndBottom.
+ */
+const BITMASK_TO_TILE: PlantTile[] = [];
+BITMASK_TO_TILE[0] = PlantTile.AboveGround; 
+BITMASK_TO_TILE[Direction.N] = PlantTile.TipBottom;
+BITMASK_TO_TILE[Direction.S] = PlantTile.TipTop;
+BITMASK_TO_TILE[Direction.W] = PlantTile.TipLeft;
+BITMASK_TO_TILE[Direction.E] = PlantTile.TipRight;
+BITMASK_TO_TILE[Direction.N | Direction.S] = PlantTile.TopAndBottom;
+BITMASK_TO_TILE[Direction.E | Direction.W] = PlantTile.LeftAndRight;
+BITMASK_TO_TILE[Direction.N | Direction.E] = PlantTile.TopAndRight;
+BITMASK_TO_TILE[Direction.N | Direction.W] = PlantTile.TopAndLeft;
+BITMASK_TO_TILE[Direction.S | Direction.E] = PlantTile.BottomAndRight;
+BITMASK_TO_TILE[Direction.S | Direction.W] = PlantTile.BottomAndLeft;
+BITMASK_TO_TILE[Direction.E | Direction.S | Direction.W] = PlantTile.AllButTop;
+BITMASK_TO_TILE[Direction.N | Direction.S | Direction.E] = PlantTile.AllButRight;
+BITMASK_TO_TILE[Direction.N | Direction.E | Direction.W] = PlantTile.AllButBottom;
+BITMASK_TO_TILE[Direction.N | Direction.W | Direction.S] = PlantTile.AllButLeft;
+BITMASK_TO_TILE[Direction.N | Direction.E | Direction.S | Direction.W] = PlantTile.Surrounded;
+
+
 
 export default class PlantTileSets {
-
-    static rootSet1 = new Map<PlantTile, integer>([
-        [PlantTile.AboveGround, (5*ROWLENGTH) + 2],
-        [PlantTile.TipBottom, (18*ROWLENGTH) + 0],
-        [PlantTile.TipTop, (18*ROWLENGTH) + 1],
-        [PlantTile.TipLeft, (18*ROWLENGTH) + 3],
-        [PlantTile.TipRight, (18*ROWLENGTH) + 2],
-        [PlantTile.TopAndBottom, (19*ROWLENGTH) + 0],
-        [PlantTile.LeftAndRight, (19*ROWLENGTH) + 1],
-        [PlantTile.TopAndRight, (20*ROWLENGTH) + 2],
-        [PlantTile.TopAndLeft, (20*ROWLENGTH) + 3],
-        [PlantTile.BottomAndRight, (19*ROWLENGTH) + 2],
-        [PlantTile.BottomAndLeft, (19*ROWLENGTH) + 3],
-        [PlantTile.AllButTop, (21*ROWLENGTH) + 1],
-        [PlantTile.AllButLeft, (20*ROWLENGTH) + 1],
-        [PlantTile.AllButBottom, (21*ROWLENGTH) + 0],
-        [PlantTile.AllButRight, (20*ROWLENGTH) + 0],
-        [PlantTile.Surrounded, (21*ROWLENGTH) + 2]
-
+    static rootSet1 = new Map<PlantTile, number>([
+        [PlantTile.AboveGround, (5 * ROWLENGTH) + 2],
+        [PlantTile.TipBottom, (18 * ROWLENGTH) + 0],
+        [PlantTile.TipTop, (18 * ROWLENGTH) + 1],
+        [PlantTile.TipLeft, (18 * ROWLENGTH) + 3],
+        [PlantTile.TipRight, (18 * ROWLENGTH) + 2],
+        [PlantTile.TopAndBottom, (19 * ROWLENGTH) + 0],
+        [PlantTile.LeftAndRight, (19 * ROWLENGTH) + 1],
+        [PlantTile.TopAndRight, (20 * ROWLENGTH) + 2],
+        [PlantTile.TopAndLeft, (20 * ROWLENGTH) + 3],
+        [PlantTile.BottomAndRight, (19 * ROWLENGTH) + 2],
+        [PlantTile.BottomAndLeft, (19 * ROWLENGTH) + 3],
+        [PlantTile.AllButTop, (21 * ROWLENGTH) + 1],
+        [PlantTile.AllButLeft, (20 * ROWLENGTH) + 1],
+        [PlantTile.AllButBottom, (21 * ROWLENGTH) + 0],
+        [PlantTile.AllButRight, (20 * ROWLENGTH) + 0],
+        [PlantTile.Surrounded, (21 * ROWLENGTH) + 2]
     ]);
 
+    static ConvertToTileIndex(x: number, y: number, plantDataSet: PlantData, plantTileSet: Map<PlantTile, number>) {
+        // Optimization: Convert rootData to a Set of strings "x,y" once before calling this 
+        // if calling in a loop, otherwise .some() is O(n) which is slow.
+        const exists = (tx: number, ty: number) => {
+            if (plantDataSet.startPos.x === tx && plantDataSet.startPos.y === ty) return true;
+            return plantDataSet.rootData.some((p: any) => p.x === tx && p.y === ty);
+        };
 
-    static ConvertToTileIndex(x: number, y:number, plantDataSet: PlantData, plantTileSet: Map<PlantTile, integer>){
+        let mask = 0;
+        // const N = (plantDataSet.startPos.x === x && plantDataSet.startPos.y === y ) ? 
+//             true : plantDataSet.rootData.some(val => {return val.x === Npos.x && val.y === Npos.y}); 
+        if (plantDataSet.startPos.x === x && plantDataSet.startPos.y === y) {
+            mask |= Direction.N;
+        } else if (exists(x, y - 1)) mask |= Direction.N;
+        if (exists(x + 1, y)) mask |= Direction.E;
+        if (exists(x, y + 1)) mask |= Direction.S;
+        if (exists(x - 1, y)) mask |= Direction.W;
 
-        const Npos = {x: x, y: y - 1};
-        const Epos = {x: x + 1, y: y};
-        const Spos = {x: x, y: y + 1};
-        const Wpos = {x: x - 1, y: y};
-
-        const N = (plantDataSet.startPos.x === x && plantDataSet.startPos.y === y ) ? 
-            true : plantDataSet.rootData.some(val => {return val.x === Npos.x && val.y === Npos.y});    
-        const E = plantDataSet.rootData.some(val => {return val.x === Epos.x && val.y === Epos.y}); 
-        const S = plantDataSet.rootData.some(val => {return val.x === Spos.x && val.y === Spos.y}); 
-        const W = plantDataSet.rootData.some(val => {return val.x === Wpos.x && val.y === Wpos.y});
-
-        const plantTile = Direction_to_PlantTile.get(JSON.stringify({N, E, S, W}))
-        const tileIndexValue = plantTileSet.get(plantTile)
-
-        return tileIndexValue;
+        const plantTile = BITMASK_TO_TILE[mask];
+        return plantTileSet.get(plantTile);
     }
-
-
 }

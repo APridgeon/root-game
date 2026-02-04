@@ -4,80 +4,117 @@ import MapManager from "../map/mapManager";
 import PlantData, { Position } from "./plantData";
 import Game_Config from "../game_config";
 
-export type waterStats = {
-    waterAdded: number,
-    waterRemoved: number,
-    totalWater: number
+/**
+ * Statistics regarding water flow for a specific plant update.
+ */
+export type WaterStats = {
+    /** Amount of water gained from the environment. */
+    waterAdded: number;
+    /** Amount of water consumed or lost by the plant roots. */
+    waterRemoved: number;
+    /** The resulting total water level of the plant. */
+    totalWater: number;
 }
 
+/**
+ * Handles the logic for water absorption from the map tiles into plant entities.
+ * * This class listens for global absorption events and updates both the 
+ * {@link MapManager} and the individual {@link PlantData}.
+ */
 export default class WaterHandler {
-
-    private rootsCloseToWater: Position[];
-    private waterSources: Position[];
-
     private _mapManager: MapManager;
+    private _scene: Phaser.Scene;
 
-    constructor(scene: Phaser.Scene , mapManager: MapManager){
-
+    /**
+     * Creates an instance of WaterHandler.
+     * @param scene The Phaser scene context for event listening.
+     * @param mapManager The manager handling the game world tiles.
+     */
+    constructor(scene: Phaser.Scene, mapManager: MapManager) {
+        this._scene = scene;
         this._mapManager = mapManager;
+
+        // Register the absorption listener
+        this._scene.events.on(Events.AbsorbWater, this.handleWaterAbsorption, this);
         
-        scene.events.on(Events.AbsorbWater, (plantData: PlantData) => {
-            this.checkIfCloseToWater(plantData, mapManager);
-            this.removeSurroundingWater();
-            const waterStats: waterStats = {totalWater: 0, waterAdded: 0, waterRemoved: 0};
-            waterStats.waterRemoved = this.calculateWaterToRemoveFromPlant(plantData);
-            waterStats.waterAdded = this.calculateWaterToAddToPlant(plantData);
-            this.updatePlantWaterData(scene, plantData, waterStats);
-        })
+        // Ensure cleanup to prevent memory leaks when the scene is swapped or restarted
+        this._scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this._scene.events.off(Events.AbsorbWater, this.handleWaterAbsorption, this);
+        });
     }
 
-    private removeSurroundingWater(): void {
+    /**
+     * Callback triggered when a plant attempts to absorb water.
+     * Calculates nearby water, drains the tiles, and updates plant stats.
+     * * @param plantData The data object of the plant performing the absorption.
+     * @internal
+     */
+    private handleWaterAbsorption = (plantData: PlantData): void => {
+        const waterSources = this.findNearbyWaterSources(plantData);
+        
+        // Process World Changes
+        this.drainWaterSources(waterSources);
+
+        // Process Plant Changes
+        const waterAdded = waterSources.length * Game_Config.WATER_ADD_AMOUNT;
+        const waterRemoved = plantData.rootData.length * Game_Config.WATER_SUBTRACT_AMOUNT;
+        
+        plantData.water += (waterAdded - waterRemoved);
+
+        // Update UI/Feedback only if the plant belongs to a player
+        if (!plantData.ai) {
+            const stats: WaterStats = {
+                waterAdded,
+                waterRemoved,
+                totalWater: plantData.water
+            };
+            this._scene.events.emit(Events.WaterText, stats);
+        }
+    }
+
+    /**
+     * Scans tiles adjacent to all plant roots to find available water.
+     * * @param plantData The plant whose roots are being checked.
+     * @returns A list of unique {@link Position} coordinates containing water.
+     */
+    private findNearbyWaterSources(plantData: PlantData): Position[] {
+        const sources: Position[] = [];
         const landData = this._mapManager.mapData.landGenerator.landData;
-        this.waterSources.forEach(pos => {
-            const tile = landData[pos.y][pos.x]
-            tile.water = (tile.water < 0) ? 0 : tile.water - 1; 
+
+        // Using a Set to avoid counting/draining the same water tile twice
+        const uniqueKeys = new Set<string>();
+
+        for (const { x, y } of plantData.rootData) {
+            const neighbors = [
+                { x, y: y - 1 }, { x: x + 1, y },
+                { x, y: y + 1 }, { x: x - 1, y }
+            ];
+
+            for (const pos of neighbors) {
+                const key = `${pos.x},${pos.y}`;
+                if (uniqueKeys.has(key)) continue;
+
+                const tile = landData[pos.y]?.[pos.x];
+                if (tile && tile.water > 0) {
+                    sources.push(pos);
+                    uniqueKeys.add(key);
+                }
+            }
+        }
+        return sources;
+    }
+
+    /**
+     * Reduces the water level of specified tiles and triggers a visual map update.
+     * * @param sources Array of coordinates to be drained.
+     */
+    private drainWaterSources(sources: Position[]): void {
+        const landData = this._mapManager.mapData.landGenerator.landData;
+        
+        for (const pos of sources) {
+            const tile = landData[pos.y][pos.x];
+            tile.water = Math.max(0, tile.water - 1);
             this._mapManager.mapDisplay.updateTile(pos);
-        })
+        }
     }
-
-    private updatePlantWaterData(scene: Phaser.Scene,plantData: PlantData, waterStats: waterStats): void{
-        waterStats.totalWater = plantData.water;
-        if(!plantData.ai) scene.events.emit(Events.WaterText, waterStats);
-    }
-
-    private calculateWaterToAddToPlant( plantData: PlantData): number {
-        const waterToAdd = this.waterSources.length * Game_Config.WATER_ADD_AMOUNT
-        plantData.water += waterToAdd;
-        return waterToAdd;
-    }
-
-    private calculateWaterToRemoveFromPlant(plantData: PlantData): number {
-        const biomass = plantData.rootData.length;
-        const waterToRemove = (biomass * Game_Config.WATER_SUBTRACT_AMOUNT);
-        plantData.water -= waterToRemove;
-        return waterToRemove;
-    }
-
-    private checkIfCloseToWater(plantData: PlantData, mapManager: MapManager): void {
-        this.waterSources = [];
-        this.rootsCloseToWater = [];
-        const landData = mapManager.mapData.landGenerator.landData;
-
-        plantData.rootData.forEach( pos => {
-            const {x, y} = pos;
-
-            const N = (landData[y-1][x] && landData[y-1][x].water > 0)
-            const E = (landData[y][x+1] && landData[y][x+1].water > 0)
-            const S = (landData[y+1][x] && landData[y+1][x].water > 0)
-            const W = (landData[y][x-1] && landData[y][x-1].water > 0)
-
-            if(N) this.waterSources.push({x: x, y: y-1});
-            if(E) this.waterSources.push({x: x+1, y: y});
-            if(S) this.waterSources.push({x: x, y: y+1});
-            if(W) this.waterSources.push({x: x-1, y: y});
-            
-            if(N || E || S || W) this.rootsCloseToWater.push(pos);
-        })
-    }
-
 }

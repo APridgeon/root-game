@@ -1,6 +1,6 @@
 import * as Phaser from "phaser";
 import Game_Config from "../game_config";
-import PlantData, { Position } from "./plantData";
+import PlantData from "./plantData";
 import PlantTileSets, { PlantTile } from "./plantTileSets";
 import PlantManager from "./plantManager";
 import { Tree, TreeSettings } from "./aerialTree";
@@ -10,95 +10,185 @@ import gameManager from "../gameManager/gameManager";
 import { TreeType } from "./aerialTreeTiles";
 import Main from "../game";
 
+/**
+ * Handles the visual representation of plants in the game world.
+ * This class manages the tilemap layers for roots and the procedural 
+ * generation of aerial tree structures using graphics pipelines.
+ */
 export default class PlantDisplay {
+    /** Reference to the main game scene. */
+    private scene: Main;
+    
+    /** Reference to the logic-side plant manager. */
+    private plantManager: PlantManager;
+    
+    /** The tilemap instance used specifically for rendering plant growth. */
+    private plantTileMap: Phaser.Tilemaps.Tilemap;
+    
+    /** The tileset assigned to the plant tilemap. */
+    private plantTileSet: Phaser.Tilemaps.Tileset;
+    
+    /** The specific layer where root tiles are drawn. */
+    public plantTileLayer: Phaser.Tilemaps.TilemapLayer;
+    
+    /** * A map linking plant logic data to their corresponding visual Tree objects.
+     */
+    public plantTrees: Map<PlantData, Tree> = new Map();
+    
+    /** The graphics object used to draw procedural tree branches. */
+    private graphicsObject: Phaser.GameObjects.Graphics;
+    
+    /** The post-processing shader used to give the trees a pixelated aesthetic. */
+    private pixelShader: PixelatedFX;
 
-    scene: Main;
-    plantManager: PlantManager;
-
-    plantTileMap: Phaser.Tilemaps.Tilemap;
-    plantTileSet: Phaser.Tilemaps.Tileset;
-    plantTileLayer: Phaser.Tilemaps.TilemapLayer;
-
-    plantTrees: Map<PlantData, Tree> = new Map();
-    graphicsObject: Phaser.GameObjects.Graphics;
-
-    pixel: PixelatedFX;
-
-
-    constructor(scene: Main, plantManager: PlantManager){
+    /**
+     * Creates an instance of PlantDisplay.
+     * @param scene The Phaser scene context.
+     * @param plantManager The manager handling plant logic and data.
+     */
+    constructor(scene: Main, plantManager: PlantManager) {
         this.scene = scene;
         this.plantManager = plantManager;
 
         this.setupTileMapLayers();
-        this.setupGraphicsTree();
-        this.updatePlantDisplay();
-
-        this.addAerialTree(this.plantManager.userPlant, true);
-        this.plantManager.aiPlants.forEach(aiplant => {
-            this.addAerialTree(aiplant);
-        })
-
-        this.scene.game.events.on(Events.screenSizeChange, () => {
-            this.graphicsObject.resetPostPipeline();
-            this.graphicsObject.setPostPipeline(this.pixel);
-            let post = this.graphicsObject.postPipelines[0] as PixelatedFX;
-            let scale = Game_Config.MAP_SCALE;
-            if(gameManager.mobile) scale *= 1.5;
-            post.setup(scale - 2, {NE: 0.1, SE: 0.1, SW: 0, NW: 0});
-        })
+        this.setupGraphicsPipeline();
+        
+        // Initial setup
+        this.syncAllPlants();
+        this.initEventListeners();
     }
 
-    setupTileMapLayers(){
-        this.plantTileMap = this.scene.make.tilemap({width: Game_Config.MAP_SIZE.x, height: Game_Config.MAP_SIZE.y, tileWidth: Game_Config.MAP_RES, tileHeight: Game_Config.MAP_RES});
-        this.plantTileSet = this.plantTileMap.addTilesetImage('plantTiles', null, Game_Config.MAP_RES, Game_Config.MAP_RES, 0, 0);
-        this.plantTileLayer = this.plantTileMap.createBlankLayer('plant', this.plantTileSet, -Game_Config.MAP_tilesToWorld(0), -Game_Config.MAP_tilesToWorld(0))
-            .setOrigin(0,0)
+    /**
+     * Initializes the tilemap and layers required for rendering roots.
+     * Configures scale, depth, and positioning based on global game configuration.
+     */
+    private setupTileMapLayers(): void {
+        const { x, y } = Game_Config.MAP_SIZE;
+        const res = Game_Config.MAP_RES;
+        const offset = -Game_Config.MAP_tilesToWorld(0);
+
+        this.plantTileMap = this.scene.make.tilemap({ width: x, height: y, tileWidth: res, tileHeight: res });
+        this.plantTileSet = this.plantTileMap.addTilesetImage('plantTiles', null, res, res, 0, 0);
+        
+        this.plantTileLayer = this.plantTileMap.createBlankLayer('plant', this.plantTileSet, offset, offset)
+            .setOrigin(0, 0)
             .setDepth(10)
             .setScale(Game_Config.MAP_SCALE)
             .setVisible(true);
     }
 
-    setupGraphicsTree(){
-        this.pixel = (this.scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.getPostPipeline('PixelatedFX') as PixelatedFX;
-        this.graphicsObject = this.scene.add.graphics({x:0, y:0});
-        this.graphicsObject.setPostPipeline(this.pixel)//.setPipeline('Light2D');
-        let post = this.graphicsObject.postPipelines[0] as PixelatedFX;
+    /**
+     * Sets up the WebGL graphics pipeline and attaches the PixelatedFX shader.
+     */
+    private setupGraphicsPipeline(): void {
+        const renderer = this.scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer;
+        this.pixelShader = renderer.pipelines.getPostPipeline('PixelatedFX') as PixelatedFX;
+        
+        this.graphicsObject = this.scene.add.graphics({ x: 0, y: 0 });
+        this.applyShaderSettings();
+    }
+
+    /**
+     * Updates shader parameters. Adjusts pixelation scale based on device type (mobile vs desktop).
+     */
+    private applyShaderSettings(): void {
+        this.graphicsObject.resetPostPipeline();
+        this.graphicsObject.setPostPipeline(this.pixelShader);
+        const post = this.graphicsObject.postPipelines[0] as PixelatedFX;
+        
         let scale = Game_Config.MAP_SCALE;
-        if(gameManager.mobile) scale *= 1.5;
-        console.log(this.scene.cameras.main.zoom)
-        
-        post.setup(scale - 2, {NE: 0.1, SE: 0.1, SW: 0, NW: 0});
+        if (gameManager.mobile) scale *= 1.5;
+
+        // Apply specific pixelation parameters
+        post.setup(scale - 2, { NE: 0.1, SE: 0.1, SW: 0, NW: 0 });
     }
 
-    private addToTileIndexData(plantData: PlantData, plantTileSet: Map<PlantTile, integer>): void {
-        if(plantData.alive){
-            plantData.rootData.forEach(pos => {
-                const index = PlantTileSets.ConvertToTileIndex(pos.x, pos.y, plantData, plantTileSet);
-                this.plantTileLayer.putTileAt(index, pos.x, pos.y)
-            })
-        } else {
-            plantData.rootData.forEach(pos => {
-                this.plantTileLayer.putTileAt(-1, pos.x, pos.y)
-            })
-            plantData.rootData = [];
+    /**
+     * Sets up global event listeners, such as responding to window resizing.
+     */
+    private initEventListeners(): void {
+        this.scene.game.events.on(Events.screenSizeChange, () => this.applyShaderSettings());
+    }
+
+    /**
+     * Synchronizes the tile data and creates initial tree visuals for both player and AI.
+     */
+    private syncAllPlants(): void {
+        this.updatePlantDisplay();
+
+        // Create tree for user
+        this.addAerialTree(this.plantManager.userPlant, true);
+
+        // Create trees for AI
+        for (const aiPlant of this.plantManager.aiPlants) {
+            this.addAerialTree(aiPlant);
         }
-        
     }
 
+    /**
+     * Iterates through all plants and refreshes their tile indices on the tilemap.
+     */
     public updatePlantDisplay(): void {
-        this.addToTileIndexData(this.plantManager.userPlant, PlantTileSets.rootSet1);
-        this.plantManager.aiPlants.forEach(aiplant => {
-            this.addToTileIndexData(aiplant, PlantTileSets.rootSet1);
-        })
+        const allPlants = [this.plantManager.userPlant, ...this.plantManager.aiPlants];
+        for (const plant of allPlants) {
+            this.updateTileIndices(plant, PlantTileSets.rootSet1);
+        }
     }
 
-    private addAerialTree(plantData: PlantData, user: boolean = false){
+    /**
+     * Updates specific tiles for a plant. If the plant is dead, tiles are cleared.
+     * @param plantData The data model of the plant.
+     * @param tileSet The mapping used to determine which tile index to draw.
+     */
+    private updateTileIndices(plantData: PlantData, tileSet: Map<PlantTile, number>): void {
+        if (!plantData.alive) {
+            plantData.rootData.forEach(pos => this.plantTileLayer.putTileAt(-1, pos.x, pos.y));
+            plantData.rootData = [];
+            return;
+        }
 
-        let treeSettings: TreeSettings = {
+        plantData.rootData.forEach(pos => {
+            const index = PlantTileSets.ConvertToTileIndex(pos.x, pos.y, plantData, tileSet);
+            this.plantTileLayer.putTileAt(index, pos.x, pos.y);
+        });
+    }
+
+    /**
+     * Instantiates a new procedural Tree object based on plant data.
+     * @param plantData Logic data for the plant.
+     * @param isUser Whether this tree belongs to the player (enables debug keys).
+     */
+    private addAerialTree(plantData: PlantData, isUser: boolean = false): void {
+        const settings = this.generateTreeSettings(isUser);
+        
+        const worldPos = {
+            x: Game_Config.MAP_tilesToWorld(plantData.startPos.x) + Game_Config.MAP_RES,
+            y: Game_Config.MAP_tilesToWorld(plantData.startPos.y)
+        };
+
+        const tree = new Tree(worldPos, settings, this.graphicsObject, this.scene);
+        this.plantTrees.set(plantData, tree);
+
+        // Debug/Interactive growth key
+        if (isUser) {
+            this.scene.input.keyboard.on('keydown-A', () => {
+                tree.buds.forEach(bud => bud.growing = true);
+                settings.lineWidth += 0.2;
+            });
+        }
+    }
+
+    /**
+     * Randomizes and returns configuration settings for a new Tree.
+     * @param isUser Determines if the tree uses player-specific data or random AI types.
+     * @returns A complete TreeSettings object.
+     */
+    private generateTreeSettings(isUser: boolean): TreeSettings {
+        return {
             abilityToBranch: 1,
             branchDelay: 10,
             startLeafGrowth: Phaser.Math.Between(10, 20),
-            growthAmount: Phaser.Math.RND.between(30,100)/100,
+            growthAmount: Phaser.Math.RND.realInRange(0.3, 1.0),
             internodeLength: 5,
             life: 0,
             lineWidth: 3,
@@ -107,33 +197,19 @@ export default class PlantDisplay {
             seed: Phaser.Math.RND.integer().toString(),
             wobbliness: Phaser.Math.Between(30, 80),
             color: Phaser.Display.Color.RandomRGB(),
-            treeType: Phaser.Math.Between(0, 2) as TreeType
-        }
-
-        if(user){
-            treeSettings.treeType = this.scene.playerData
-        }
-
-        let scale = Game_Config.MAP_SCALE;
-        if(gameManager.mobile){
-            scale *= 2;
-        }
-
-        const tree = new Tree({x: Game_Config.MAP_tilesToWorld(plantData.startPos.x) + (Game_Config.MAP_RES), y: Game_Config.MAP_tilesToWorld(plantData.startPos.y)}, treeSettings, this.graphicsObject, this.scene);
-        this.plantTrees.set(plantData, tree);
-
-        this.scene.input.keyboard.on('keydown-A', () => {
-            console.log("increased width!")
-            tree.buds.forEach(bud => {
-                bud.growing = true;
-            })
-            treeSettings.lineWidth += 0.2
-        })
-            
+            treeType: isUser ? (this.scene as any).playerData : (Phaser.Math.Between(0, 2) as TreeType)
+        };
     }
 
-    public destroyAerialTree(plantData: PlantData){
+    /**
+     * Removes a tree's visuals and deletes it from the tracking map.
+     * @param plantData The plant data associated with the tree to be destroyed.
+     */
+    public destroyAerialTree(plantData: PlantData): void {
         const tree = this.plantTrees.get(plantData);
-        tree.clear();
+        if (tree) {
+            tree.clear();
+            this.plantTrees.delete(plantData);
+        }
     }
 }
