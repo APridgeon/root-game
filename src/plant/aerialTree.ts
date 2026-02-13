@@ -109,7 +109,7 @@ export class Tree {
         this.buds.push(new GrowthBud(this.pos, 0, 0, 1, this.treeSettings.treeType));
         Phaser.Math.RND.sow([`${this.treeSettings.seed}`]);
         
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 10; i++) {
             this.generateTree();
         }
     }
