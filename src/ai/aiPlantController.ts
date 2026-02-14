@@ -28,9 +28,9 @@ export default class aiController {
         const root_length = this.plant.rootData.length - 1;
         const chosen_root = this.plant.rootData[Phaser.Math.RND.integerInRange((root_length-5) > 0 ? (root_length-5) : 0, root_length)];
         const chosen_direction = [Direction.East, Direction.South, Direction.South, Direction.South, Direction.West][Phaser.Math.RND.integerInRange(0, 4)];
-        const direction_vector = direction_to_pos.get(chosen_direction);
-        const new_position = {x: chosen_root.x + direction_vector.x, y: chosen_root.y + direction_vector.y};
-        if(new_position.x < 0 || new_position.x > Game_Config.MAP_SIZE.x) new_position.x = chosen_root.x;
+        const direction_vector = direction_to_pos.get(chosen_direction) as Position;
+        let new_position = {x: chosen_root.x + direction_vector.x, y: chosen_root.y + direction_vector.y};
+        new_position.x = Phaser.Math.Clamp(new_position.x, 0, Game_Config.MAP_SIZE.x)
 
         const new_root_data = {coords: new_position, plant: this.plant};
         this.scene.events.emit('rootGrowthRequest', new_root_data);

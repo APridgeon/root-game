@@ -37,7 +37,7 @@ export default class InputHandler {
             const timeDown = p.upTime - p.downTime;
 
             if(timeDown < 200){
-                const tileCoords = this._mapManager.mapDisplay.tilemap.worldToTileXY(p.worldX, p.worldY);
+                const tileCoords = this._mapManager.mapDisplay.tilemap.worldToTileXY(p.worldX, p.worldY) as Position;
 
                 const rootData: RootData = {
                     plant: this._plantManager.userPlant,

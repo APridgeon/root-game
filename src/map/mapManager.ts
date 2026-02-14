@@ -36,6 +36,13 @@ export default class MapManager {
         return (tile.isLand() && !tile.hasWater()) 
     }
 
+    public isLandTileSurface(pos: Position): boolean {
+        if(!pos) return false;
+        const tile = this.mapData.landGenerator.landData[pos.y][pos.x];
+        const above_tile = this.mapData.landGenerator.landData[pos.y-1][pos.x];
+        return (tile.isLand() && !above_tile.isLand())
+
+
     public FindAccessableRoute(startPos: Position, endPos: Position): Position[] {
         //TODO
         //path finding algorithm

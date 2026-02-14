@@ -152,15 +152,18 @@ export default class PlantManager {
                 let plantHeight = 0;
                 
                 for (let y = 0; y < Game_Config.MAP_SIZE.y; y++) {
-                    if (this.mapManager.isLandTileAccessible({ x, y })) {
+                    if (this.mapManager.isLandTileAccessible({ x, y }) && this.mapManager.isLandTileSurface({x, y})) {
                         plantHeight = y;
                         break;
                     }
                 }
 
-                const aiPlant = new PlantData(scene, { x, y: plantHeight }, true);
-                this.mapManager.DestroyTile({ x, y: plantHeight });
-                this.aiPlants.push(aiPlant);
+                if(plantHeight !== 0){
+                    const aiPlant = new PlantData(scene, { x, y: plantHeight }, true);
+                    this.mapManager.DestroyTile({ x, y: plantHeight });
+                    this.aiPlants.push(aiPlant);
+                }
+
             }
         }
     }

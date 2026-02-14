@@ -39,8 +39,8 @@ export default class PlantData {
 
     alive: boolean = true;
     water: integer = Game_Config.PLANT_DATA_WATER_START_LEVEL;
-    aiController: aiController | null;
-    newRootLocation: Position;
+    aiController: aiController | null = null;
+    newRootLocation: Position | null = null;
     newRootDirection: Direction = Direction.None;
 
     strength: number = 1;
@@ -52,8 +52,8 @@ export default class PlantData {
         this.startPos = startPos;
         this.ai = ai;
 
-        this._scene.mapManager.AttackTile({x: this.startPos.x, y: this.startPos.y}, this);
-        this.rootData.push({x: this.startPos.x, y: this.startPos.y});
+        this._scene.mapManager.AttackTile(this.startPos, this);
+        this.rootData.push(this.startPos);
 
         if(ai) this.aiController = new aiController(scene, this);
 
