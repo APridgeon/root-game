@@ -21,3 +21,7 @@ export class DirectionVectors {
     ])
 
 }
+
+export function subtract_vectors(a: Position, b: Position){
+    return {x: a.x - b.x, y: a.y - b.y}
+}

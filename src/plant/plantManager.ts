@@ -176,7 +176,7 @@ export default class PlantManager {
     private setupEventResponses(): void {
         this.scene.events.on(Events.RootGrowthRequest, (rootData: RootData) => {
             const directionTowardsPlant = this.checkIfPlantIsClose(rootData.plant, rootData.coords);
-
+            console.log(directionTowardsPlant)
             if (directionTowardsPlant !== Direction.None) {
                 rootData.plant.newRootLocation = rootData.coords;
                 rootData.plant.newRootDirection = directionTowardsPlant;
