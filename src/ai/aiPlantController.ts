@@ -6,6 +6,8 @@ import { RootData } from "../player/userInput";
 import * as Phaser from "phaser";
 
 
+const DEBUG = false;
+
 export const direction_to_pos = new Map<Direction, Position>([
     [Direction.North,   {x: 0, y: -1}],
     [Direction.East,    {x: 1, y: 0}],
@@ -26,27 +28,47 @@ export default class aiController {
 
     public aiRootChoice(){
         const position_of_closest_water = this.identify_closest_body_of_water();
+        if (DEBUG) console.log(`position of closest water: ${JSON.stringify(position_of_closest_water)} for ${JSON.stringify(this.plant.startPos)}`)
+
         if(position_of_closest_water){
             const closest_root = this.identify_closest_root(position_of_closest_water, this.plant.rootData);
+            if (DEBUG) console.log(`closest root: ${JSON.stringify(closest_root)} for ${JSON.stringify(this.plant.startPos)}`)
             const direction = this.identify_direction(closest_root, position_of_closest_water)
             const direction_vector = direction_to_pos.get(direction) as Position;
+            if (DEBUG) console.log(`direction vector: ${JSON.stringify(direction_vector)} for ${JSON.stringify(this.plant.startPos)}`)
             const coords = {
                 x: Phaser.Math.Clamp(closest_root.x + direction_vector.x, 0, Game_Config.MAP_SIZE.x - 1),
                 y: Phaser.Math.Clamp(closest_root.y + direction_vector.y, 0, Game_Config.MAP_SIZE.y - 1)
             };
+            if (DEBUG)console.log(`coords: ${JSON.stringify(coords)} for ${JSON.stringify(this.plant.startPos)}`)
             if ((this.scene as Main).mapManager.isLandTileAccessible(coords)) {
                 const new_root_data = { coords, plant: this.plant };
                 this.scene.events.emit('rootGrowthRequest', new_root_data);
-                console.log(new_root_data, 'water')
+                if (DEBUG) console.log(`root growth: ${JSON.stringify(new_root_data.coords)} for ${JSON.stringify(this.plant.startPos)}`)
                 return
             }
+            else {
+                if (DEBUG) console.log(`No root growth for ${JSON.stringify(this.plant.startPos)}`)
+                const tile = (this.scene as Main).mapManager.mapData.landGenerator.landData[coords.y][coords.x]
+                if (DEBUG) console.error(tile)
+                if (DEBUG) console.error(`problem tile: ${(tile)} for ${JSON.stringify(this.plant.startPos)}`)
+
+                const new_position = this.randomly_choose_new_root_position();
+                const new_root_data = {coords: new_position, plant: this.plant};
+                this.scene.events.emit('rootGrowthRequest', new_root_data);
+                if (DEBUG) console.log(`random root growth: ${JSON.stringify(new_root_data.coords)} for ${JSON.stringify(this.plant.startPos)}`)
+            }
         }
-        const new_position = this.randomly_choose_new_root_position();
-        const new_root_data = {coords: new_position, plant: this.plant};
-        this.scene.events.emit('rootGrowthRequest', new_root_data);
-        console.log(new_root_data, 'random')
+        else {
+            const new_position = this.randomly_choose_new_root_position();
+            const new_root_data = {coords: new_position, plant: this.plant};
+            this.scene.events.emit('rootGrowthRequest', new_root_data);
+            if (DEBUG) console.log(`random root growth: ${JSON.stringify(new_root_data.coords)} for ${JSON.stringify(this.plant.startPos)}`)
+        }
         
     }
+
+    private r
 
    
     private identify_closest_body_of_water(): Position | null {
@@ -54,7 +76,7 @@ export default class aiController {
         const queue = Phaser.Utils.Array.Shuffle(pre_queue)
         const visited = new Set(queue.map(p => `${p.x},${p.y}`));
         const landData = (this.scene as any).mapManager.mapData.landGenerator.landData;
-        const maxSearch = 100; // Limit search depth for performance
+        const maxSearch = 1000; // Limit search depth for performance
         let iterations = 0;
 
         while (queue.length > 0 && iterations < maxSearch) {
@@ -109,11 +131,11 @@ export default class aiController {
     }
 
     private identify_direction(closest_root: Position, closest_water: Position): Direction {
-        const direction_vector = subtract_vectors(closest_root, closest_water)
+        const direction_vector = subtract_vectors(closest_water, closest_root)
         const N_or_S = direction_vector.y
         const E_or_W = direction_vector.x
         if(Math.abs(N_or_S) > Math.abs(E_or_W)){
-            if(N_or_S < 0) return Direction.South
+            if(N_or_S > 0) return Direction.South
             else return Direction.North
         } else {
             if(E_or_W > 0) return Direction.East

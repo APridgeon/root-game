@@ -45,7 +45,7 @@ class LandGenerator {
     sandLevel = Game_Config.MAP_UGROUND_HOLE_LEVEL + 10;
 
     /** Temporary storage for testing land configurations. */
-    test_land_data: LandData[][];
+    // test_land_data: LandData[][];
 
     /** How much to stretch the noise for cavern generation. Smaller = larger features. */
     private readonly NOISE_STRETCH = 0.05;

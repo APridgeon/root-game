@@ -62,7 +62,7 @@ export default class MapData {
     landGenerator: LandGenerator;
     biomeManager: BiomeManager;
     noise: Perlin;
-    grid: LandData[][];
+    // grid: LandData[][];
 
     constructor(noise: Perlin, mapManager: MapManager, scene: Phaser.Scene) {
         this._mapManager = mapManager;
@@ -71,14 +71,14 @@ export default class MapData {
         this.landGenerator = new LandGenerator(this, this.noise);
         this.biomeManager = new BiomeManager(this, scene);
 
-        // 1. Initialize the 2D grid properly
-        this.grid = this.initialise_tilemap();
+        // // 1. Initialize the 2D grid properly
+        // this.grid = this.initialise_tilemap();
         
-        // 2. Determine Biome zones
-        this.set_biome(this.grid);
+        // // 2. Determine Biome zones
+        // this.set_biome(this.grid);
         
-        // 3. Carve out the surface/ground
-        this.create_surface(this.grid);
+        // // 3. Carve out the surface/ground
+        // this.create_surface(this.grid);
 
         scene.events.emit('map finished');
     }

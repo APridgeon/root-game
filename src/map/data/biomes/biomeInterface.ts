@@ -70,7 +70,7 @@ export abstract class BiomeBase {
      * @param y The vertical coordinate of the tile.
      */
     private assignTile(x: number, y: number): void {
-        const tile = this.mapData.landGenerator.landData[y]?.[x];
+        const tile = this.mapData.landGenerator.landData[y][x];
         
         if (!tile) return;
 
