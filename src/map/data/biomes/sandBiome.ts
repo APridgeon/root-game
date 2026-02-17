@@ -25,16 +25,22 @@ export default class SandlandBiome extends BiomeBase {
      */
     public override addWater(): void {
         const { noise } = this.mapData;
-        const groundLevelLimit = Game_Config.MAP_GROUND_LEVEL + 10;
+        const groundLevelLimit = Game_Config.MAP_GROUND_LEVEL;
         const waterAmount = Game_Config.WATER_TILE_STARTING_AMOUNT;
 
         for (const land of this.landData) {
             // Desert water is found much deeper than other biomes
-            if (land.pos.y > groundLevelLimit && land.isLand()) {
-                const waterNoise = noise.simplex2(land.pos.x * 0.05 + 0.3, land.pos.y * 0.05 + 0.3);
+            if (land.pos.y > groundLevelLimit && land.isLand() && land.landType !== LandTypes.Hole) {
+                // Layered noise for "veins" rather than just blobs
+                const scale1 = 0.05;
+                const scale2 = 0.15;
+                const n1 = noise.simplex2(land.pos.x * scale1, land.pos.y * scale1);
+                const n2 = noise.simplex2(land.pos.x * scale2 + 5, land.pos.y * scale2 + 5) * 0.3;
                 
-                // High threshold (0.7) ensures water is rare
-                land.water = waterNoise > 0.7 ? waterAmount : 0;
+                const combinedNoise = n1 + n2;
+                
+                // High threshold (0.65) ensures water is rare but exists in organic clusters
+                land.water = combinedNoise > 0.65 ? waterAmount : 0;
                 land.phosphorous = false;
             }
         }

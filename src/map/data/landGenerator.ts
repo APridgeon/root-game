@@ -51,13 +51,13 @@ class LandGenerator {
     private readonly NOISE_STRETCH = 0.05;
 
     /** The cutoff value for noise; values above this become 'Holes'. */
-    private readonly NOISE_THRESHOLD = 0.7;
+    private readonly NOISE_THRESHOLD = 0.5;
 
     /** The maximum height variance (in tiles) for the surface terrain. */
-    private readonly WOBBLE_AMP = 6;
+    private readonly WOBBLE_AMP = 8;
 
     /** The horizontal frequency of the surface waves. */
-    private readonly WOBBLE_FREQ = 0.03;
+    private readonly WOBBLE_FREQ = 0.05;
 
     /**
      * Creates an instance of LandGenerator and triggers the initial generation sequence.
@@ -70,11 +70,11 @@ class LandGenerator {
 
         this.landData = this.initializeGrid()
         this.generateBaseTerrain();
-        this.applyNoiseOverlay({
-            startY: this.underGroundHoleLevel,
-            stretch: { x: this.NOISE_STRETCH, y: this.NOISE_STRETCH },
-            threshold: this.NOISE_THRESHOLD
-        })
+        // this.applyNoiseOverlay({
+        //     startY: this.underGroundHoleLevel,
+        //     stretch: { x: this.NOISE_STRETCH, y: this.NOISE_STRETCH },
+        //     threshold: this.NOISE_THRESHOLD
+        // })
     }
 
     /**
@@ -92,10 +92,14 @@ class LandGenerator {
     private generateBaseTerrain(): void {
         for (let x = 0; x < this.size.x; x++) {
             // Calculate ground height once per column
-            const noiseValue = this._noise.simplex2(x * this.WOBBLE_FREQ, 0.5);
-            const groundOffset = PhaserMath.RoundTo(noiseValue * this.WOBBLE_AMP, 0);
-            const currentGroundY = this.groundLevel + groundOffset;
+            // Layered noise (octaves) for more organic surface detail
+            const n1 = this._noise.simplex2(x * this.WOBBLE_FREQ, 0.5) * 1.0;
+            const n2 = this._noise.simplex2(x * this.WOBBLE_FREQ * 2.5, 1.5) * 0.4;
+            const combinedNoise = (n1 + n2) / 1.4;
 
+            const groundOffset = PhaserMath.RoundTo(combinedNoise * this.WOBBLE_AMP, 0);
+            const currentGroundY = this.groundLevel + groundOffset;
+            
             for (let y = 0; y < this.size.y; y++) {
                 const type = y >= currentGroundY ? LandTypes.Normal : LandTypes.None;
                 this.landData[y][x] = new LandData(type, { x, y }, this._mapData);

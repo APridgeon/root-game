@@ -58,7 +58,7 @@ export abstract class BiomeBase {
         }
 
         console.info(`Generated Biome: ${this.biomeType}`);
-        
+        this.addHoles();
         this.addWater();
         this.addMinerals();
         this.addImages();
@@ -87,6 +87,8 @@ export abstract class BiomeBase {
             tile.initStrength();
         }
     }
+
+    protected addHoles(): void{}
 
     /**
      * Hook to implement water bodies (lakes, rivers) specific to this biome.
