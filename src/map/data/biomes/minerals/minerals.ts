@@ -1,12 +1,12 @@
 export enum Mineral {
-    Phosphorous
+  Phosphorous
 }
 
 
 export class Resource {
 
-    constructor(){
-        
-    }
+  constructor() {
+
+  }
 
 }
