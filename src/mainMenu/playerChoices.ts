@@ -33,7 +33,13 @@ export default class PlayerChoices {
       boxPos = { x: 2, y: 15 }
     }
 
-    this.backgroundBox = new Box(this._scene, this._scene.tileMap, UI_TileSets.boxStyle2, Game_Config.UI_tilesToWorld(boxPos.x), Game_Config.UI_tilesToWorld(boxPos.y), 12, 3);
+    this.backgroundBox = new Box(
+      this._scene,
+      this._scene.tileMap,
+      UI_TileSets.boxStyle3,
+      Game_Config.UI_tilesToWorld(boxPos.x),
+      Game_Config.UI_tilesToWorld(boxPos.y),
+      Game_Config.UI_worldToTiles(this._scene.game.scale.width) - 4, 5);
 
     this._scene.time.addEvent({
       callback: () => {
@@ -124,12 +130,12 @@ export default class PlayerChoices {
       })
     } else {
       // this.backgroundBox.setPosition({x: Game_Config.UI_tilesToWorld(2), y: Game_Config.UI_tilesToWorld(15)})
-      this.titleText.setPosition(Game_Config.UI_tilesToWorld(3), Game_Config.UI_tilesToWorld(16))
+      this.titleText.setPosition(Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(17))
       this.plantChoices.forEach((text, i) => {
-        text.setPosition(Game_Config.UI_tilesToWorld(3), Game_Config.UI_tilesToWorld(16 + 2 + i))
+        text.setPosition(Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(17 + 2 + i))
       })
       this.plantChoicesRects.forEach((rect, i) => {
-        rect.setPosition(Game_Config.UI_tilesToWorld(3), Game_Config.UI_tilesToWorld(16 + 2 + i))
+        rect.setPosition(Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(17 + 2 + i))
       })
     }
   }
