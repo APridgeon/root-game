@@ -22,16 +22,11 @@ export default class PlayerChoices {
 
   treeChoice: TreeType = TreeType.Normal;
 
-
   constructor(scene: MainMenu) {
     this._scene = scene;
 
-    let boxPos: Position;
-    if (this._scene.game.scale.height < 400) {
-      boxPos = { x: 5, y: 10 }
-    } else {
-      boxPos = { x: 2, y: 15 }
-    }
+    const boxPos = (this._scene.game.scale.height < 400) ?
+      { x: 5, y: 10 } : { x: 2, y: 15 };
 
     this.backgroundBox = new Box(
       this._scene,
@@ -61,27 +56,39 @@ export default class PlayerChoices {
       delay: 400,
       repeat: 0
     })
-
-
-
-
   }
 
   createText() {
-    this.titleText = this._scene.add.bitmapText(Game_Config.UI_tilesToWorld(6), Game_Config.UI_tilesToWorld(16), 'ant_party', 'Choose your plant type')
+    this.titleText = this._scene.add.bitmapText(
+      Game_Config.UI_tilesToWorld(6),
+      Game_Config.UI_tilesToWorld(16),
+      'ant_party', 'Choose your plant type'
+    )
       .setOrigin(0, 0)
       .setTintFill(0x000000)
       .setScale(Game_Config.FONT_SCALE)
       .setDepth(10)
 
 
-    this.plantChoices.push(this._scene.add.bitmapText(Game_Config.UI_tilesToWorld(6), Game_Config.UI_tilesToWorld(18), 'ant_party', 'Oak'))
-    this.plantChoices.push(this._scene.add.bitmapText(Game_Config.UI_tilesToWorld(6), Game_Config.UI_tilesToWorld(19), 'ant_party', 'Willow'))
-    this.plantChoices.push(this._scene.add.bitmapText(Game_Config.UI_tilesToWorld(6), Game_Config.UI_tilesToWorld(20), 'ant_party', 'Square'));
-
-    this.plantChoicesRects.push(this._scene.add.rectangle(Game_Config.UI_tilesToWorld(6), Game_Config.UI_tilesToWorld(18), Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(1), 0x000000, 0))
-    this.plantChoicesRects.push(this._scene.add.rectangle(Game_Config.UI_tilesToWorld(6), Game_Config.UI_tilesToWorld(19), Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(1), 0x000000, 0))
-    this.plantChoicesRects.push(this._scene.add.rectangle(Game_Config.UI_tilesToWorld(6), Game_Config.UI_tilesToWorld(20), Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(1), 0x000000, 0))
+    const choices = ['Oak', 'Willow', 'Square']
+    choices.forEach((choice, i) => {
+      this.plantChoices.push(
+        this._scene.add.bitmapText(
+          Game_Config.UI_tilesToWorld(6),
+          Game_Config.UI_tilesToWorld(18 + i),
+          'ant_party', choice
+        )
+      )
+      this.plantChoicesRects.push(
+        this._scene.add.rectangle(
+          Game_Config.UI_tilesToWorld(6),
+          Game_Config.UI_tilesToWorld(18 + i),
+          Game_Config.UI_tilesToWorld(4),
+          Game_Config.UI_tilesToWorld(1),
+          0x000000, 0
+        )
+      )
+    })
 
     this.plantChoices.forEach((text, i) => {
       text.setOrigin(0, 0)
@@ -110,34 +117,27 @@ export default class PlayerChoices {
         } else if (i === 2) {
           this.treeChoice = TreeType.Square
         }
-        console.log(this.treeChoice)
       })
-
     })
-
-
   }
 
   setCorrectSizes(screenDim: Position) {
-    if (screenDim.y < 400) {
-      // this.backgroundBox.setPosition({x: Game_Config.UI_tilesToWorld(5), y: Game_Config.UI_tilesToWorld(10)})
-      this.titleText.setPosition(Game_Config.UI_tilesToWorld(6), Game_Config.UI_tilesToWorld(11))
-      this.plantChoices.forEach((text, i) => {
-        text.setPosition(Game_Config.UI_tilesToWorld(6), Game_Config.UI_tilesToWorld(11 + 2 + i))
-      })
-      this.plantChoicesRects.forEach((rect, i) => {
-        rect.setPosition(Game_Config.UI_tilesToWorld(6), Game_Config.UI_tilesToWorld(11 + 2 + i))
-      })
-    } else {
-      // this.backgroundBox.setPosition({x: Game_Config.UI_tilesToWorld(2), y: Game_Config.UI_tilesToWorld(15)})
-      this.titleText.setPosition(Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(17))
-      this.plantChoices.forEach((text, i) => {
-        text.setPosition(Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(17 + 2 + i))
-      })
-      this.plantChoicesRects.forEach((rect, i) => {
-        rect.setPosition(Game_Config.UI_tilesToWorld(4), Game_Config.UI_tilesToWorld(17 + 2 + i))
-      })
-    }
-  }
+    const dimensions = (screenDim.y < 400) ?
+      { x: 6, y: 11 } : { x: 4, y: 17 };
 
+    this.titleText.setPosition(
+      Game_Config.UI_tilesToWorld(dimensions.x),
+      Game_Config.UI_tilesToWorld(dimensions.y)
+    )
+    this.plantChoices.forEach((text, i) => {
+      text.setPosition(
+        Game_Config.UI_tilesToWorld(dimensions.x),
+        Game_Config.UI_tilesToWorld(dimensions.y + 2 + i))
+    })
+    this.plantChoicesRects.forEach((rect, i) => {
+      rect.setPosition(
+        Game_Config.UI_tilesToWorld(dimensions.x),
+        Game_Config.UI_tilesToWorld(dimensions.y + 2 + i))
+    })
+  }
 }
