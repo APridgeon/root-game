@@ -19,6 +19,7 @@ export default class PlayerChoices {
   titleText: Phaser.GameObjects.BitmapText;
   plantChoices: Phaser.GameObjects.BitmapText[] = [];
   plantChoicesRects: Phaser.GameObjects.Rectangle[] = [];
+  plantChoicesImages: Phaser.GameObjects.Image[] = [];
 
   treeChoice: TreeType = TreeType.Normal;
 
@@ -74,19 +75,26 @@ export default class PlayerChoices {
     choices.forEach((choice, i) => {
       this.plantChoices.push(
         this._scene.add.bitmapText(
-          Game_Config.UI_tilesToWorld(6),
+          Game_Config.UI_tilesToWorld(10),
           Game_Config.UI_tilesToWorld(18 + i),
           'ant_party', choice
         )
       )
       this.plantChoicesRects.push(
         this._scene.add.rectangle(
-          Game_Config.UI_tilesToWorld(6),
+          Game_Config.UI_tilesToWorld(10),
           Game_Config.UI_tilesToWorld(18 + i),
           Game_Config.UI_tilesToWorld(4),
           Game_Config.UI_tilesToWorld(1),
           0x000000, 0
         )
+      )
+      this.plantChoicesImages.push(
+        this._scene.add.image(
+          Game_Config.UI_tilesToWorld(5),
+          Game_Config.UI_tilesToWorld(19.5 + (i * 2)),
+          'trees', (6 * (5 + 2 * i)) + 0
+        ).setScale(Game_Config.MAP_SCALE)
       )
     })
 
@@ -122,10 +130,10 @@ export default class PlayerChoices {
 
   setCorrectSizes(screenDim: Position) {
     const dimensions = (screenDim.y < 400) ?
-      { x: 6, y: 11 } : { x: 4, y: 17 };
+      { x: 6, y: 11 } : { x: 8, y: 17 };
 
     this.titleText.setPosition(
-      Game_Config.UI_tilesToWorld(dimensions.x),
+      Game_Config.UI_tilesToWorld(dimensions.x - 4),
       Game_Config.UI_tilesToWorld(dimensions.y)
     )
     this.plantChoices.forEach((text, i) => {
@@ -137,6 +145,11 @@ export default class PlayerChoices {
       rect.setPosition(
         Game_Config.UI_tilesToWorld(dimensions.x),
         Game_Config.UI_tilesToWorld(dimensions.y + 2 + (i * 2)))
+    })
+    this.plantChoicesImages.forEach((image, i) => {
+      image.setPosition(
+        Game_Config.UI_tilesToWorld(dimensions.x - 3),
+        Game_Config.UI_tilesToWorld(dimensions.y + 2.5 + (i * 2)))
     })
   }
 }
