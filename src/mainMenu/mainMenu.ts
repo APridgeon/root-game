@@ -47,18 +47,28 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   create() {
-    this.tileMap = this.make.tilemap({ tileHeight: Game_Config.UI_RES, tileWidth: Game_Config.UI_RES, height: Game_Config.MAP_SIZE.y, width: Game_Config.MAP_SIZE.x });
-    this.tiles = this.tileMap.addTilesetImage('UI_tiles', 'UI_tiles', Game_Config.UI_RES, Game_Config.UI_RES, 0, 0);
+    this.tileMap = this.make.tilemap(
+      {
+        tileHeight: Game_Config.UI_RES,
+        tileWidth: Game_Config.UI_RES,
+        height: Game_Config.MAP_SIZE.y,
+        width: Game_Config.MAP_SIZE.x
+      });
+
+    this.tiles = this.tileMap.addTilesetImage(
+      'UI_tiles', 'UI_tiles',
+      Game_Config.UI_RES,
+      Game_Config.UI_RES,
+      0, 0);
 
     new TimeOfDayManager(this);
     new SkyManager(this);
 
-    let title = new TitleText(this);
-    this.title = title;
-    let pc = new PlayerChoices(this);
+    this.title = new TitleText(this);
+    const pc = new PlayerChoices(this);
 
     this.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
-      title.clickEvent.removeAllListeners();
+      this.title.clickEvent.removeAllListeners();
 
       this.scene.start('main', { treeChoice: pc.treeChoice });
       this.scene.start('UI');
@@ -68,13 +78,22 @@ export default class MainMenu extends Phaser.Scene {
 
   generateBackground() {
     this.tileMap = this.make.tilemap();
-    let skyResolution: Position = { x: 150, y: 250 };
-    this.tiles = this.tileMap.addTilesetImage('sky', 'sky-dawn', skyResolution.x, skyResolution.y, 0, 0);
-    this.skyLayer = this.tileMap.createBlankLayer('skyLayer', 'sky', 0, 0, Math.ceil(this.game.scale.width / skyResolution.x) * 2, 1, skyResolution.x, skyResolution.y)
+    const skyResolution: Position = { x: 150, y: 250 };
+
+    this.tiles = this.tileMap.addTilesetImage(
+      'sky', 'sky-dawn',
+      skyResolution.x, skyResolution.y,
+      0, 0);
+
+    this.skyLayer = this.tileMap.createBlankLayer(
+      'skyLayer', 'sky',
+      0, 0,
+      Math.ceil(this.game.scale.width / skyResolution.x) * 2,
+      1, skyResolution.x, skyResolution.y
+    )
       .forEachTile(tile => tile.index = 0)
       .setOrigin(0, 0)
       .setScale(2);
   }
-
 
 }

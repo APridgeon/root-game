@@ -34,7 +34,7 @@ export default class PlayerChoices {
       UI_TileSets.boxStyle3,
       Game_Config.UI_tilesToWorld(boxPos.x),
       Game_Config.UI_tilesToWorld(boxPos.y),
-      Game_Config.UI_worldToTiles(this._scene.game.scale.width) - 4, 5);
+      Game_Config.UI_worldToTiles(this._scene.game.scale.width) - 4, 7);
 
     this._scene.time.addEvent({
       callback: () => {
@@ -103,21 +103,20 @@ export default class PlayerChoices {
     })
 
     this.plantChoicesRects.forEach((rect, i) => {
-      rect.setOrigin(0, 0)
-      rect.setInteractive()
-      rect.on(Phaser.Input.Events.POINTER_OVER, () => {
-        this.plantChoices.forEach(text => {
-          text.setTintFill(0x000000)
+      rect
+        .setOrigin(0, 0)
+        .setInteractive()
+        .on(Phaser.Input.Events.POINTER_OVER, () => {
+          this.plantChoices.forEach(text => text.setTintFill(0x000000))
+          this.plantChoices[i].setTintFill(0xff0000)
+          if (i === 0) {
+            this.treeChoice = TreeType.Normal
+          } else if (i === 1) {
+            this.treeChoice = TreeType.Willow
+          } else if (i === 2) {
+            this.treeChoice = TreeType.Square
+          }
         })
-        this.plantChoices[i].setTintFill(0xff0000)
-        if (i === 0) {
-          this.treeChoice = TreeType.Normal
-        } else if (i === 1) {
-          this.treeChoice = TreeType.Willow
-        } else if (i === 2) {
-          this.treeChoice = TreeType.Square
-        }
-      })
     })
   }
 
@@ -132,12 +131,12 @@ export default class PlayerChoices {
     this.plantChoices.forEach((text, i) => {
       text.setPosition(
         Game_Config.UI_tilesToWorld(dimensions.x),
-        Game_Config.UI_tilesToWorld(dimensions.y + 2 + i))
+        Game_Config.UI_tilesToWorld(dimensions.y + 2 + (i * 2)))
     })
     this.plantChoicesRects.forEach((rect, i) => {
       rect.setPosition(
         Game_Config.UI_tilesToWorld(dimensions.x),
-        Game_Config.UI_tilesToWorld(dimensions.y + 2 + i))
+        Game_Config.UI_tilesToWorld(dimensions.y + 2 + (i * 2)))
     })
   }
 }
