@@ -33,7 +33,11 @@ export default class UI extends Phaser.Scene {
   }
 
   preload() {
-    this.load.spritesheet('UI_tiles', 'assets/ui/GUI_1x_sliced.png', { frameWidth: 8, frameHeight: 8, spacing: 0 });
+    this.load.spritesheet(
+      'UI_tiles',
+      'assets/ui/GUI_1x_sliced.png',
+      { frameWidth: 8, frameHeight: 8, spacing: 0 }
+    );
     this.load.bitmapFont({
       key: 'ant_party',
       textureURL: 'assets/fonts/AntParty/AntParty.png',
@@ -80,7 +84,12 @@ export default class UI extends Phaser.Scene {
 
     new GuideManager(this);
 
-    this.barometer = new Barometer(this, this.uiTileMap, Game_Config.UI_tilesToWorld(1), this.game.scale.height - Game_Config.UI_tilesToWorld(7), 10);
+    this.barometer = new Barometer(
+      this, this.uiTileMap,
+      Game_Config.UI_tilesToWorld(1),
+      this.game.scale.height - Game_Config.UI_tilesToWorld(7),
+      10
+    );
 
     const waterTextContext: { key: string, text: string, colour: number }[] = [
       {
@@ -113,9 +122,7 @@ export default class UI extends Phaser.Scene {
         .setDepth(10);
 
       this.waterTextObjects[context.key] = waterTextObject
-
     })
-
 
     this.scene.get('main').events.on(Events.WaterText, (waterStats: WaterStats) => {
       this.waterTextObjects['water level'].setText('Water: ' + waterStats.totalWater.toString())
@@ -137,12 +144,27 @@ export default class UI extends Phaser.Scene {
       welcomeBox.setText('GAME OVER');
     })
 
-    this.soundButton = new Button(this, { x: Game_Config.UI_roundWorldToTileFactor(this.game.scale.width) - Game_Config.UI_tilesToWorld(7), y: Game_Config.UI_tilesToWorld(2) }, (24 * 34) + 3);
+    this.soundButton = new Button(
+      this,
+      {
+        x: Game_Config.UI_roundWorldToTileFactor(this.game.scale.width) - Game_Config.UI_tilesToWorld(7),
+        y: Game_Config.UI_tilesToWorld(2)
+      },
+      (24 * 34) + 3
+    );
     this.soundButton.image.on(Phaser.Input.Events.POINTER_UP, () => {
       this.game.events.emit(Events.soundToggle);
     })
 
-    this.fullscreenButton = new Button(this, { x: Game_Config.UI_roundWorldToTileFactor(this.game.scale.width) - Game_Config.UI_tilesToWorld(4), y: Game_Config.UI_tilesToWorld(2) }, (10 * 34) + 15);
+    this.fullscreenButton = new Button(
+      this,
+      {
+        x: Game_Config.UI_roundWorldToTileFactor(this.game.scale.width) - Game_Config.UI_tilesToWorld(4),
+        y: Game_Config.UI_tilesToWorld(2)
+      },
+      (10 * 34) + 15
+    );
+
     this.fullscreenButton.image.on(Phaser.Input.Events.POINTER_UP, function () {
       if (this.scale.isFullscreen) {
         this.scale.stopFullscreen();
@@ -152,9 +174,7 @@ export default class UI extends Phaser.Scene {
       }
     }, this);
 
-
     this.cameras.main.setZoom(1);
-
 
     this.game.events.on(Events.screenSizeChange, (screenDim: Position) => {
       this.resize(screenDim);
