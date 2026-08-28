@@ -10,6 +10,14 @@ import * as Phaser from "phaser";
 import Button from "./button";
 import TextBox from "./boxes/textBox";
 import GuideManager from "./guideManager";
+import InfoBox from "./infoBox";
+
+export enum Colours {
+  RED = 0xAF5031,
+  BLUE = 0x7FC7CC,
+  GREEN = 0x4B5B34
+}
+
 
 export default class UI extends Phaser.Scene {
 
@@ -25,6 +33,9 @@ export default class UI extends Phaser.Scene {
   soundButton: Button;
   uiText: Phaser.GameObjects.BitmapText;
   waterTextObjects: Record<string, Phaser.GameObjects.BitmapText> = {};
+
+  infoBox: InfoBox;
+  turnBox: TextBox;
 
   turnNo = 0;
 
@@ -63,23 +74,23 @@ export default class UI extends Phaser.Scene {
       0
     );
 
-    const welcomeBox = new TextBox(
+    this.infoBox = new InfoBox(
       "WELCOME TO TAPROOT!",
       this,
       this.uiTileMap,
       UI_TileSets.boxStyle3,
       0,
       -Game_Config.UI_tilesToWorld(5),
-      20, 5
+      24, 5
     )
 
-    const turnBox = new TextBox(
+    this.turnBox = new TextBox(
       'Turn no: 0',
       this, this.uiTileMap,
       UI_TileSets.boxStyle3,
-      gameManager.mobile ? 0 : -Game_Config.UI_tilesToWorld(8),
+      gameManager.mobile ? 0 : -Game_Config.UI_tilesToWorld(12),
       gameManager.mobile ? 0 : -Game_Config.UI_tilesToWorld(5),
-      8, 5
+      12, 5
     );
 
     new GuideManager(this);
@@ -91,28 +102,57 @@ export default class UI extends Phaser.Scene {
       10
     );
 
+    this.create_water_text_objects();
+
+    this.setup_sound_button();
+    this.setup_fullscreen_button();
+    this.setup_scene_events();
+
+    this.cameras.main.setZoom(1);
+
+    this.game.events.on(Events.screenSizeChange, (screenDim: Position) => {
+      this.resize(screenDim);
+    })
+
+  }
+
+  private resize(screenDim: Position) {
+    Object.values(this.waterTextObjects).forEach((obj, i) => {
+      obj.setPosition(
+        Game_Config.UI_tilesToWorld(1),
+        screenDim.y - Game_Config.UI_tilesToWorld(10 + (i * 2))
+      )
+    })
+
+    this.barometer.setPosition({
+      x: Game_Config.UI_tilesToWorld(1),
+      y: screenDim.y - Game_Config.UI_tilesToWorld(7)
+    });
+  }
+
+  private create_water_text_objects() {
     const waterTextContext: { key: string, text: string, colour: number }[] = [
       {
         key: 'water level',
         text: 'Water: ' + Game_Config.PLANT_DATA_WATER_START_LEVEL,
-        colour: 0x0095e9
+        colour: Colours.BLUE
       },
       {
         key: 'water removed',
         text: 'Water removed: ' + 0,
-        colour: 0xff0000
+        colour: Colours.RED
       },
       {
         key: 'water added',
         text: 'Water added: ' + 0,
-        colour: 0x00ff00
+        colour: Colours.GREEN
       },
     ]
 
     waterTextContext.forEach((context, i) => {
       const waterTextObject = this.add.bitmapText(
         Game_Config.UI_tilesToWorld(2),
-        this.game.scale.height - Game_Config.UI_tilesToWorld(10 - i),
+        this.game.scale.height - Game_Config.UI_tilesToWorld(14 - (2 * i)),
         'ant_party',
         context.text
       )
@@ -123,27 +163,9 @@ export default class UI extends Phaser.Scene {
 
       this.waterTextObjects[context.key] = waterTextObject
     })
+  }
 
-    this.scene.get('main').events.on(Events.WaterText, (waterStats: WaterStats) => {
-      this.waterTextObjects['water level'].setText('Water: ' + waterStats.totalWater.toString())
-      this.waterTextObjects['water removed'].setText('Water removed: ' + waterStats.waterRemoved)
-      this.waterTextObjects['water added'].setText('Water added: ' + waterStats.waterAdded)
-      this.barometer.setWaterBar(waterStats.totalWater);
-    })
-
-    this.scene.get('main').events.on(Events.UpdateUIText, () => {
-      this.turnNo += 1;
-      turnBox.setText(`Turn no: ${this.turnNo}`)
-    })
-
-    this.scene.get('main').events.on(Events.GameOver, () => {
-
-      welcomeBox.text.setTint(0xff0000)
-        .setDropShadow(0.5, 0.5, 0x000000, 1)
-        .setScale(Game_Config.FONT_SCALE * 2)
-      welcomeBox.setText('GAME OVER');
-    })
-
+  private setup_sound_button() {
     this.soundButton = new Button(
       this,
       {
@@ -155,7 +177,9 @@ export default class UI extends Phaser.Scene {
     this.soundButton.image.on(Phaser.Input.Events.POINTER_UP, () => {
       this.game.events.emit(Events.soundToggle);
     })
+  }
 
+  private setup_fullscreen_button() {
     this.fullscreenButton = new Button(
       this,
       {
@@ -173,20 +197,22 @@ export default class UI extends Phaser.Scene {
         this.scale.startFullscreen();
       }
     }, this);
-
-    this.cameras.main.setZoom(1);
-
-    this.game.events.on(Events.screenSizeChange, (screenDim: Position) => {
-      this.resize(screenDim);
-    })
-
   }
 
-  private resize(screenDim: Position) {
-    this.barometer.setPosition({ x: Game_Config.UI_tilesToWorld(1), y: screenDim.y - Game_Config.UI_tilesToWorld(7) });
-    this.waterTextObjects['water level'].setPosition(Game_Config.UI_tilesToWorld(2), screenDim.y - Game_Config.UI_tilesToWorld(8));
-    this.waterTextObjects['water removed'].setPosition(Game_Config.UI_tilesToWorld(2), screenDim.y - Game_Config.UI_tilesToWorld(9));
-    this.waterTextObjects['water added'].setPosition(Game_Config.UI_tilesToWorld(2), screenDim.y - Game_Config.UI_tilesToWorld(10));
+  private setup_scene_events() {
+    this.scene.get('main').events.on(Events.WaterText, (waterStats: WaterStats) => {
+      this.waterTextObjects['water level'].setText('Water: ' + waterStats.totalWater.toString())
+      this.waterTextObjects['water removed'].setText('Water removed: ' + waterStats.waterRemoved)
+      this.waterTextObjects['water added'].setText('Water added: ' + waterStats.waterAdded)
+      this.barometer.setWaterBar(waterStats.totalWater);
+    })
+
+    this.scene.get('main').events.on(Events.UpdateUIText, () => {
+      this.turnNo += 1;
+      this.turnBox.setText(`Turn no: ${this.turnNo}`)
+    })
+
+
   }
 
 }

@@ -28,8 +28,8 @@ export default class Game_Config {
   static MAP_RESOURCE_LEVEL: integer = 24;
   static MAP_UGROUND_HOLE_LEVEL: integer = 24;
 
-  static FONT_RES: integer = 7;
-  static FONT_SCALE: integer = 2;
+  static FONT_RES: integer = 8;
+  static FONT_SCALE: integer = 3;
 
   static UI_RES: integer = 8;
   static UI_SCALE: integer = 2;
