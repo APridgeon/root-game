@@ -4,13 +4,15 @@ import { Events } from "../events/events";
 import Game_Config from "../game_config";
 import { Position } from "../plant/plantData";
 import MainMenu from "./mainMenu";
+import Phaser from 'phaser';
 
 
 export default class TitleText {
 
   _scene: MainMenu;
 
-  bitmapText: Phaser.GameObjects.BitmapText;
+  bitmapText!: Phaser.GameObjects.BitmapText;
+  bitmapTextShineEffect?: Phaser.Types.Actions.AddEffectShineReturn[];
   backgroundBox: Box;
 
   clickEvent: Phaser.Events.EventEmitter;
@@ -47,7 +49,7 @@ export default class TitleText {
       .setDropShadow(2, 2, 0xffffff)
       .setDepth(10);
 
-    this.bitmapText.postFX.addShine(1, 0.8, 3, false);
+    this.bitmapTextShineEffect = Phaser.Actions.AddEffectShine(this.bitmapText)
   }
 
   setCorrectSize(screenDim: Position) {
@@ -74,8 +76,11 @@ export default class TitleText {
       Game_Config.UI_worldToTiles(this.bitmapText.height) + 4
     );
 
-    this.bitmapText.resetPostPipeline();
-    this.bitmapText.postFX.addShine(1, 0.8, 3, false);
+    this.bitmapTextShineEffect?.forEach(effect => {
+      // maybe I don't need to destroy FX?
+      // this.bitmapText.resetPostPipeline();
+      // this.bitmapText.postFX.addShine(1, 0.8, 3, false);
+    })
   }
 
 }

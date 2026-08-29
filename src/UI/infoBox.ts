@@ -17,7 +17,7 @@ export default class InfoBox extends TextBox {
   ) {
     super(text, scene, tilemap, boxStyle, x, y, width, height)
 
-    this.text.postFX.addGlow()
+    // this.text.postFX.addGlow()
 
     scene.tweens.add({
       targets: this.text,

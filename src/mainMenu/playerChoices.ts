@@ -16,7 +16,7 @@ export default class PlayerChoices {
   _scene: MainMenu;
 
   backgroundBox: Box;
-  titleText: Phaser.GameObjects.BitmapText;
+  titleText!: Phaser.GameObjects.BitmapText;
   plantChoices: Phaser.GameObjects.BitmapText[] = [];
   plantChoicesRects: Phaser.GameObjects.Rectangle[] = [];
   plantChoicesImages: Phaser.GameObjects.Image[] = [];
@@ -66,7 +66,7 @@ export default class PlayerChoices {
       'ant_party', 'Choose your plant type'
     )
       .setOrigin(0, 0)
-      .setTintFill(0x000000)
+      .setTint(0x000000)
       .setScale(Game_Config.FONT_SCALE)
       .setDepth(10)
 
@@ -100,13 +100,13 @@ export default class PlayerChoices {
 
     this.plantChoices.forEach((text, i) => {
       text.setOrigin(0, 0)
-        .setTintFill(0x000000)
+        .setTint(0x000000)
         .setScale(Game_Config.FONT_SCALE)
         .setDepth(10)
         .setActive(true)
 
       if (i === 0) {
-        text.setTintFill(0xff0000)
+        text.setTint(0xff0000)
       }
     })
 
@@ -115,8 +115,8 @@ export default class PlayerChoices {
         .setOrigin(0, 0)
         .setInteractive()
         .on(Phaser.Input.Events.POINTER_OVER, () => {
-          this.plantChoices.forEach(text => text.setTintFill(0x000000))
-          this.plantChoices[i].setTintFill(0xff0000)
+          this.plantChoices.forEach(text => text.setTint(0x000000))
+          this.plantChoices[i].setTint(0xff0000)
           if (i === 0) {
             this.treeChoice = TreeType.Normal
           } else if (i === 1) {

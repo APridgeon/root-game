@@ -1,4 +1,4 @@
-import * as Phaser from 'phaser';
+import Phaser from 'phaser';
 
 /**
  * The fragment shader source for the PixelatedFX pipeline.
@@ -38,7 +38,7 @@ const fragShader = `
  * corner shadow intensities.
  * * @extends Phaser.Renderer.WebGL.Pipelines.PostFXPipeline
  */
-export default class PixelatedFX extends Phaser.Renderer.WebGL.Pipelines.PostFXPipeline {
+export default class PixelatedFX extends Phaser.Renderer.WebGL.RenderNodes.BaseFilter {
   /**
    * The size of the pixels. Higher values result in larger pixels.
    * @default 4

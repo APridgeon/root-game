@@ -8,13 +8,13 @@ import PlayerChoices from './playerChoices';
 
 export default class MainMenu extends Phaser.Scene {
 
-  tileMap: Phaser.Tilemaps.Tilemap;
-  tiles: Phaser.Tilemaps.Tileset;
-  skyLayer: Phaser.Tilemaps.TilemapLayer;
+  tileMap!: Phaser.Tilemaps.Tilemap;
+  tiles!: Phaser.Tilemaps.Tileset;
+  skyLayer!: Phaser.Tilemaps.TilemapLayer;
 
-  title: TitleText;
+  title!: TitleText;
 
-  ev: Phaser.Events.EventEmitter;
+  ev!: Phaser.Events.EventEmitter;
 
   constructor() {
     super({ key: 'MainMenu' });
@@ -59,7 +59,7 @@ export default class MainMenu extends Phaser.Scene {
       'UI_tiles', 'UI_tiles',
       Game_Config.UI_RES,
       Game_Config.UI_RES,
-      0, 0);
+      0, 0)!;
 
     new TimeOfDayManager(this);
     new SkyManager(this);
@@ -83,14 +83,15 @@ export default class MainMenu extends Phaser.Scene {
     this.tiles = this.tileMap.addTilesetImage(
       'sky', 'sky-dawn',
       skyResolution.x, skyResolution.y,
-      0, 0);
+      0, 0
+    )!;
 
     this.skyLayer = this.tileMap.createBlankLayer(
       'skyLayer', 'sky',
       0, 0,
       Math.ceil(this.game.scale.width / skyResolution.x) * 2,
       1, skyResolution.x, skyResolution.y
-    )
+    )!
       .forEachTile(tile => tile.index = 0)
       .setOrigin(0, 0)
       .setScale(2);
