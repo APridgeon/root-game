@@ -5,7 +5,7 @@ import Phaser from 'phaser';
  * Performs a pixelation effect with weighted sampling of corner neighbors.
  */
 const fragShader = `
-    #define SHADER_NAME PIXELATE_FS'
+    #define SHADER_NAME PIXELATED_FX'
     precision mediump float;
     uniform sampler2D uMainSampler;
     uniform vec2 resolution;
@@ -33,78 +33,39 @@ const fragShader = `
     }
 `;
 
-/**
- * A Post-Processing pipeline that applies a pixelation effect with customizable 
- * corner shadow intensities.
- * * @extends Phaser.Renderer.WebGL.Pipelines.PostFXPipeline
- */
-export default class PixelatedFX extends Phaser.Renderer.WebGL.RenderNodes.BaseFilter {
-  /**
-   * The size of the pixels. Higher values result in larger pixels.
-   * @default 4
-   */
-  public amount: number = 4;
 
-  /**
-   * Weighting factors for the corner samples (North-East, South-East, South-West, North-West).
-   * These affect how neighboring pixel colors bleed into the center.
-   */
-  public shadows: { NE: number; SE: number; SW: number; NW: number } = { NE: 0.2, SE: 0, SW: 0, NW: 0 };
+export class PixelatedFXController extends Phaser.Filters.Controller {
 
-  /**
-   * @param game - A reference to the Phaser Game instance.
-   */
-  constructor(game: Phaser.Game) {
-    super({
-      game,
-      renderTarget: true,
-      fragShader,
-      /* @ts-ignore */
-      uniforms: [
-        'uProjectionMatrix',
-        'uMainSampler',
-        'resolution',
-        'amount',
-        'NE',
-        'SE',
-        'SW',
-        'NW'
-      ]
-    });
-  }
+  amount: integer = 4;
+  shadows: {
+    NE: number, SE: number,
+    SW: number, NW: number
+  } = {
+      NE: 0.2, SE: 0, SW: 0, NW: 0
+    }
 
-  /**
-   * Called when the pipeline is booted by the Pipeline Manager.
-   * Sets the initial resolution uniform based on the renderer size.
-   */
-  onBoot(): void {
-    this.set2f('resolution', this.renderer.width, this.renderer.height);
-  }
 
-  /**
-   * Called every frame before the pipeline draws.
-   * Updates the shader uniforms with the current property values.
-   */
-  onPreRender(): void {
-    this.set1f('amount', this.amount);
-    this.set1f('NE', this.shadows.NE);
-    this.set1f('SE', this.shadows.SE);
-    this.set1f('SW', this.shadows.SW);
-    this.set1f('NW', this.shadows.NW);
-  }
-
-  /**
-   * Conveniently updates the effect parameters in one call.
-   * * @param amount - The new pixel size.
-   * @param shadows - An object containing the new weights for each corner.
-   */
-  public setup(amount: number, shadows: { NE: number; SE: number; SW: number; NW: number }): void {
-    this.amount = amount;
-    this.shadows = {
-      NE: shadows.NE,
-      SE: shadows.SE,
-      SW: shadows.SW,
-      NW: shadows.NW
-    };
+  constructor(camera: Phaser.Cameras.Scene2D.Camera) {
+    super(camera, 'PixelatedFX')
   }
 }
+
+export class PixelatedFX extends Phaser.Renderer.WebGL.RenderNodes.BaseFilterShader {
+
+  constructor(manager: Phaser.Renderer.WebGL.RenderNodes.RenderNodeManager) {
+    super('PixelatedFX', manager, null, fragShader);
+  }
+
+  setupUniforms(controller: PixelatedFXController, drawingContext: Phaser.Renderer.WebGL.DrawingContext): void {
+    const programManager = this.programManager;
+
+    programManager.setUniform('resolution', [drawingContext.width, drawingContext.height]);
+    programManager.setUniform('amount', controller.amount)
+    programManager.setUniform('NE', controller.shadows.NE)
+    programManager.setUniform('SE', controller.shadows.SE)
+    programManager.setUniform('SW', controller.shadows.SW)
+    programManager.setUniform('NW', controller.shadows.NW)
+  }
+
+}
+

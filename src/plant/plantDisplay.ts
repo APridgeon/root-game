@@ -4,7 +4,7 @@ import PlantData from "./plantData";
 import PlantTileSets, { PlantTile } from "./plantTileSets";
 import PlantManager from "./plantManager";
 import { Tree, TreeSettings } from "./aerialTree";
-import PixelatedFX from "./pixelatedShader";
+import { PixelatedFXController } from "./pixelatedShader";
 import { Events } from "../events/events";
 import gameManager from "../gameManager/gameManager";
 import { TreeType } from "./aerialTreeTiles";
@@ -39,7 +39,7 @@ export default class PlantDisplay {
   private graphicsObject: Phaser.GameObjects.Graphics;
 
   /** The post-processing shader used to give the trees a pixelated aesthetic. */
-  private pixelShader: PixelatedFX;
+  private pixelShader: PixelatedFXController;
 
   /**
    * Creates an instance of PlantDisplay.
@@ -81,10 +81,9 @@ export default class PlantDisplay {
    * Sets up the WebGL graphics pipeline and attaches the PixelatedFX shader.
    */
   private setupGraphicsPipeline(): void {
-    const renderer = this.scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer;
-    this.pixelShader = renderer.pipelines.getPostPipeline('PixelatedFX') as PixelatedFX;
-
+    this.pixelShader = new PixelatedFXController(this.scene.cameras.main)
     this.graphicsObject = this.scene.add.graphics({ x: 0, y: 0 });
+    this.graphicsObject.enableFilters().filters.external.add(this.pixelShader)
     this.applyShaderSettings();
   }
 
@@ -92,15 +91,13 @@ export default class PlantDisplay {
    * Updates shader parameters. Adjusts pixelation scale based on device type (mobile vs desktop).
    */
   private applyShaderSettings(): void {
-    this.graphicsObject.resetPostPipeline();
-    this.graphicsObject.setPostPipeline(this.pixelShader);
-    const post = this.graphicsObject.postPipelines[0] as PixelatedFX;
 
     let scale = Game_Config.MAP_SCALE;
     if (gameManager.mobile) scale *= 1.5;
 
     // Apply specific pixelation parameters
-    post.setup(scale - 2, { NE: 0.1, SE: 0.1, SW: 0, NW: 0 });
+    this.pixelShader.amount = scale - 2;
+    this.pixelShader.shadows = { NE: 0.1, SE: 0.1, SW: 0, NW: 0 };
   }
 
   /**

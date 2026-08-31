@@ -3,7 +3,7 @@ import UI from "../UI/UI_scene";
 import Main from "../game";
 import GameSizeManager from '../gameSizing/gameSizeManager';
 import MainMenu from '../mainMenu/mainMenu';
-import PixelatedFX from '../plant/pixelatedShader';
+import { PixelatedFX } from '../plant/pixelatedShader';
 
 
 class GameManager {
@@ -25,11 +25,13 @@ class GameManager {
       width: screenDim.x,
       height: screenDim.y,
       scene: [MainMenu, Main, UI],
-      pipeline: { 'PixelatedFX': PixelatedFX },
       pixelArt: true,
       scale: {
         parent: 'game',
         mode: Phaser.Scale.NONE
+      },
+      renderNodes: {
+        PixelatedFX: PixelatedFX
       }
     };
 
