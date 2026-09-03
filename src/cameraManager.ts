@@ -14,6 +14,8 @@ export default class CameraManager {
   cam: Phaser.Cameras.Scene2D.Camera;
   maskTexture: Phaser.GameObjects.RenderTexture;
 
+  maskGOarray: Phaser.GameObjects.Image[] = [];
+
   private fog: Phaser.GameObjects.Rectangle;
   private _plantManager: PlantManager;
   private _mapManager: MapManager;
@@ -35,7 +37,7 @@ export default class CameraManager {
       .fill(0x00, 0.5)
       .render()
 
-    const fog = scene.add.rectangle(
+    this.fog = scene.add.rectangle(
       0, 0,
       Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x),
       Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y),
@@ -45,20 +47,12 @@ export default class CameraManager {
       .setOrigin(0, 0)
       .setDepth(500)
 
-    fog.enableFilters()
-    fog.filters.internal.addMask(this.maskTexture, false)
-
-    // const circ = scene.make.image({ x: 0, y: 0, key: 'circleMask' }, false)
-    //   .setOrigin(0, 0)
-    //   .setScale(2)
-    // maskTexture.erase(circ)
-    //   .render()
-
+    this.fog.enableFilters()
+    this.fog.filters.internal.addMask(this.maskTexture, false)
 
     this.cam = scene.cameras.main;
     this.cam.setBounds(Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y));
     this.setZoom();
-
 
     this.updateMask(scene, plantManager, mapManager);
 
@@ -71,13 +65,13 @@ export default class CameraManager {
     })
 
     scene.events.on(Events.GameOver, () => {
-      this.maskTexture.clear();
+      this.fog.destroy();
     })
 
     scene.game.events.on(Events.screenSizeChange, (screenDim: Position) => {
       console.log(`the camera has listened! screenDim: ${JSON.stringify(screenDim)}`);
       this.setZoom();
-      // this.updateMask(scene, plantManager, mapManager);
+      this.updateMask(scene, plantManager, mapManager);
 
       this.cam.centerOn(Game_Config.MAP_tilesToWorld(plantManager.userPlant.startPos.x), Game_Config.MAP_tilesToWorld(plantManager.userPlant.startPos.y));
     })
@@ -96,8 +90,9 @@ export default class CameraManager {
 
 
   private updateMask(scene: Phaser.Scene, plantManager: PlantManager, mapManager: MapManager) {
-    let circleArray: Phaser.GameObjects.Image[] = [];
-
+    this.maskGOarray.forEach(GO => {
+      GO.destroy();
+    })
 
     //reset maskTexture
     this.maskTexture
@@ -120,13 +115,14 @@ export default class CameraManager {
         .setScale(Game_Config.MAP_SCALE)
         .setAlpha(1);
       this.maskTexture.erase(circ)
+      this.maskGOarray.push(circ)
     })
 
     //draw circle mask for aerial growth
-    let buds = plantManager.plantDisplay.plantTrees.get(plantManager.userPlant).buds
+    const buds = plantManager.plantDisplay.plantTrees.get(plantManager.userPlant).buds
     for (let i = 0; i < buds.length; i += 2) {
-      let x = Game_Config.MAP_tilesToWorld(Game_Config.MAP_worldToTiles(buds[i].pos.x));
-      let y = Game_Config.MAP_tilesToWorld(Game_Config.MAP_worldToTiles(buds[i].pos.y));
+      const x = Game_Config.MAP_tilesToWorld(Game_Config.MAP_worldToTiles(buds[i].pos.x));
+      const y = Game_Config.MAP_tilesToWorld(Game_Config.MAP_worldToTiles(buds[i].pos.y));
 
       const circ = scene.make.image({
         x: x,
@@ -135,22 +131,24 @@ export default class CameraManager {
         .setScale(Game_Config.MAP_SCALE)
         .setAlpha(1);
       this.maskTexture.erase(circ)
+      this.maskGOarray.push(circ)
     };
-    this.maskTexture.render()
-    //
+
     ////draw masks for anim decorations
-    //mapManager.mapDisplay.mapAnimFX.forEach(anim => {
-    //  let circ = scene.add.image(anim.image.getCenter().x, anim.image.getCenter().y, 'smallMask').setVisible(false).setScale(Game_Config.MAP_SCALE);
-    //  this.maskTexture.erase(circ, circ.x, circ.y);
-    //  circleArray.push(circ);
-    //})
-    //
-    //
-    //
-    ////destroy circle array objects
-    //circleArray.forEach(circ => {
-    //  circ.destroy();
-    //})
+    mapManager.mapDisplay.mapAnimFX.forEach(anim => {
+      const circ = scene.make.image({
+        x: anim.image.getCenter().x,
+        y: anim.image.getCenter().y,
+        key: 'smallMask'
+      }, false)
+        .setScale(Game_Config.MAP_SCALE);
+
+      this.maskTexture.erase(circ);
+      this.maskGOarray.push(circ);
+    })
+
+    this.maskTexture.render()
+
   }
 
   private setupDragMovement(scene: Phaser.Scene) {
