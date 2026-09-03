@@ -1,3 +1,4 @@
+import { text } from "stream/consumers";
 import { Events } from "./events/events";
 import gameManager from "./gameManager/gameManager";
 import Game_Config from "./game_config";
@@ -22,19 +23,42 @@ export default class CameraManager {
     this._plantManager = plantManager;
     this._mapManager = mapManager;
 
-    this.fog = scene.add.rectangle(0, 0, Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y))
-      .setFillStyle(0x000000, 0.1)
+
+    this.maskTexture = scene.make.renderTexture({
+      x: 0, y: 0,
+      width: Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x),
+      height: Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y)
+    },
+      false
+    )
       .setOrigin(0, 0)
-      .setVisible(false);
+      .fill(0x00, 0.5)
+      .render()
+
+    const fog = scene.add.rectangle(
+      0, 0,
+      Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x),
+      Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y),
+      0x000000,
+      1
+    )
+      .setOrigin(0, 0)
+      .setDepth(500)
+
+    fog.enableFilters()
+    fog.filters.internal.addMask(this.maskTexture, false)
+
+    // const circ = scene.make.image({ x: 0, y: 0, key: 'circleMask' }, false)
+    //   .setOrigin(0, 0)
+    //   .setScale(2)
+    // maskTexture.erase(circ)
+    //   .render()
+
 
     this.cam = scene.cameras.main;
     this.cam.setBounds(Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(0), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y));
     this.setZoom();
 
-    this.maskTexture = scene.add.renderTexture(0, 0, Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.x), Game_Config.MAP_tilesToWorld(Game_Config.MAP_SIZE.y))
-      .setOrigin(0, 0)
-      .setVisible(true)
-      .setDepth(100);
 
     this.updateMask(scene, plantManager, mapManager);
 
@@ -53,7 +77,7 @@ export default class CameraManager {
     scene.game.events.on(Events.screenSizeChange, (screenDim: Position) => {
       console.log(`the camera has listened! screenDim: ${JSON.stringify(screenDim)}`);
       this.setZoom();
-      this.updateMask(scene, plantManager, mapManager);
+      // this.updateMask(scene, plantManager, mapManager);
 
       this.cam.centerOn(Game_Config.MAP_tilesToWorld(plantManager.userPlant.startPos.x), Game_Config.MAP_tilesToWorld(plantManager.userPlant.startPos.y));
     })
@@ -75,26 +99,27 @@ export default class CameraManager {
     let circleArray: Phaser.GameObjects.Image[] = [];
 
 
-    //clear maskTexture
-    this.maskTexture.clear();
-
-
-    //fog
-    this.maskTexture.draw(this.fog, 0, 0);
+    //reset maskTexture
+    this.maskTexture
+      .clear()
+      .fill(0x00, 0.5);
 
     //draw land cover
-    let land = this._mapManager.mapDisplay.tilemap.getLayer('landBeforeHoles');
-    this.maskTexture.draw(land.tilemapLayer, 0, 0);
+    const land = this._mapManager.mapDisplay.tilemap.getLayer('landBeforeHoles');
 
-    //draw circlemask for each root segment
+    this.maskTexture.draw(land.tilemapLayer, 0, 0, 1);
+
+
+    ////draw circlemask for each root segment
     plantManager.userPlant.rootData.forEach(pos => {
-      let tile = plantManager.plantDisplay.plantTileLayer.getTileAt(pos.x, pos.y, true);
-      let circ = scene.add.image(tile.getCenterX(), tile.getCenterY(), 'circleMask')
-        .setVisible(false)
+      const tile = plantManager.plantDisplay.plantTileLayer.getTileAt(pos.x, pos.y, true);
+      const circ = scene.make.image({
+        x: tile.getCenterX(),
+        y: tile.getCenterY(), key: 'circleMask'
+      }, false)
         .setScale(Game_Config.MAP_SCALE)
         .setAlpha(1);
-      this.maskTexture.erase(circ, circ.x, circ.y);
-      circleArray.push(circ);
+      this.maskTexture.erase(circ)
     })
 
     //draw circle mask for aerial growth
@@ -103,27 +128,29 @@ export default class CameraManager {
       let x = Game_Config.MAP_tilesToWorld(Game_Config.MAP_worldToTiles(buds[i].pos.x));
       let y = Game_Config.MAP_tilesToWorld(Game_Config.MAP_worldToTiles(buds[i].pos.y));
 
-      let circ = scene.add.image(x, y, 'circleMask')
-        .setVisible(false)
+      const circ = scene.make.image({
+        x: x,
+        y: y, key: 'circleMask'
+      }, false)
         .setScale(Game_Config.MAP_SCALE)
         .setAlpha(1);
-      this.maskTexture.erase(circ, circ.x, circ.y);
-      circleArray.push(circ);
+      this.maskTexture.erase(circ)
     };
-
-    //draw masks for anim decorations
-    mapManager.mapDisplay.mapAnimFX.forEach(anim => {
-      let circ = scene.add.image(anim.image.getCenter().x, anim.image.getCenter().y, 'smallMask').setVisible(false).setScale(Game_Config.MAP_SCALE);
-      this.maskTexture.erase(circ, circ.x, circ.y);
-      circleArray.push(circ);
-    })
-
-
-
-    //destroy circle array objects
-    circleArray.forEach(circ => {
-      circ.destroy();
-    })
+    this.maskTexture.render()
+    //
+    ////draw masks for anim decorations
+    //mapManager.mapDisplay.mapAnimFX.forEach(anim => {
+    //  let circ = scene.add.image(anim.image.getCenter().x, anim.image.getCenter().y, 'smallMask').setVisible(false).setScale(Game_Config.MAP_SCALE);
+    //  this.maskTexture.erase(circ, circ.x, circ.y);
+    //  circleArray.push(circ);
+    //})
+    //
+    //
+    //
+    ////destroy circle array objects
+    //circleArray.forEach(circ => {
+    //  circ.destroy();
+    //})
   }
 
   private setupDragMovement(scene: Phaser.Scene) {
