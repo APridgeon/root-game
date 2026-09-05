@@ -73,7 +73,7 @@ export default class MainMenu extends Phaser.Scene {
       this.scene.start('main', { treeChoice: pc.treeChoice });
       this.scene.start('UI');
       this.scene.stop();
-    })
+    }
   }
 
   generateBackground() {

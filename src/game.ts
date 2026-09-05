@@ -3,7 +3,7 @@ import MapManager from './map/mapManager';
 import Perlin from 'phaser3-rex-plugins/plugins/perlin.js';
 import PlantManager from './plant/plantManager';
 import InputHandler from './player/userInput';
-import CameraManager from './cameraManager';
+import CameraManager from './camera/cameraManager';
 import TurnHandler from './player/turnHandler';
 import TimeOfDayManager from './general/timeOfDay';
 import SoundManager from './sound/SoundManager';

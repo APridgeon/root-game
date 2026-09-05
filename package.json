@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "rollup --config rollup.config.dev.mjs",
     "build": "rollup --config rollup.config.dist.mjs",
-    "watch": "rollup --watch --config rollup.config.dev.mjs"
+    "watch": "NODE_OPTIONS=--max-old-space-size=8192 rollup --watch --config rollup.config.dev.mjs"
   },
   "repository": {
     "type": "git",
